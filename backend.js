@@ -62,7 +62,7 @@
       return ensureClient().then(function (c) {
         return c.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo: location.origin + location.pathname }
+          options: { redirectTo: location.origin + "/account" }
         });
       });
     },
@@ -94,6 +94,16 @@
     var gbtn = document.querySelector('[data-auth="google"]');
     var foundation = document.getElementById("foundation");
     if (!form && !gbtn) return; // not the login page
+
+    // If already signed in (or just returned from a Google OAuth redirect),
+    // leave the login form and go to the dashboard. Without this, OAuth lands
+    // the user right back on the login page and looks like nothing happened.
+    if (hasAuth) {
+      ensureClient().then(function (c) {
+        c.auth.getSession().then(function (r) { if (r.data && r.data.session) location.replace("/account"); });
+        c.auth.onAuthStateChange(function (_e, session) { if (session) location.replace("/account"); });
+      });
+    }
 
     function note(msg) {
       if (!foundation) return;
@@ -128,7 +138,7 @@
         (creating ? api.signUp(email, pw) : api.signInEmail(email, pw)).then(function (r) {
           if (r && r.error) return note(r.error.message);
           if (creating) note("Almost there — check your email to confirm your account.");
-          else location.href = "/";
+          else location.href = "/account";
         }).catch(function (err) { note(String(err)); });
       });
     }
