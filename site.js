@@ -8,7 +8,6 @@
   var LINKS = [
     ["Services", "/services"],
     ["Products", "/products"],
-    ["Pricing", "/pricing"],
     ["Insights", "/insights"],
     ["About", "/about"]
   ];
@@ -25,11 +24,11 @@
 
     // Studio pages get their own header (own tabs + a clear link back to the main site)
     if (document.body.getAttribute("data-section") === "studio") {
-      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/pricing">Pricing</a><a href="/studio#download">Download</a><a href="/">← Modulus Technologies</a>';
+      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/products#pricing">Pricing</a><a href="/studio#download">Download</a><a href="/">← Modulus Technologies</a>';
       return '<header class="nav"><div class="wrap nav-inner">' +
           '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
           '<nav class="nav-links" aria-label="Modulus Studio">' +
-            '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/pricing">Pricing</a>' +
+            '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/products#pricing">Pricing</a>' +
           '</nav>' +
           '<div class="nav-right">' +
             '<a class="login" href="/">← Modulus Technologies</a>' +
@@ -56,7 +55,7 @@
           '<div><a class="brand" href="/">' + MARK + '<b>Modulus</b></a>' +
             '<p class="footer-tag">The infrastructure for unbounded ambition.</p></div>' +
           '<div class="footer-cols">' +
-            '<div class="footer-col"><h5>Products</h5><a href="/studio">Modulus Studio</a><a href="/pricing">Pricing</a><a href="/products">Roadmap</a></div>' +
+            '<div class="footer-col"><h5>Products</h5><a href="/studio">Modulus Studio</a><a href="/products#pricing">Pricing</a><a href="/products">Roadmap</a></div>' +
             '<div class="footer-col"><h5>Company</h5><a href="/about">About</a><a href="/insights">Insights</a><a href="/contact">Contact</a></div>' +
             '<div class="footer-col"><h5>Use cases</h5><a href="/services#growth">Growth</a><a href="/services#operations">Operations</a><a href="/services#content">Content</a><a href="/services#support">Support</a></div>' +
             '<div class="footer-col"><h5>Get started</h5><a href="/contact">Book a call</a><a href="/login">Login</a></div>' +
