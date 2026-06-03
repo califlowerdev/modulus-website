@@ -117,6 +117,16 @@
       entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); } });
     }, { threshold: 0.12 });
     document.querySelectorAll(".reveal").forEach(function (n) { obs.observe(n); });
+
+    // Deep-link fix: the header/footer are injected after the page loads,
+    // which cancels the browser's native jump-to-anchor (so /products#pricing
+    // would land at the top). Re-scroll to the hash once the chrome is in place.
+    if (location.hash.length > 1) {
+      try {
+        var anchor = document.querySelector(location.hash);
+        if (anchor) setTimeout(function () { anchor.scrollIntoView(); }, 90);
+      } catch (e) { /* invalid selector in hash — ignore */ }
+    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
