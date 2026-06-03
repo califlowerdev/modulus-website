@@ -1,0 +1,139 @@
+/* Modulus — site constellation. One field of drifting nodes that link to their
+   neighbors and reach toward the cursor (navy network, gold near the mouse).
+   On the homepage it spans the hero through the founder section; on other pages
+   site.js wraps the hero in its own field. Nodes ease back gently behind real
+   text (headlines, headings, the founder quote) so they never fight with
+   reading, but stay lively everywhere else. Ignores pointer events, respects
+   reduced motion, pauses when off-screen or the tab is hidden. */
+(function () {
+  var canvas = document.querySelector(".field-canvas");
+  if (!canvas || canvas.__c) return; // one init per canvas
+  canvas.__c = 1;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var ctx = canvas.getContext("2d");
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var field = canvas.parentElement;
+  var w = 0, h = 0, particles = [], boxes = [], raf = null, running = true;
+  var mouse = { x: -9999, y: -9999 };
+  var NAVY = "12,27,46", GOLD = "200,167,91";
+  var LINK = 132, NEAR = 175;
+
+  // Readability easing: a node's visibility eases down a little as it drifts over
+  // real text and recovers as it leaves. Gentle (high floor) — calmer dots behind
+  // text, lively everywhere else. Tune via MASK_FLOOR / MASK_MARGIN.
+  var MASK_FLOOR = 0.5, MASK_MARGIN = 80;
+  function vis(x, y) {
+    var best = 1;
+    for (var b = 0; b < boxes.length; b++) {
+      var r = boxes[b];
+      var dx = Math.max(r.x0 - x, x - r.x1, 0);
+      var dy = Math.max(r.y0 - y, y - r.y1, 0);
+      var d = Math.sqrt(dx * dx + dy * dy);
+      var t = d >= MASK_MARGIN ? 1 : d / MASK_MARGIN;
+      t = t * t * (3 - 2 * t); // smoothstep — gentle ease in/out
+      var v = MASK_FLOOR + (1 - MASK_FLOOR) * t;
+      if (v < best) best = v;
+    }
+    return best;
+  }
+
+  function resize() {
+    var r = field.getBoundingClientRect();
+    w = r.width; h = r.height;
+    canvas.width = Math.round(w * DPR); canvas.height = Math.round(h * DPR);
+    canvas.style.width = w + "px"; canvas.style.height = h + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    // calm only behind real text: the hero block, section headings, founder quote
+    boxes = [];
+    var texts = field.querySelectorAll(".hero .wrap, h2, .founder .quote");
+    for (var i = 0; i < texts.length; i++) {
+      var tr = texts[i].getBoundingClientRect();
+      if (tr.width === 0 && tr.height === 0) continue;
+      boxes.push({
+        x0: tr.left - r.left, y0: tr.top - r.top,
+        x1: tr.left - r.left + tr.width, y1: tr.top - r.top + tr.height
+      });
+    }
+
+    var count = Math.max(48, Math.min(280, Math.round((w * h) / 10000)));
+    particles = [];
+    for (var k = 0; k < count; k++) {
+      particles.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
+        r: Math.random() * 2.2 + 1.7,
+        gold: Math.random() < 0.32,
+        _v: 1
+      });
+    }
+  }
+
+  function step() {
+    ctx.clearRect(0, 0, w, h);
+
+    // pass 1 — move each node, then compute how visible it should be here
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+      p._v = vis(p.x, p.y);
+    }
+
+    // pass 2 — draw neighbor links, the cursor link, then the nodes on top
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      var dxm = p.x - mouse.x, dym = p.y - mouse.y, dm = Math.sqrt(dxm * dxm + dym * dym);
+      var near = dm < NEAR;
+
+      for (var j = i + 1; j < particles.length; j++) {
+        var q = particles[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < LINK) {
+          var lv = p._v < q._v ? p._v : q._v; // fade the link by its calmer endpoint
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = "rgba(" + NAVY + "," + (0.17 * (1 - d / LINK) * lv).toFixed(3) + ")";
+          ctx.lineWidth = 1; ctx.stroke();
+        }
+      }
+
+      if (near) {
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(mouse.x, mouse.y);
+        ctx.strokeStyle = "rgba(" + GOLD + "," + (0.42 * (1 - dm / NEAR) * p._v).toFixed(3) + ")";
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+
+      var col = near ? GOLD : (p.gold ? GOLD : NAVY);
+      var a = near ? (0.62 * (1 - dm / NEAR) + 0.3) : (p.gold ? 0.38 : 0.34);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(" + col + "," + (a * p._v).toFixed(3) + ")";
+      ctx.fill();
+    }
+
+    if (running) raf = requestAnimationFrame(step);
+  }
+
+  function play() { if (running && !raf) raf = requestAnimationFrame(step); }
+  function pause() { running = false; if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+  window.addEventListener("mousemove", function (e) {
+    var r = field.getBoundingClientRect();
+    mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+  }, { passive: true });
+  window.addEventListener("mouseout", function () { mouse.x = -9999; mouse.y = -9999; });
+  window.addEventListener("resize", resize);
+  window.addEventListener("load", resize); // re-measure once fonts/images settle
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) pause(); else { running = true; play(); }
+  });
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting && !document.hidden) { running = true; play(); } else { pause(); }
+    }, { threshold: 0 }).observe(field);
+  }
+
+  resize();
+  raf = requestAnimationFrame(step);
+})();

@@ -1,0 +1,16 @@
+# Netlify config for the Modulus marketing site (static — no build step).
+[build]
+  publish = "."
+
+# Old Solutions page folded into Services.
+[[redirects]]
+  from = "/solutions"
+  to = "/services.html"
+  status = 301
+
+[[redirects]]
+  from = "/solutions.html"
+  to = "/services.html"
+  status = 301
+
+# Netlify serves 404.html automatically for unknown paths.

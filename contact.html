@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modulus Technologies — Contact</title>
+  <meta name="description" content="Tell us about your business and we will reply with a concrete idea for a workflow worth automating. Not a pitch." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="canonical" href="https://modulustech.ai/contact.html" />
+  <meta name="theme-color" content="#0C1B2E" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Modulus Technologies" />
+  <meta property="og:title" content="Modulus Technologies — Contact" />
+  <meta property="og:description" content="Tell us about your business and we will reply with a concrete idea for a workflow worth automating. Not a pitch." />
+  <meta property="og:url" content="https://modulustech.ai/contact.html" />
+  <meta property="og:image" content="https://modulustech.ai/assets/modulus-mark.png" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="stylesheet" href="redo.css" />
+  <style>
+    .cgrid { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(40px,6vw,72px); align-items: start; }
+    .next li { list-style: none; padding-left: 28px; position: relative; margin-bottom: 15px; color: var(--ink-2); font-size: 15.5px; }
+    .next li::before { content: ""; position: absolute; left: 0; top: 5px; width: 16px; height: 16px; border-radius: 5px; background: var(--gold); }
+    .thanks { display: none; }
+    .thanks .check { width: 54px; height: 54px; border-radius: 50%; background: var(--gold); display: grid; place-items: center; margin-bottom: 18px; }
+    .thanks .check svg { width: 26px; height: 26px; color: var(--navy); }
+    @media (max-width:900px){ .cgrid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main id="main">
+
+    <section class="hero sec-paper" style="padding-bottom:clamp(40px,6vh,72px)">
+      <div class="wrap">
+        <span class="eyebrow fade-up">Contact</span>
+        <h1 class="fade-up d1" style="font-size:clamp(40px,6vw,76px)">Let's find one workflow worth <span class="acc">automating</span>.</h1>
+        <p class="sub fade-up d2">Tell us a little about your business. We will reply with a concrete idea, not a pitch.</p>
+      </div>
+    </section>
+
+    <section class="sec-soft" style="padding-top:clamp(40px,6vh,72px)">
+      <div class="wrap">
+        <div class="cgrid">
+          <div class="reveal">
+            <form class="form" id="contactForm">
+              <div class="field"><label for="c-name">Name</label><input id="c-name" type="text" required /></div>
+              <div class="field"><label for="c-email">Email</label><input id="c-email" type="email" required /></div>
+              <div class="field"><label for="c-company">Company</label><input id="c-company" type="text" /></div>
+              <div class="field"><label for="c-msg">What is eating your time?</label><textarea id="c-msg" required></textarea></div>
+              <button class="btn btn-gold" type="submit">Send</button>
+            </form>
+            <div class="thanks" id="thanks">
+              <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <h2 style="font-size:28px">Thanks. Your message is in.</h2>
+              <p style="color:var(--ink-2);margin-top:10px;font-size:16px">We read every message and will be in touch shortly, usually within a day or two.</p>
+            </div>
+          </div>
+          <div class="reveal">
+            <span class="eyebrow">What happens next</span>
+            <h2 style="font-size:28px;margin:12px 0 22px">A real reply, not an autoresponder.</h2>
+            <ul class="next" style="padding:0">
+              <li>We read your note and look at how your business runs.</li>
+              <li>We come back with one concrete idea worth automating.</li>
+              <li>If it is a fit, we book a short call to scope it together.</li>
+            </ul>
+            <p style="color:var(--ink-2);margin-top:24px;font-size:15.5px">Prefer email? <a class="textlink" href="mailto:jamesdenhamiv@gmail.com">Email us directly <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <script src="site.js"></script>
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      this.style.display = 'none';
+      document.getElementById('thanks').style.display = 'block';
+    });
+  </script>
+</body>
+</html>
