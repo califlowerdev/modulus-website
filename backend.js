@@ -51,7 +51,7 @@
     if (!login) return;
     if (user) {
       login.textContent = user.email ? user.email.split("@")[0] : "Account";
-      login.setAttribute("href", "account.html");
+      login.setAttribute("href", "/account");
       login.title = "Your account";
     }
   }
@@ -76,7 +76,7 @@
       return ensureClient().then(function (c) { return c.auth.signOut(); }).then(function () { location.reload(); });
     },
     resetPassword: function (email) {
-      return ensureClient().then(function (c) { return c.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/login.html" }); });
+      return ensureClient().then(function (c) { return c.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/login" }); });
     }
   };
   window.modulusAuth = api;
@@ -128,7 +128,7 @@
         (creating ? api.signUp(email, pw) : api.signInEmail(email, pw)).then(function (r) {
           if (r && r.error) return note(r.error.message);
           if (creating) note("Almost there — check your email to confirm your account.");
-          else location.href = "index.html";
+          else location.href = "/";
         }).catch(function (err) { note(String(err)); });
       });
     }

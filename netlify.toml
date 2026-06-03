@@ -2,15 +2,78 @@
 [build]
   publish = "."
 
+# Clean URLs: bounce any direct ".html" hit to the extensionless path.
+# force = true because the .html files exist and would otherwise serve directly.
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/about.html"
+  to = "/about"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/services.html"
+  to = "/services"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/products.html"
+  to = "/products"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/pricing.html"
+  to = "/pricing"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/studio.html"
+  to = "/studio"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/insights.html"
+  to = "/insights"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/contact.html"
+  to = "/contact"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/login.html"
+  to = "/login"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/account.html"
+  to = "/account"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/privacy.html"
+  to = "/privacy"
+  status = 301
+  force = true
+[[redirects]]
+  from = "/terms.html"
+  to = "/terms"
+  status = 301
+  force = true
+
 # Old Solutions page folded into Services.
 [[redirects]]
   from = "/solutions"
-  to = "/services.html"
+  to = "/services"
   status = 301
-
 [[redirects]]
   from = "/solutions.html"
-  to = "/services.html"
+  to = "/services"
   status = 301
+  force = true
 
 # Netlify serves 404.html automatically for unknown paths.

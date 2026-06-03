@@ -1,47 +1,50 @@
 /* Modulus Technologies — shared light chrome (redo).
    Injects a consistent nav + footer on every page, gives each page's hero a
    constellation background, and runs scroll reveal.
-   Above-the-fold uses CSS .fade-up (no JS); below-fold uses .reveal here. */
+   Above-the-fold uses CSS .fade-up (no JS); below-fold uses .reveal here.
+   URLs are clean (extensionless); Netlify serves /services from services.html. */
 (function () {
   var MARK = '<img class="brand-img" src="assets/modulus-mark.png" alt="Modulus" width="28" height="28" />';
   var LINKS = [
-    ["Services", "services.html"],
-    ["Products", "products.html"],
-    ["Pricing", "pricing.html"],
-    ["Insights", "insights.html"],
-    ["About", "about.html"]
+    ["Services", "/services"],
+    ["Products", "/products"],
+    ["Pricing", "/pricing"],
+    ["Insights", "/insights"],
+    ["About", "/about"]
   ];
-  var here = (location.pathname.split("/").pop() || "index.html");
+  // Current path, normalized to clean form so aria-current matches LINKS.
+  var here = location.pathname.replace(/\.html$/, "");
+  if (here === "" || here === "/index") here = "/";
 
   function nav() {
     var links = LINKS.map(function (l) {
       return '<a href="' + l[1] + '"' + (l[1] === here ? ' aria-current="page"' : '') + '>' + l[0] + '</a>';
     }).join("");
     var drawer = LINKS.map(function (l) { return '<a href="' + l[1] + '">' + l[0] + '</a>'; }).join("") +
-      '<a href="login.html">Login</a><a href="contact.html">Book a call</a>';
+      '<a href="/login">Login</a><a href="/contact">Book a call</a>';
 
     // Studio pages get their own header (own tabs + a clear link back to the main site)
     if (document.body.getAttribute("data-section") === "studio") {
-      var sdrawer = '<a href="studio.html#features">Features</a><a href="studio.html#how">How it works</a><a href="pricing.html">Pricing</a><a href="studio.html#download">Download</a><a href="index.html">← Modulus Technologies</a>';
+      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/pricing">Pricing</a><a href="/studio#download">Download</a><a href="/">← Modulus Technologies</a>';
       return '<header class="nav"><div class="wrap nav-inner">' +
-          '<a class="brand" href="studio.html" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
+          '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
           '<nav class="nav-links" aria-label="Modulus Studio">' +
-            '<a href="studio.html#features">Features</a><a href="studio.html#how">How it works</a><a href="pricing.html">Pricing</a>' +
+            '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/pricing">Pricing</a>' +
           '</nav>' +
           '<div class="nav-right">' +
-            '<a class="login" href="index.html">← Modulus Technologies</a>' +
-            '<a class="btn btn-gold" href="studio.html#download" style="padding:10px 20px;font-size:14px;">Download</a>' +
+            '<a class="login" href="/">← Modulus Technologies</a>' +
+            '<a class="btn btn-gold" href="/studio#download" style="padding:10px 20px;font-size:14px;">Download</a>' +
             '<button class="nav-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
           '</div>' +
         '</div><div class="wrap"><div class="nav-drawer" id="navDrawer">' + sdrawer + '</div></div></header>';
     }
 
     return '<header class="nav"><div class="wrap nav-inner">' +
-        '<a class="brand" href="index.html" aria-label="Modulus Technologies home">' + MARK + '<b>Modulus</b> <span class="sub">Technologies</span></a>' +
+        '<a class="brand" href="/" aria-label="Modulus Technologies home">' + MARK + '<b>Modulus</b> <span class="sub">Technologies</span></a>' +
         '<nav class="nav-links" aria-label="Primary">' + links + '</nav>' +
         '<div class="nav-right">' +
-          '<a class="login" href="login.html">Login</a>' +
-          '<a class="btn btn-gold" href="contact.html" style="padding:10px 20px;font-size:14px;">Book a call</a>' +
+          '<a class="login" href="/login">Login</a>' +
+          '<a class="btn btn-gold" href="/contact" style="padding:10px 20px;font-size:14px;">Book a call</a>' +
           '<button class="nav-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
         '</div>' +
       '</div><div class="wrap"><div class="nav-drawer" id="navDrawer">' + drawer + '</div></div></header>';
@@ -50,16 +53,16 @@
   function footer() {
     return '<footer class="footer"><div class="wrap">' +
         '<div class="footer-top">' +
-          '<div><a class="brand" href="index.html">' + MARK + '<b>Modulus</b></a>' +
+          '<div><a class="brand" href="/">' + MARK + '<b>Modulus</b></a>' +
             '<p class="footer-tag">The infrastructure for unbounded ambition.</p></div>' +
           '<div class="footer-cols">' +
-            '<div class="footer-col"><h5>Products</h5><a href="studio.html">Modulus Studio</a><a href="pricing.html">Pricing</a><a href="products.html">Roadmap</a></div>' +
-            '<div class="footer-col"><h5>Company</h5><a href="about.html">About</a><a href="insights.html">Insights</a><a href="contact.html">Contact</a></div>' +
-            '<div class="footer-col"><h5>Use cases</h5><a href="services.html#growth">Growth</a><a href="services.html#operations">Operations</a><a href="services.html#content">Content</a><a href="services.html#support">Support</a></div>' +
-            '<div class="footer-col"><h5>Get started</h5><a href="contact.html">Book a call</a><a href="login.html">Login</a></div>' +
+            '<div class="footer-col"><h5>Products</h5><a href="/studio">Modulus Studio</a><a href="/pricing">Pricing</a><a href="/products">Roadmap</a></div>' +
+            '<div class="footer-col"><h5>Company</h5><a href="/about">About</a><a href="/insights">Insights</a><a href="/contact">Contact</a></div>' +
+            '<div class="footer-col"><h5>Use cases</h5><a href="/services#growth">Growth</a><a href="/services#operations">Operations</a><a href="/services#content">Content</a><a href="/services#support">Support</a></div>' +
+            '<div class="footer-col"><h5>Get started</h5><a href="/contact">Book a call</a><a href="/login">Login</a></div>' +
           '</div>' +
         '</div>' +
-        '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="privacy.html">Privacy</a> &middot; <a href="terms.html">Terms</a> &middot; Agentic AI for SMBs.</span></div>' +
+        '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; Agentic AI for SMBs.</span></div>' +
       '</div></footer>';
   }
 
