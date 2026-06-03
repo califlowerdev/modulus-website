@@ -13,8 +13,8 @@
 (function () {
   // ======================= PASTE YOUR KEYS HERE =============================
   var CONFIG = {
-    SUPABASE_URL: "",          // e.g. https://xxxxxxxx.supabase.co
-    SUPABASE_ANON_KEY: "",     // the public "anon"/"publishable" key (browser-safe)
+    SUPABASE_URL: "https://deypezfcawzdcfhnckxp.supabase.co",
+    SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRleXBlemZjYXd6ZGNmaG5ja3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzE4MjcsImV4cCI6MjA5NjAwNzgyN30.AxvDKCh5NIvzdBHy9BbP3NlV18yt4JuWVrpHho1SNic",
     CHATBASE_ID: "",           // your Chatbase chatbot id
     STRIPE_LINKS: {            // Stripe Payment Link URLs, one per plan
       starter: "",             // $19 / month
@@ -218,9 +218,13 @@
         var name = meta.full_name || meta.name || (user.email ? user.email.split("@")[0] : "there");
         setText("acctHello", "Welcome back, " + name + ".");
         setText("acctEmail", user.email || "");
-        c.from("subscriptions").select("plan,status,credits_used,credits_limit,current_period_end").eq("user_id", user.id).maybeSingle()
-          .then(function (res) { renderPlan(res && res.data); })
-          .catch(function () { renderPlan(null); });
+        // NOTE: billing/plan data is intentionally NOT read here yet. The
+        // Supabase project's billing tables (accounts / subscriptions /
+        // credits / licenses) belong to the Modulus Studio desktop app's
+        // licensing system. The website stays decoupled from them until the
+        // shared-account integration is built deliberately. Until then the
+        // dashboard shows a clean "no active plan" state for signed-in users.
+        renderPlan(null);
       });
     });
   }
