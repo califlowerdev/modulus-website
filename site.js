@@ -106,6 +106,11 @@
       var bjs = document.createElement("script"); bjs.src = "backend.js"; document.body.appendChild(bjs);
     }
 
+    // "Ask Modulus" assistant widget (self-contained; no external services or keys)
+    if (!document.querySelector('script[src*="assistant.js"]')) {
+      var ajs = document.createElement("script"); ajs.src = "assistant.js"; ajs.defer = true; document.body.appendChild(ajs);
+    }
+
     var toggle = document.querySelector(".nav-toggle");
     var drawer = document.getElementById("navDrawer");
     if (toggle && drawer) toggle.addEventListener("click", function () {
@@ -124,7 +129,11 @@
     if (location.hash.length > 1) {
       try {
         var anchor = document.querySelector(location.hash);
-        if (anchor) setTimeout(function () { anchor.scrollIntoView(); }, 90);
+        if (anchor) {
+          var jump = function () { anchor.scrollIntoView(); };
+          setTimeout(jump, 60);
+          window.addEventListener("load", function () { setTimeout(jump, 120); });
+        }
       } catch (e) { /* invalid selector in hash — ignore */ }
     }
   }
