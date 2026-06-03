@@ -189,18 +189,44 @@
     if (on) { if (!ex) { var t = document.createElement("div"); t.className = "mod-typing"; t.innerHTML = "<i></i><i></i><i></i>"; body.appendChild(t); scrollDown(); } }
     else if (ex) { ex.remove(); }
   }
+  // Real-AI upgrade: set AI_ENDPOINT to the deployed Supabase "ask" function URL
+  // (https://deypezfcawzdcfhnckxp.supabase.co/functions/v1/ask) to answer with a
+  // real LLM. On ANY error/timeout it falls back to the local knowledge base, so
+  // the widget never breaks. Empty = local KB only (current live behavior).
+  var AI_ENDPOINT = "";
+  var convo = [];
+
+  function fetchAI(text) {
+    var ctrl = new AbortController();
+    var to = setTimeout(function () { ctrl.abort(); }, 15000);
+    return fetch(AI_ENDPOINT, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ q: text, history: convo.slice(-6) }),
+      signal: ctrl.signal
+    }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { return d && d.answer ? d.answer : null; })
+      .catch(function () { return null; })
+      .then(function (ans) { clearTimeout(to); return ans; });
+  }
+  function showBot(text, chips) { typing(false); addMsg(text, "bot"); addChips(chips); }
+  function kbAnswer(text) { var r = match(text); return { a: r.a, chips: r.chips || GREET_CHIPS }; }
+
   function respond(text) {
-    var r = match(text);
     typing(true);
-    setTimeout(function () {
-      typing(false);
-      addMsg(r.a, "bot");
-      addChips(r.chips || GREET_CHIPS);
-    }, REDUCE ? 220 : 560);
+    if (AI_ENDPOINT) {
+      fetchAI(text).then(function (ans) {
+        if (ans) { convo.push({ role: "assistant", content: ans }); showBot(ans, ["See plans", "Book a call"]); }
+        else { var k = kbAnswer(text); showBot(k.a, k.chips); }   // graceful fallback to local KB
+      });
+    } else {
+      setTimeout(function () { var k = kbAnswer(text); showBot(k.a, k.chips); }, REDUCE ? 220 : 560);
+    }
   }
   function send(text) {
     text = (text || "").trim(); if (!text) return;
     addMsg(text, "me");
+    convo.push({ role: "user", content: text });
     input.value = "";
     respond(text);
   }
