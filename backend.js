@@ -47,12 +47,15 @@
 
   // When signed in, swap the nav "Login" link for the account name + sign out.
   function reflectUser(user) {
-    var login = document.querySelector(".nav-right .login");
-    if (!login) return;
-    if (user) {
-      login.textContent = user.email ? user.email.split("@")[0] : "Account";
-      login.setAttribute("href", "/account");
-      login.title = "Your account";
+    if (!user) return;
+    // Update every real login link (desktop header + mobile drawer) to the
+    // signed-in account name. Marked [data-auth-login] so we never touch the
+    // Studio header's "back to Modulus" link (which also carries .login).
+    var links = document.querySelectorAll("[data-auth-login]");
+    for (var i = 0; i < links.length; i++) {
+      links[i].textContent = user.email ? user.email.split("@")[0] : "Account";
+      links[i].setAttribute("href", "/account");
+      links[i].title = "Your account";
     }
   }
 

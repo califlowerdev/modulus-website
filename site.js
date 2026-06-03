@@ -20,7 +20,7 @@
       return '<a href="' + l[1] + '"' + (l[1] === here ? ' aria-current="page"' : '') + '>' + l[0] + '</a>';
     }).join("");
     var drawer = LINKS.map(function (l) { return '<a href="' + l[1] + '">' + l[0] + '</a>'; }).join("") +
-      '<a href="/login">Login</a><a href="/contact">Book a call</a>';
+      '<a class="login" data-auth-login href="/login">Login</a><a href="/contact">Book a call</a>';
 
     // Studio pages get their own header (own tabs + a clear link back to the main site)
     if (document.body.getAttribute("data-section") === "studio") {
@@ -42,7 +42,7 @@
         '<a class="brand" href="/" aria-label="Modulus Technologies home">' + MARK + '<b>Modulus</b> <span class="sub">Technologies</span></a>' +
         '<nav class="nav-links" aria-label="Primary">' + links + '</nav>' +
         '<div class="nav-right">' +
-          '<a class="login" href="/login">Login</a>' +
+          '<a class="login" data-auth-login href="/login">Login</a>' +
           '<a class="btn btn-gold" href="/contact" style="padding:10px 20px;font-size:14px;">Book a call</a>' +
           '<button class="nav-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
         '</div>' +
