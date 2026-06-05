@@ -24,14 +24,15 @@
 
     // Studio pages get their own header (own tabs + a clear link back to the main site)
     if (document.body.getAttribute("data-section") === "studio") {
-      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/products#pricing">Pricing</a><a href="/studio#download">Get access</a><a href="/">← Modulus Technologies</a>';
+      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/products#pricing">Pricing</a><a href="/studio#download">Get access</a><a class="login" data-auth-login href="/login">Sign in</a><a href="/">⌂ Home · Modulus Technologies</a>';
       return '<header class="nav"><div class="wrap nav-inner">' +
           '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
           '<nav class="nav-links" aria-label="Modulus Studio">' +
             '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/products#pricing">Pricing</a>' +
           '</nav>' +
           '<div class="nav-right">' +
-            '<a class="login" href="/">← Modulus Technologies</a>' +
+            '<a class="s-home" href="/" aria-label="Modulus Technologies home" title="Home — Modulus Technologies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg></a>' +
+            '<a class="login" data-auth-login href="/login">Sign in</a>' +
             '<a class="btn btn-gold" href="/studio#download" style="padding:10px 20px;font-size:14px;">Get access</a>' +
             '<button class="nav-toggle" aria-label="Menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
           '</div>' +
