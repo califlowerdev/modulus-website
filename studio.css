@@ -1,0 +1,108 @@
+/* ============================================================
+   Modulus Studio — dark design system.
+   The shared dark identity for the Studio product surfaces:
+   the signed-in web app (sign-in + dashboard) today, and the
+   Studio marketing page over time. Loads AFTER redo.css, so it
+   reuses redo's --ease / --font-display / --pill and overrides
+   the light surface to dark.
+   ============================================================ */
+:root {
+  --s-bg: #070f1c; --s-bg2: #0b1727;
+  --s-ink: #eaf0f7; --s-ink2: rgba(234,240,247,.72); --s-ink3: rgba(234,240,247,.46);
+  --s-line: rgba(255,255,255,.09);
+  --s-gold: #E4C77D; --s-gold2: #C8A75B;
+}
+html, body { background: var(--s-bg); }
+body { color: var(--s-ink); }
+::selection { background: rgba(228,199,125,.28); }
+
+/* ---- shared chrome: nav -> dark glass ---- */
+.nav { background: rgba(7,15,28,.66) !important; backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid var(--s-line); }
+.nav .brand b { color: #fff; } .nav .brand .sub { color: var(--s-gold); }
+.nav-links a, .nav .login { color: var(--s-ink2); } .nav-links a:hover, .nav .login:hover { color: #fff; }
+.nav-toggle { color: var(--s-ink); }
+.app-nav .nav-inner { min-height: 64px; }
+.s-home { display: inline-flex; align-items: center; justify-content: center; color: var(--s-ink2); padding: 8px; border-radius: 10px; transition: color .2s, background .2s; }
+.s-home:hover { color: #fff; background: rgba(255,255,255,.07); }
+.s-home svg { width: 20px; height: 20px; display: block; }
+
+/* ---- shared chrome: footer -> dark ---- */
+.footer { background: #050d18; border-top: 1px solid var(--s-line); }
+.footer, .footer p, .footer a, .footer h5, .footer .footer-bottom span, .footer-legal a { color: var(--s-ink2); }
+.footer .brand b { color: #fff; } .footer a:hover { color: #fff; }
+.footer h5 { color: var(--s-ink3); }
+.app-footer { padding: 26px 0; }
+.app-footer .footer-bottom { border-top: 0; margin-top: 0; padding-top: 0; }
+
+/* ---- primitives ---- */
+.s-eyebrow { display: inline-block; color: var(--s-gold); letter-spacing: .2em; text-transform: uppercase; font-size: 12px; font-weight: 600; }
+.glass { position: relative; background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02)); border: 1px solid var(--s-line); border-radius: 22px; box-shadow: 0 30px 70px -45px rgba(0,0,0,.8); }
+.s-btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; border-radius: 999px; padding: 13px 24px; font-weight: 600; font-size: 15px; letter-spacing: .01em; cursor: pointer; font-family: inherit; border: 0; transition: transform .2s var(--ease), box-shadow .25s, background .25s, border-color .25s; }
+.s-btn svg { width: 18px; height: 18px; }
+.s-btn.gold { background: linear-gradient(180deg, #efd699, var(--s-gold2)); color: #2a2010; box-shadow: 0 12px 34px -12px rgba(228,199,125,.6); }
+.s-btn.gold:hover { transform: translateY(-2px); box-shadow: 0 18px 44px -12px rgba(228,199,125,.7); }
+.s-btn.ghost { color: var(--s-ink); background: transparent; border: 1px solid rgba(255,255,255,.2); }
+.s-btn.ghost:hover { border-color: rgba(255,255,255,.42); background: rgba(255,255,255,.04); transform: translateY(-2px); }
+.s-btn.full { width: 100%; }
+
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+
+/* ============================================================
+   APP — sign-in
+   ============================================================ */
+.authwrap { position: relative; min-height: 72vh; display: grid; place-items: center; padding: 64px 0; overflow: hidden; }
+.authglow { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(640px 440px at 50% 4%, rgba(228,199,125,.16), rgba(56,108,196,.10) 42%, transparent 72%); }
+.authcard { max-width: 432px; width: 100%; margin: 0 auto; text-align: center; padding: 44px 40px; position: relative; z-index: 1; }
+.authcard .mk { width: 46px; height: 46px; border-radius: 13px; display: block; margin: 0 auto 20px; }
+.authcard h1 { font-family: var(--font-display); font-weight: 600; font-size: 28px; color: #fff; }
+.authcard .lead { color: var(--s-ink2); margin: 10px 0 26px; font-size: 15px; line-height: 1.5; }
+.authtabs { display: flex; gap: 4px; background: rgba(255,255,255,.04); border: 1px solid var(--s-line); border-radius: var(--pill); padding: 4px; margin-bottom: 26px; }
+.authtabs button { flex: 1; border: 0; background: transparent; font-family: inherit; font-weight: 600; font-size: 14px; padding: 10px; border-radius: var(--pill); color: var(--s-ink2); cursor: pointer; transition: background .2s, color .2s; }
+.authtabs button.on { background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06)); color: #fff; }
+.authform { display: grid; gap: 16px; text-align: left; }
+.authform .field label { display: block; font-size: 12.5px; font-weight: 600; color: var(--s-ink2); margin-bottom: 7px; letter-spacing: .01em; }
+.authform .field input { width: 100%; padding: 13px 15px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--s-line); color: var(--s-ink); font-family: inherit; font-size: 15px; transition: border-color .2s, background .2s; }
+.authform .field input:focus { outline: none; border-color: rgba(228,199,125,.5); background: rgba(255,255,255,.06); }
+.authform .field input::placeholder { color: var(--s-ink3); }
+.authform .s-btn { margin-top: 4px; }
+.forgot { text-align: right; margin-top: -6px; }
+.forgot a { font-size: 13px; color: var(--s-gold); font-weight: 600; }
+.divider { display: flex; align-items: center; gap: 14px; color: var(--s-ink3); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 22px 0; }
+.divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: var(--s-line); }
+.gbtn { display: inline-flex; align-items: center; justify-content: center; gap: 11px; width: 100%; padding: 13px; border-radius: var(--pill); background: #fff; color: #1f2328; font-weight: 600; font-size: 15px; border: 0; cursor: pointer; transition: transform .2s var(--ease), box-shadow .2s; font-family: inherit; }
+.gbtn:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -16px rgba(0,0,0,.6); }
+.gbtn svg { width: 19px; height: 19px; }
+.authnote { font-size: 12.5px; color: var(--s-ink3); margin-top: 20px; line-height: 1.5; }
+.foundation { display: none; margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: rgba(228,199,125,.12); color: var(--s-gold); font-size: 13px; font-weight: 600; }
+#nameField { display: none; }
+body[data-mode="create"] #nameField { display: block; }
+body[data-mode="create"] .forgot { display: none; }
+
+/* ============================================================
+   APP — dashboard
+   ============================================================ */
+.dash { padding: clamp(44px,7vh,84px) 0; }
+.acctcard-wrap { max-width: 880px; margin: 0 auto; }
+.signedout { max-width: 432px; margin: 0 auto; text-align: center; padding: 46px 40px; }
+.signedout .mk { width: 46px; height: 46px; border-radius: 13px; display: block; margin: 0 auto 18px; }
+.signedout h1 { font-family: var(--font-display); font-weight: 600; font-size: 27px; color: #fff; }
+.signedout p { color: var(--s-ink2); margin: 10px 0 24px; font-size: 15px; }
+.dashhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 26px; flex-wrap: wrap; }
+.dashhead h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px,4vw,40px); color: #fff; margin-top: 8px; }
+.planbadge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--s-gold); background: rgba(228,199,125,.14); border: 1px solid rgba(228,199,125,.3); padding: 7px 14px; border-radius: var(--pill); }
+.dashgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.dcard { padding: 28px; }
+.dcard.full { grid-column: 1 / -1; }
+.dcard h2 { font-family: var(--font-display); font-weight: 600; font-size: 19px; color: #fff; margin-bottom: 18px; }
+.dcard-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.dcard-h h2 { margin-bottom: 0; }
+.usagepct { color: var(--s-ink3); font-size: 14px; } .usagepct b { color: var(--s-ink); font-size: 18px; font-family: var(--font-display); }
+.usagebar { height: 12px; border-radius: var(--pill); background: rgba(255,255,255,.05); border: 1px solid var(--s-line); overflow: hidden; margin: 16px 0 12px; }
+.usagebar > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--s-gold2), var(--s-gold)); border-radius: var(--pill); transition: width .7s var(--ease); }
+.usagemeta { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--s-ink2); } .usagemeta b { color: var(--s-ink); }
+.kv { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--s-line); font-size: 14.5px; } .kv:last-of-type { border-bottom: 0; } .kv span { color: var(--s-ink3); } .kv b { color: var(--s-ink); }
+.dcard-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; } .dcard-btns .s-btn { font-size: 14px; padding: 11px 20px; }
+.dcard .muted { color: var(--s-ink2); font-size: 14.5px; } .dcard .hint { color: var(--s-ink3); font-size: 13px; margin-top: 14px; } .hint a { color: var(--s-gold); font-weight: 600; }
+.acctrow2 { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; } .acctrow2 .kv { border: 0; padding: 0; }
+@media (max-width: 760px) { .dashgrid { grid-template-columns: 1fr; } }

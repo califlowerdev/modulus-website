@@ -3,101 +3,76 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modulus Technologies — Your dashboard</title>
+  <title>Modulus Studio — Your dashboard</title>
   <meta name="description" content="Manage your Modulus Studio plan, usage, billing, and downloads." />
   <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#070f1c" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="redo.css" />
-  <style>
-    .dash { padding: clamp(44px,7vh,84px) 0; }
-    .acctcard-wrap { max-width: 880px; margin: 0 auto; }
-    /* signed-out prompt */
-    .signedout { max-width: 430px; margin: 0 auto; text-align: center; background: var(--paper); border: 1px solid var(--line); border-radius: 24px; padding: 44px 40px; box-shadow: 0 40px 90px -50px rgba(11,11,15,.32); }
-    .signedout .mk { width: 44px; height: 44px; border-radius: 12px; display: block; margin: 0 auto 18px; }
-    .signedout h1 { font-size: 26px; } .signedout p { color: var(--ink-2); margin: 10px 0 22px; font-size: 15px; }
-    /* dashboard */
-    .dashhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 26px; flex-wrap: wrap; }
-    .dashhead h1 { font-size: clamp(28px,4vw,40px); margin-top: 8px; }
-    .planbadge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-deep); background: rgba(200,167,91,.14); border: 1px solid rgba(200,167,91,.3); padding: 7px 14px; border-radius: var(--pill); }
-    .dashgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .dcard { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 18px 44px -34px rgba(11,11,15,.26); }
-    .dcard.full { grid-column: 1 / -1; }
-    .dcard h2 { font-size: 19px; margin-bottom: 18px; }
-    .dcard-h { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-    .dcard-h h2 { margin-bottom: 0; }
-    .usagepct { color: var(--ink-3); font-size: 14px; } .usagepct b { color: var(--ink); font-size: 18px; font-family: var(--font-display); }
-    .usagebar { height: 12px; border-radius: var(--pill); background: var(--paper-2); border: 1px solid var(--line); overflow: hidden; margin: 16px 0 12px; }
-    .usagebar > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright)); border-radius: var(--pill); transition: width .7s var(--ease); }
-    .usagemeta { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--ink-2); } .usagemeta b { color: var(--ink); }
-    .kv { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; } .kv:last-of-type { border-bottom: 0; } .kv span { color: var(--ink-3); } .kv b { color: var(--ink); }
-    .dcard-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; } .dcard-btns .btn { font-size: 14px; padding: 11px 18px; }
-    .dcard .muted { color: var(--ink-2); font-size: 14.5px; } .dcard .hint { color: var(--ink-3); font-size: 13px; margin-top: 14px; } .hint a { color: var(--gold-deep); font-weight: 600; }
-    .acctrow2 { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; } .acctrow2 .kv { border: 0; padding: 0; }
-    @media (max-width: 760px) { .dashgrid { grid-template-columns: 1fr; } }
-  </style>
+  <link rel="stylesheet" href="studio.css" />
 </head>
-<body>
+<body data-section="app">
   <main id="main">
-    <section class="dash sec-paper">
+    <section class="dash">
       <div class="wrap">
         <div class="acctcard-wrap" id="accountCard">
 
           <!-- signed out -->
-          <div id="acctSignedOut" class="signedout">
+          <div id="acctSignedOut" class="signedout glass">
             <img class="mk" src="assets/modulus-mark.png" alt="Modulus" />
             <h1>Your dashboard</h1>
             <p>Sign in to manage your plan, usage, billing, and downloads.</p>
-            <a class="btn btn-gold" href="/login">Sign in</a>
+            <a class="s-btn gold" href="/login">Sign in</a>
           </div>
 
           <!-- signed in: the dashboard -->
           <div id="acctSignedIn" style="display:none">
             <div class="dashhead">
-              <div><span class="eyebrow">Your account</span><h1 id="acctHello">Welcome back.</h1></div>
+              <div><span class="s-eyebrow">Your account</span><h1 id="acctHello">Welcome back.</h1></div>
               <span class="planbadge" id="acctPlanBadge">&mdash;</span>
             </div>
 
             <div class="dashgrid">
               <!-- usage -->
-              <div class="dcard full">
+              <div class="dcard glass full">
                 <div class="dcard-h"><h2>Usage this month</h2><span class="usagepct"><b id="usagePct">0%</b> used</span></div>
                 <div class="usagebar"><span id="usageBar"></span></div>
                 <div class="usagemeta">
                   <span><b id="usageUsed">0</b> of <b id="usageLimit">&mdash;</b> credits</span>
                   <span>Refills <b id="usageRefill">&mdash;</b></span>
                 </div>
-                <p class="hint" id="noPlanHint">No active plan yet. <a href="/products#pricing">Choose a plan</a> to start generating.</p>
+                <p class="hint" id="noPlanHint">No active plan yet. <a href="/studio#pricing">Choose a plan</a> to start generating.</p>
               </div>
 
               <!-- plan & billing -->
-              <div class="dcard">
+              <div class="dcard glass">
                 <h2>Plan &amp; billing</h2>
                 <div class="kv"><span>Plan</span><b id="billPlan">&mdash;</b></div>
                 <div class="kv"><span>Price</span><b id="billPrice">&mdash;</b></div>
                 <div class="kv"><span>Status</span><b id="billStatus">&mdash;</b></div>
                 <div class="kv"><span>Renews</span><b id="billRenew">&mdash;</b></div>
                 <div class="dcard-btns">
-                  <a class="btn btn-ghost" id="manageBillingBtn" href="#">Manage billing</a>
-                  <a class="btn btn-ghost" href="/products#pricing">Change plan</a>
+                  <a class="s-btn ghost" id="manageBillingBtn" href="#">Manage billing</a>
+                  <a class="s-btn ghost" href="/studio#pricing">Change plan</a>
                 </div>
               </div>
 
               <!-- download -->
-              <div class="dcard">
+              <div class="dcard glass">
                 <h2>Modulus Studio</h2>
                 <p class="muted">Install the desktop app and sign in with this account.</p>
                 <div class="dcard-btns">
-                  <a class="btn btn-gold" id="downloadBtn" href="/studio#download">Download for Windows</a>
+                  <a class="s-btn gold" id="downloadBtn" href="/studio#download">Download for Windows</a>
                 </div>
                 <p class="hint">Windows 10 / 11 &middot; updates automatically</p>
               </div>
 
               <!-- account -->
-              <div class="dcard full acctrow2">
+              <div class="dcard glass full acctrow2">
                 <div class="kv"><span>Signed in as&nbsp;&nbsp;</span><b id="acctEmail">&mdash;</b></div>
-                <a class="btn btn-ghost" id="signOutBtn" href="#">Sign out</a>
+                <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
               </div>
             </div>
           </div>

@@ -39,6 +39,16 @@
         '</div><div class="wrap"><div class="nav-drawer" id="navDrawer">' + sdrawer + '</div></div></header>';
     }
 
+    // Signed-in app pages (login + dashboard) get a minimal dark app header.
+    if (document.body.getAttribute("data-section") === "app") {
+      return '<header class="nav app-nav"><div class="wrap nav-inner">' +
+          '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
+          '<div class="nav-right">' +
+            '<a class="login" href="/">&larr; Modulus Technologies</a>' +
+          '</div>' +
+        '</div></header>';
+    }
+
     return '<header class="nav"><div class="wrap nav-inner">' +
         '<a class="brand" href="/" aria-label="Modulus Technologies home">' + MARK + '<b>Modulus</b> <span class="sub">Technologies</span></a>' +
         '<nav class="nav-links" aria-label="Primary">' + links + '</nav>' +
@@ -66,6 +76,14 @@
           '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></span></div>' +
         '</div></footer>';
     }
+    // App pages get a slim dark footer.
+    if (document.body.getAttribute("data-section") === "app") {
+      return '<footer class="footer app-footer"><div class="wrap">' +
+          '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span>' +
+          '<span class="footer-legal"><a href="/studio">Modulus Studio</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></span></div>' +
+        '</div></footer>';
+    }
+
     return '<footer class="footer"><div class="wrap">' +
         '<div class="footer-top">' +
           '<div><a class="brand" href="/">' + MARK + '<b>Modulus</b></a>' +
