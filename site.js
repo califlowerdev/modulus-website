@@ -24,11 +24,11 @@
 
     // Studio pages get their own header (own tabs + a clear link back to the main site)
     if (document.body.getAttribute("data-section") === "studio") {
-      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/products#pricing">Pricing</a><a href="/studio#download">Get access</a><a class="login" data-auth-login href="/login">Sign in</a><a href="/">⌂ Home · Modulus Technologies</a>';
+      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a><a class="login" data-auth-login href="/login">Sign in</a><a href="/">⌂ Home · Modulus Technologies</a>';
       return '<header class="nav"><div class="wrap nav-inner">' +
           '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
           '<nav class="nav-links" aria-label="Modulus Studio">' +
-            '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/products#pricing">Pricing</a>' +
+            '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/studio#pricing">Pricing</a>' +
           '</nav>' +
           '<div class="nav-right">' +
             '<a class="s-home" href="/" aria-label="Modulus Technologies home" title="Home — Modulus Technologies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg></a>' +
@@ -51,6 +51,21 @@
   }
 
   function footer() {
+    // Studio gets its own dark, self-contained footer: in-world links + a clear path back to the company.
+    if (document.body.getAttribute("data-section") === "studio") {
+      return '<footer class="footer"><div class="wrap">' +
+          '<div class="footer-top">' +
+            '<div><a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
+              '<p class="footer-tag">Turn one talk into a month of content.</p></div>' +
+            '<div class="footer-cols">' +
+              '<div class="footer-col"><h5>Studio</h5><a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a></div>' +
+              '<div class="footer-col"><h5>Company</h5><a href="/">Modulus Technologies</a><a href="/about">About</a><a href="/contact">Contact</a></div>' +
+              '<div class="footer-col"><h5>Account</h5><a class="login" data-auth-login href="/login">Sign in</a></div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></span></div>' +
+        '</div></footer>';
+    }
     return '<footer class="footer"><div class="wrap">' +
         '<div class="footer-top">' +
           '<div><a class="brand" href="/">' + MARK + '<b>Modulus</b></a>' +
