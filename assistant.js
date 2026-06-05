@@ -12,8 +12,8 @@
   var REDUCE = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ----------------------------- knowledge base ---------------------------- */
-  // Prices are kept general on purpose (the live tiers aren't locked yet), so
-  // the assistant always points to /products#pricing instead of quoting a number.
+  // Prices are kept general on purpose, so the assistant points to the canonical
+  // Studio pricing (/studio#pricing) instead of quoting a number.
   var KB = [
     { k: ["what is modulus", "who are you", "what do you do", "what is this", "about modulus", "tell me about"],
       a: "Modulus Technologies builds agentic AI that gives small businesses the leverage big companies have always had. We find the highest-value job in your business, build an AI agent that does it end to end, and keep it improving. Built for operators, not engineers — no setup, no jargon.",
@@ -28,7 +28,7 @@
       chips: ["What's Modulus Studio?", "Book a call"] },
 
     { k: ["price", "pricing", "cost", "how much", "plan", "plans", "subscription", "credits", "tier"],
-      a: "Modulus Studio runs on simple monthly plans — each gives you a pool of credits you spend generating, repurposing, and transcribing, and they refill every month. You can see the current tiers on the Products page. For custom agents or AI strategy, we scope a bespoke engagement on a call.",
+      a: "Modulus Studio runs on simple monthly plans — each gives you a pool of credits you spend generating, repurposing, and transcribing, and they refill every month. You can see the current tiers on the Modulus Studio page. For custom agents or AI strategy, we scope a bespoke engagement on a call.",
       chips: ["See plans", "Book a call"] },
 
     { k: ["get started", "getting started", "begin", "start", "try", "sign up", "how do i start"],
@@ -69,7 +69,7 @@
 
   // Chips that navigate rather than re-ask.
   var GO = {
-    "Book a call": "/contact", "Explore Studio": "/studio", "See plans": "/products#pricing",
+    "Book a call": "/contact", "Explore Studio": "/studio", "See plans": "/studio#pricing",
     "About": "/about", "Privacy": "/privacy", "Email us": "mailto:jamesdenhamiv@gmail.com"
   };
 
@@ -193,7 +193,7 @@
   // (https://deypezfcawzdcfhnckxp.supabase.co/functions/v1/ask) to answer with a
   // real LLM. On ANY error/timeout it falls back to the local knowledge base, so
   // the widget never breaks. Empty = local KB only (current live behavior).
-  var AI_ENDPOINT = "";
+  var AI_ENDPOINT = "https://deypezfcawzdcfhnckxp.supabase.co/functions/v1/ask";
   var convo = [];
 
   function fetchAI(text) {
