@@ -5,6 +5,18 @@
    URLs are clean (extensionless); Netlify serves /services from services.html. */
 (function () {
   var MARK = '<img class="brand-img" src="assets/modulus-mark.png" alt="Modulus" width="28" height="28" />';
+
+  // ---- Single source of truth for Modulus Studio plan pricing -------------
+  // Edit prices, credits, and limits HERE. The /studio pricing cards and the
+  // logged-in account page (backend.js) both read from this object, so the
+  // two can never drift apart. The numbers written into studio.html's cards
+  // are a no-JS / SEO fallback that syncPlanCards() overwrites from this
+  // object on load. Exposed on window so the injected backend.js can read it.
+  window.MODULUS_PLANS = {
+    starter: { name: "Starter", price: "$19", period: "/ month", credits: "600",   limit: 600 },
+    pro:     { name: "Pro",     price: "$39", period: "/ month", credits: "1,500", limit: 1500 },
+    studio:  { name: "Studio",  price: "$99", period: "/ month", credits: "4,000", limit: 4000 }
+  };
   var LINKS = [
     ["Services", "/services"],
     ["Products", "/products"],
@@ -101,6 +113,20 @@
 
   function el(html) { var d = document.createElement("div"); d.innerHTML = html.trim(); return d.firstChild; }
 
+  // Fill any [data-plan] pricing card from MODULUS_PLANS so the visible
+  // numbers always match the single source of truth. No-op on pages with no
+  // such cards (every page but /studio).
+  function syncPlanCards() {
+    var plans = window.MODULUS_PLANS || {};
+    document.querySelectorAll("[data-plan]").forEach(function (card) {
+      var p = plans[card.getAttribute("data-plan")];
+      if (!p) return;
+      var amt = card.querySelector(".amt"); if (amt) amt.textContent = p.price;
+      var per = card.querySelector(".per"); if (per) per.textContent = p.period;
+      var cr = card.querySelector(".s-credits"); if (cr) cr.textContent = p.credits + " credits / month";
+    });
+  }
+
   // Give the page's hero a constellation field if it doesn't already have one,
   // then load the animation once. The homepage hand-authors a larger field
   // spanning several sections; every other page gets a hero-scoped field here.
@@ -134,6 +160,7 @@
     document.body.insertAdjacentHTML("afterbegin", '<a class="skip" href="#main">Skip to content</a>');
     document.body.insertAdjacentElement("beforeend", el(footer()));
     constellation();
+    syncPlanCards();
 
     // backend foundation (auth + assistant + checkout); inert until keys set in backend.js
     if (!document.querySelector('script[src*="backend.js"]')) {

@@ -11,7 +11,7 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.chatbase.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.chatbase.co; frame-src https://js.stripe.com https://www.chatbase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src https://js.stripe.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 
 # Clean URLs: bounce any direct ".html" hit to the extensionless path.
 # force = true because the .html files exist and would otherwise serve directly.

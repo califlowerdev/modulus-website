@@ -63,8 +63,10 @@
         <span class="eyebrow">Newsletter</span>
         <h2 style="font-size:clamp(28px,4vw,42px);margin-top:14px">The occasional, useful note.</h2>
         <p style="color:var(--ink-2);margin-top:14px">Practical takes on agentic AI for small businesses. No spam, unsubscribe anytime.</p>
-        <form class="nrow" onsubmit="event.preventDefault(); this.innerHTML='<p style=\'color:var(--gold-deep);margin:0;font-weight:600\'>Thanks. You are on the list.</p>';">
-          <input type="email" required placeholder="you@company.com" aria-label="Email" />
+        <form class="nrow" id="newsletterForm" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="newsletter" />
+          <p hidden><label>Leave this empty: <input name="bot-field" /></label></p>
+          <input type="email" name="email" required placeholder="you@company.com" aria-label="Email" />
           <button class="btn btn-gold" type="submit">Subscribe</button>
         </form>
       </div>
@@ -72,5 +74,20 @@
 
   </main>
   <script src="site.js"></script>
+  <script>
+    document.getElementById('newsletterForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var form = this;
+      var body = new URLSearchParams(new FormData(form)).toString();
+      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body })
+        .then(function (r) {
+          if (!r.ok) throw new Error('send failed');
+          form.innerHTML = '<p style="color:var(--gold-deep);margin:0;font-weight:600">Thanks. You are on the list.</p>';
+        })
+        .catch(function () {
+          form.innerHTML = '<p style="color:var(--ink-2);margin:0">Could not subscribe just now — email jamesdenhamiv@gmail.com and we will add you.</p>';
+        });
+    });
+  </script>
 </body>
 </html>

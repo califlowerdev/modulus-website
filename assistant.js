@@ -1,8 +1,10 @@
 /* Modulus Technologies — "Ask Modulus" assistant.
-   Self-contained, on every page (injected by site.js). No external services,
-   no API keys, no network calls — answers common questions from a local
-   knowledge base and hands off to a call/email for anything else.
-   Upgradeable later to a real LLM (via a Supabase Edge Function) or Chatbase.
+   Self-contained widget, on every page (injected by site.js). Answers common
+   questions from a local knowledge base; when AI_ENDPOINT is set it sends the
+   question (plus recent turns) to our own Supabase "ask" Edge Function for a
+   real LLM reply, and falls back to the local KB on any error/timeout so it
+   never breaks. No third-party widget scripts; the only network call is to our
+   same-origin-allowed Supabase function.
    CSP-safe: same-origin script + an injected <style> (style-src allows inline). */
 (function () {
   if (window.__modAsk) return;            // idempotent

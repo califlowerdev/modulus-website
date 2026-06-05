@@ -19,8 +19,7 @@
     SUPABASE_URL: "https://deypezfcawzdcfhnckxp.supabase.co",
     SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRleXBlemZjYXd6ZGNmaG5ja3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzE4MjcsImV4cCI6MjA5NjAwNzgyN30.AxvDKCh5NIvzdBHy9BbP3NlV18yt4JuWVrpHho1SNic",
     BILLING_LIVE: false,       // flip to true at go-live (see header)
-    STRIPE_PORTAL: "",         // Stripe customer-portal link ("Manage billing"); optional
-    CHATBASE_ID: ""            // unused (we ship our own assistant.js); left for compatibility
+    STRIPE_PORTAL: ""          // Stripe customer-portal link ("Manage billing"); optional
   };
   // ==========================================================================
 
@@ -185,21 +184,16 @@
     }
   }
 
-  /* ------------------------- ASSISTANT (Chatbase) ------------------------- */
-  function loadAssistant() {
-    if (!CONFIG.CHATBASE_ID) return; // we ship assistant.js instead
-    window.chatbaseConfig = { chatbotId: CONFIG.CHATBASE_ID };
-    var s = document.createElement("script");
-    s.src = "https://www.chatbase.co/embed.min.js";
-    s.id = CONFIG.CHATBASE_ID;
-    s.setAttribute("domain", "www.chatbase.co");
-    s.defer = true;
-    document.body.appendChild(s);
-  }
-
   /* ------------------------- ACCOUNT DASHBOARD ---------------------------- */
-  var PLAN_PRICE = { starter: "$19 / mo", pro: "$39 / mo", studio: "$99 / mo", monthly: "—" };
-  var PLAN_LIMIT = { starter: 600, pro: 1500, studio: 4000 };
+  // Plan price + monthly credit grant read from the single source of truth in
+  // site.js (window.MODULUS_PLANS) so the account page can't drift from the
+  // /studio pricing cards. planInfo() is null for unknown / non-tier plans
+  // (e.g. "monthly"), which render as "—" / 0 exactly as the old maps did.
+  function planInfo(plan) {
+    return (window.MODULUS_PLANS && plan && window.MODULUS_PLANS[plan]) || null;
+  }
+  function planPriceLabel(plan) { var p = planInfo(plan); return p ? (p.price + " / mo") : "—"; }
+  function planLimit(plan) { var p = planInfo(plan); return p ? p.limit : 0; }
   function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
   function setText(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
   function fmtDate(s) {
@@ -212,7 +206,7 @@
   function renderPlan(row) {
     var plan = row && row.plan;
     var name = (row && row.display_name) ? row.display_name : (plan ? cap(plan) : null);
-    var limit = (row && row.limit) || (plan && PLAN_LIMIT[plan]) || 0;
+    var limit = (row && row.limit) || planLimit(plan) || 0;
     var balance = (row && typeof row.balance === "number") ? row.balance : 0;
     var pctLeft = limit ? Math.max(0, Math.min(100, Math.round(balance / limit * 100))) : 0;
     setText("acctPlanBadge", name ? (name + " plan") : "No active plan");
@@ -222,7 +216,7 @@
     var bar = document.getElementById("usageBar"); if (bar) bar.style.width = pctLeft + "%";
     setText("usageRefill", fmtDate(row && row.current_period_end));
     setText("billPlan", name ? name : "No active plan");
-    setText("billPrice", plan ? (PLAN_PRICE[plan] || "—") : "—");
+    setText("billPrice", planPriceLabel(plan));
     setText("billStatus", (row && row.status) ? cap(row.status) : "—");
     setText("billRenew", fmtDate(row && row.current_period_end));
     var noPlan = document.getElementById("noPlanHint"); if (noPlan) noPlan.style.display = plan ? "none" : "";
@@ -308,7 +302,7 @@
     });
   }
 
-  function boot() { wireLogin(); wireCheckout(); wireAccount(); loadAssistant(); }
+  function boot() { wireLogin(); wireCheckout(); wireAccount(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();
