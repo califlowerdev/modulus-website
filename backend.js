@@ -16,7 +16,7 @@
 (function () {
   // ======================= CONFIG ===========================================
   var CONFIG = {
-    SUPABASE_URL: "https://deypezfcawzdcfhnckxp.supabase.co",
+    SUPABASE_URL: "https://auth.modulustech.ai",  // custom domain (2026-06-10) so Google sign-in reads "modulustech.ai"; the .supabase.co URL still works too
     SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRleXBlemZjYXd6ZGNmaG5ja3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzE4MjcsImV4cCI6MjA5NjAwNzgyN30.AxvDKCh5NIvzdBHy9BbP3NlV18yt4JuWVrpHho1SNic",
     BILLING_LIVE: false,       // flip to true at go-live (see header)
     STRIPE_PORTAL: ""          // Stripe customer-portal link ("Manage billing"); optional

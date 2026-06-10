@@ -195,7 +195,7 @@
   // (https://deypezfcawzdcfhnckxp.supabase.co/functions/v1/ask) to answer with a
   // real LLM. On ANY error/timeout it falls back to the local knowledge base, so
   // the widget never breaks. Empty = local KB only (current live behavior).
-  var AI_ENDPOINT = "https://deypezfcawzdcfhnckxp.supabase.co/functions/v1/ask";
+  var AI_ENDPOINT = "https://auth.modulustech.ai/functions/v1/ask";
   var convo = [];
 
   function fetchAI(text) {
