@@ -16,7 +16,19 @@
 (function () {
   // ======================= CONFIG ===========================================
   var CONFIG = {
-    SUPABASE_URL: "https://auth.modulustech.ai",  // custom domain (2026-06-10) so Google sign-in reads "modulustech.ai"; the .supabase.co URL still works too
+    // API base for the supabase-js client. MUST be the canonical .supabase.co host.
+    // Browsers CANNOT make XHR/fetch calls to the custom domain auth.modulustech.ai
+    // (its Cloudflare custom-hostname edge fails in-browser fetch — "Failed to fetch" —
+    // even though curl + top-level navigation work fine). Pointing the client here
+    // broke EVERY browser API call: token validation (getUser), refresh, REST, edge
+    // functions — which is why Google/email login stopped landing. (2026-06-10 incident.)
+    SUPABASE_URL: "https://deypezfcawzdcfhnckxp.supabase.co",
+    // Branded auth origin — used ONLY for the Google OAuth redirect, which is a
+    // top-level navigation (that DOES work on the custom domain) so the Google consent
+    // screen reads "to continue to modulustech.ai" instead of the raw project URL.
+    // See signInGoogle(). The session comes back as a #fragment that the canonical
+    // client (SUPABASE_URL above) consumes on /account.
+    AUTH_ORIGIN: "https://auth.modulustech.ai",
     SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRleXBlemZjYXd6ZGNmaG5ja3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzE4MjcsImV4cCI6MjA5NjAwNzgyN30.AxvDKCh5NIvzdBHy9BbP3NlV18yt4JuWVrpHho1SNic",
     BILLING_LIVE: false,       // flip to true at go-live (see header)
     STRIPE_PORTAL: ""          // Stripe customer-portal link ("Manage billing"); optional
@@ -39,7 +51,19 @@
   function ensureClient() {
     if (sb) return Promise.resolve(sb);
     return loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2").then(function () {
-      sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+      sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          // Google sign-in returns the session in the URL #fragment (implicit grant);
+          // detectSessionInUrl consumes it on /account. flowType is pinned to
+          // 'implicit' because signInGoogle drives the OAuth redirect manually with no
+          // PKCE challenge — if a future supabase-js defaulted to 'pkce' it would stop
+          // recognizing the #access_token fragment and login would silently break.
+          detectSessionInUrl: true,
+          flowType: "implicit"
+        }
+      });
       return sb;
     });
   }
@@ -66,12 +90,19 @@
   var api = {
     configured: hasAuth,
     signInGoogle: function () {
-      return ensureClient().then(function (c) {
-        return c.auth.signInWithOAuth({
-          provider: "google",
-          options: { redirectTo: location.origin + "/account" }
-        });
-      });
+      // Send the user to the BRANDED auth origin for Google's consent screen so it
+      // reads "to continue to modulustech.ai". This is a deliberate manual redirect
+      // (NOT supabase-js signInWithOAuth) because the client base is the canonical
+      // .supabase.co host — signInWithOAuth would build the consent URL from that and
+      // show the raw project domain. GoTrue returns the session as a #fragment to
+      // redirect_to (/account), where the canonical client picks it up via
+      // detectSessionInUrl. redirect_to must stay allow-listed in Supabase Auth →
+      // URL Configuration. (2026-06-10.)
+      var redirectTo = location.origin + "/account";
+      window.location.href = CONFIG.AUTH_ORIGIN +
+        "/auth/v1/authorize?provider=google&redirect_to=" +
+        encodeURIComponent(redirectTo);
+      return Promise.resolve();
     },
     signInEmail: function (email, pw) {
       return ensureClient().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw }); });

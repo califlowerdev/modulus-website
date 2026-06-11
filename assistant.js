@@ -195,7 +195,10 @@
   // (https://deypezfcawzdcfhnckxp.supabase.co/functions/v1/ask) to answer with a
   // real LLM. On ANY error/timeout it falls back to the local knowledge base, so
   // the widget never breaks. Empty = local KB only (current live behavior).
-  var AI_ENDPOINT = "https://auth.modulustech.ai/functions/v1/ask";
+  // Canonical .supabase.co host — the browser cannot fetch the custom domain
+  // auth.modulustech.ai (in-browser "Failed to fetch"), so edge-function calls must
+  // use the canonical host like the rest of the client. (2026-06-10 incident.)
+  var AI_ENDPOINT = "https://deypezfcawzdcfhnckxp.supabase.co/functions/v1/ask";
   var convo = [];
 
   function fetchAI(text) {
