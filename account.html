@@ -65,9 +65,20 @@
                 <div class="kv"><span>Price</span><b id="billPrice">&mdash;</b></div>
                 <div class="kv"><span>Status</span><b id="billStatus">&mdash;</b></div>
                 <div class="kv"><span>Renews</span><b id="billRenew">&mdash;</b></div>
-                <div class="dcard-btns">
+                <!-- Upgrade straight from the dashboard: each button starts a
+                     secure Stripe checkout for that tier (wired by backend.js
+                     wireCheckout via data-checkout, same as the pricing page). -->
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
+                  <p class="muted" style="margin:0 0 10px;font-size:13px">Upgrade your plan</p>
+                  <div class="dcard-btns" style="flex-wrap:wrap;gap:8px">
+                    <a class="s-btn gold" href="/studio#pricing" data-checkout="starter">Starter &middot; $19/mo</a>
+                    <a class="s-btn gold" href="/studio#pricing" data-checkout="pro">Pro &middot; $39/mo</a>
+                    <a class="s-btn gold" href="/studio#pricing" data-checkout="studio">Studio &middot; $99/mo</a>
+                  </div>
+                  <p class="hint" style="margin-top:10px">Secure checkout by Stripe. <a href="/studio#pricing">Compare plans</a></p>
+                </div>
+                <div class="dcard-btns" style="margin-top:12px">
                   <a class="s-btn ghost" id="manageBillingBtn" href="#">Manage billing</a>
-                  <a class="s-btn ghost" href="/studio#pricing">Change plan</a>
                 </div>
               </div>
 
