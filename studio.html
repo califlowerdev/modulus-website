@@ -316,6 +316,12 @@
           <h2 style="font-family:var(--font-display);color:#fff;font-size:clamp(28px,4vw,46px);margin:12px 0 0;line-height:1.08">Simple plans. A monthly pool of <span class="acc">credits</span>.</h2>
           <p class="s-sub" style="margin:16px auto 0">One subscription, a set amount of usage each month. Generate, repurpose, and transcribe until your credits run out, then they refill. No surprise bills.</p>
         </div>
+        <!-- Free Trial strip (2026-06-11): the account itself is the trial.
+             25 one-time credits are granted server-side at account creation. -->
+        <div class="glass s-ent reveal" style="margin:0 0 28px">
+          <div><h3>Try it free first.</h3><p>Create your account and 25 free credits come with it. Every tool unlocked, no card needed. Enough to upload a real source and make a proper batch of content.</p></div>
+          <a class="s-btn gold" href="/login?mode=create">Start free</a>
+        </div>
         <div class="s-tiers">
           <div class="glass s-tier reveal" data-plan="starter">
             <div class="s-tk">Starter</div>
@@ -325,7 +331,7 @@
             <ul class="s-list">
               <li>About 150 pieces of content a month</li>
               <li>Content Repurposer and Transcription</li>
-              <li>Your voice and source-faithful checks</li>
+              <li>Your voice, plus full-strength source checks</li>
               <li>Cancel anytime</li>
             </ul>
             <a class="s-btn ghost full" href="mailto:james@modulustech.ai?subject=Early%20access%3A%20Starter%20plan&body=I'd%20love%20early%20access%20to%20Modulus%20Studio%20(Starter%20plan)." data-checkout="starter">Get started</a>
@@ -368,6 +374,7 @@
           <h2 style="font-family:var(--font-display);color:#fff;font-size:clamp(24px,3.4vw,38px);margin-top:12px">Good to know.</h2>
         </div>
         <div class="s-faq reveal">
+          <details><summary>Is there a free plan?</summary><div class="ans">Yes. Creating an account gives you 25 free credits, every tool unlocked, no card needed. That covers uploading a source and making a real batch of content. Paid plans add monthly credits and full-strength source checks.</div></details>
           <details><summary>What is a credit?</summary><div class="ans">A credit is a unit of usage. Generating, repurposing, and transcribing each spend credits. Most pieces of content cost a few credits.</div></details>
           <details><summary>What happens if I run out?</summary><div class="ans">Add a top-up pack anytime, or your credits refill next month.</div></details>
           <details><summary>Can I cancel anytime?</summary><div class="ans">Yes. Plans are month to month.</div></details>
