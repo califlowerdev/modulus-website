@@ -30,7 +30,7 @@
     // client (SUPABASE_URL above) consumes on /account.
     AUTH_ORIGIN: "https://auth.modulustech.ai",
     SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRleXBlemZjYXd6ZGNmaG5ja3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzE4MjcsImV4cCI6MjA5NjAwNzgyN30.AxvDKCh5NIvzdBHy9BbP3NlV18yt4JuWVrpHho1SNic",
-    BILLING_LIVE: false,       // flip to true at go-live (see header)
+    BILLING_LIVE: true,        // flipped 2026-06-11: checkout runs against the Stripe sandbox until the live-mode key swap
     STRIPE_PORTAL: ""          // Stripe customer-portal link ("Manage billing"); optional
   };
   // ==========================================================================
