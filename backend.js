@@ -460,6 +460,7 @@
   }
 
   function renderEntitlement(d) {
+    renderActivity(d && d.recent);
     if (!d || !d.plan) { renderPlan(null); return; }
     renderPlan({
       plan: d.plan.key,
@@ -468,6 +469,48 @@
       balance: typeof d.balance === "number" ? d.balance : 0,
       limit: d.plan.monthly_credits || 0,
       current_period_end: d.subscription ? d.subscription.current_period_end : null
+    });
+  }
+
+  // Relative time for the activity card: "just now", "5m ago", "3h ago",
+  // then fall back to the date.
+  function relTime(iso) {
+    if (!iso) return "";
+    var then = new Date(iso).getTime();
+    if (isNaN(then)) return "";
+    var diff = Math.max(0, (new Date().getTime() - then) / 1000);
+    if (diff < 60) return "just now";
+    if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+    if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+    if (diff < 604800) return Math.floor(diff / 86400) + "d ago";
+    return fmtDate(iso);
+  }
+
+  // Render the last few credit charges. credits are whole-credit decimals
+  // (e.g. 0.49); show "<1 credit" rather than a confusing 0.
+  function renderActivity(recent) {
+    var list = document.getElementById("activityList");
+    if (!list) return;
+    if (!recent || !recent.length) {
+      list.innerHTML = '<div class="act-empty">No activity yet. When you generate, repurpose, or transcribe, your credit charges show up here.</div>';
+      return;
+    }
+    var html = "";
+    for (var i = 0; i < recent.length; i++) {
+      var e = recent[i];
+      var c = typeof e.credits === "number" ? e.credits : 0;
+      var cost = c >= 1 ? (Math.round(c * 10) / 10).toLocaleString() + " credits"
+        : c > 0 ? "<1 credit" : "free";
+      html += '<div class="actrow"><span class="a-feat">' + esc(e.feature || "Activity") +
+        '</span><span class="a-when">' + esc(relTime(e.at)) + '</span>' +
+        '<span class="a-cost">' + cost + '</span></div>';
+    }
+    list.innerHTML = html;
+  }
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch];
     });
   }
 
@@ -515,15 +558,74 @@
     var signOut = document.getElementById("signOutBtn");
     var manage = document.getElementById("manageBillingBtn");
     if (signOut) signOut.addEventListener("click", function (e) { e.preventDefault(); api.signOut(); });
-    // Manage billing always has a destination: the Stripe customer portal
-    // once configured, a plain email to the founder until then. Hiding it
-    // while the page promises "cancel anytime" would leave no cancel path.
+    // Manage billing opens the Stripe Customer Portal (invoices, receipts,
+    // update card, cancel, switch plans). The billing-portal function creates
+    // a one-time session for the signed-in customer. A user with no paid plan
+    // yet (no Stripe customer) is sent to pricing with a friendly note.
     if (manage) {
-      manage.setAttribute(
-        "href",
-        CONFIG.STRIPE_PORTAL ||
-          "mailto:james@modulustech.ai?subject=Manage%20my%20Modulus%20billing",
-      );
+      manage.setAttribute("href", "#");
+      manage.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (manage.getAttribute("data-busy")) return;
+        var label = manage.textContent;
+        manage.setAttribute("data-busy", "1");
+        manage.textContent = "Opening…";
+        function done() { manage.textContent = label; manage.removeAttribute("data-busy"); }
+        accessToken().then(function (token) {
+          if (!token) { window.location.assign("/login"); return; }
+          return fetch(fnUrl("billing-portal"), {
+            method: "POST",
+            headers: { "content-type": "application/json", "Authorization": "Bearer " + token }
+          }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, status: r.status, d: d }; }); })
+            .then(function (res) {
+              if (res.ok && res.d && res.d.url) { window.location.assign(res.d.url); return; }
+              done();
+              if (res.status === 409) { alert((res.d && res.d.message) || "Choose a plan first."); window.location.assign("/studio#pricing"); }
+              else { alert((res.d && res.d.error) || "Couldn't open billing. Try again in a moment."); }
+            });
+        }).catch(function () { done(); alert("Couldn't open billing. Try again in a moment."); });
+      });
+    }
+
+    // Profile: populate the name, show the right credential control (password
+    // for email accounts, a "signed in with Google" chip for OAuth), and save.
+    function wireProfile(user) {
+      var form = document.getElementById("profileForm");
+      if (!form) return;
+      var meta = user.user_metadata || {};
+      var nameInput = document.getElementById("pf-name");
+      if (nameInput) nameInput.value = meta.full_name || meta.name || "";
+      // provider lives in app_metadata.provider / providers.
+      var app = user.app_metadata || {};
+      var providers = app.providers || (app.provider ? [app.provider] : []);
+      var isEmail = providers.indexOf("email") !== -1 || providers.length === 0;
+      var passWrap = document.getElementById("pf-pass-wrap");
+      var chip = document.getElementById("pf-provider");
+      if (passWrap) passWrap.style.display = isEmail ? "" : "none";
+      if (chip) chip.style.display = isEmail ? "none" : "";
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var note = document.getElementById("pf-note");
+        function setNote(msg, ok) { if (note) { note.textContent = msg; note.className = "pnote " + (ok ? "ok" : "err"); } }
+        var btn = document.getElementById("pf-save");
+        if (btn && btn.getAttribute("data-busy")) return;
+        var newName = (nameInput && nameInput.value || "").trim();
+        var newPass = isEmail ? (document.getElementById("pf-pass") || {}).value : "";
+        if (newPass && newPass.length < 8) { setNote("Password needs at least 8 characters.", false); return; }
+        var update = { data: { full_name: newName } };
+        if (newPass) update.password = newPass;
+        if (btn) { btn.setAttribute("data-busy", "1"); btn.textContent = "Saving…"; }
+        ensureClient().then(function (c) { return c.auth.updateUser(update); }).then(function (r) {
+          if (btn) { btn.removeAttribute("data-busy"); btn.textContent = "Save changes"; }
+          if (r && r.error) { setNote(r.error.message, false); return; }
+          var pf = document.getElementById("pf-pass"); if (pf) pf.value = "";
+          setText("acctHello", "Welcome back, " + (newName || "there") + ".");
+          setNote(newPass ? "Saved. Your name and password are updated." : "Saved.", true);
+        }).catch(function (err) {
+          if (btn) { btn.removeAttribute("data-busy"); btn.textContent = "Save changes"; }
+          setNote(String(err), false);
+        });
+      });
     }
     function show(signedIn) {
       // Session resolved: drop the pre-paint loader state (html[data-session])
@@ -541,6 +643,11 @@
       setText("acctHello", "Welcome back, James.");
       setText("acctEmail", "you@modulustech.ai");
       renderPlan({ plan: "pro", display_name: "Pro", status: "active", balance: 1280, limit: 1500, current_period_end: "2026-07-01" });
+      renderActivity([
+        { feature: "Source check", credits: 2.4, at: new Date(Date.now() - 6e4).toISOString() },
+        { feature: "Generation", credits: 0.9, at: new Date(Date.now() - 36e5).toISOString() },
+        { feature: "Indexing", credits: 0.36, at: new Date(Date.now() - 72e5).toISOString() }
+      ]);
       return;
     }
     if (!hasAuth) { show(false); return; }
@@ -555,6 +662,7 @@
         var name = meta.full_name || meta.name || (user.email ? user.email.split("@")[0] : "there");
         setText("acctHello", "Welcome back, " + name + ".");
         setText("acctEmail", user.email || "");
+        wireProfile(user);
         if (justSubscribed) {
           // Post-checkout: reveal immediately with the Activating state; the
           // poll holds it until the webhook's paid plan actually arrives.

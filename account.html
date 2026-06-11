@@ -68,6 +68,26 @@
     .dash .dcard-h { flex-wrap: wrap; }
     @media (max-width: 1100px) { .tiers3 { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 640px) { .tiers3 { grid-template-columns: 1fr; } }
+    /* Recent activity */
+    .actrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--s-line); font-size: 14px; }
+    .actrow:last-child { border-bottom: 0; }
+    .actrow .a-feat { color: var(--s-ink); font-weight: 500; }
+    .actrow .a-when { color: var(--s-ink3); font-size: 12.5px; }
+    .actrow .a-cost { color: var(--s-ink2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .act-empty { color: var(--s-ink3); font-size: 14px; padding: 6px 0; }
+    /* Profile form */
+    .pfield { margin-bottom: 12px; }
+    .pfield label { display: block; font-size: 12px; letter-spacing: .04em; color: var(--s-ink3); margin-bottom: 5px; }
+    .pfield input { width: 100%; box-sizing: border-box; background: rgba(255,255,255,.04); border: 1px solid var(--s-line); border-radius: 10px; padding: 11px 13px; font-size: 14px; color: var(--s-ink); font-family: inherit; }
+    .pfield input:focus { outline: none; border-color: rgba(228,199,125,.5); }
+    .pnote { font-size: 13px; margin-top: 8px; min-height: 18px; }
+    .pnote.ok { color: #4FD1A5; } .pnote.err { color: #E2606B; }
+    .provider-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--s-ink2); background: rgba(255,255,255,.04); border: 1px solid var(--s-line); border-radius: var(--pill); padding: 7px 13px; }
+    /* Dashboard footer */
+    .dashfoot { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--s-line); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .dashfoot .links a { color: var(--s-ink3); font-size: 13px; text-decoration: none; margin-right: 18px; }
+    .dashfoot .links a:hover { color: var(--s-ink); }
+    .dashfoot .copy { color: var(--s-ink3); font-size: 12.5px; }
   </style>
   <script>
     /* Pre-paint: if a Supabase session is stored, show the branded loader
@@ -171,6 +191,38 @@
                 </div>
               </div>
 
+              <!-- recent activity -->
+              <div class="dcard glass full">
+                <div class="dcard-h"><h2>Recent activity</h2><span class="muted" style="font-size:13px">Your last few credit charges</span></div>
+                <div id="activityList" style="margin-top:8px">
+                  <div class="act-empty" id="activityEmpty">Loading your recent activity&hellip;</div>
+                </div>
+              </div>
+
+              <!-- profile settings -->
+              <div class="dcard glass">
+                <h2>Profile</h2>
+                <form id="profileForm" autocomplete="off">
+                  <div class="pfield">
+                    <label for="pf-name">Display name</label>
+                    <input id="pf-name" type="text" autocomplete="name" />
+                  </div>
+                  <!-- password fields shown only for email accounts (JS) -->
+                  <div class="pfield" id="pf-pass-wrap" style="display:none">
+                    <label for="pf-pass">New password</label>
+                    <input id="pf-pass" type="password" autocomplete="new-password" minlength="8" placeholder="Leave blank to keep current" />
+                  </div>
+                  <div id="pf-provider" class="provider-chip" style="display:none">
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.2c0-.7-.06-1.4-.18-2.06H12v3.9h5.9a5 5 0 0 1-2.2 3.3v2.74h3.56c2.08-1.92 3.24-4.74 3.24-8.08z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.74c-.99.66-2.26 1.05-3.72 1.05-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.12a6.6 6.6 0 0 1 0-4.24V7.04H2.18a11 11 0 0 0 0 9.92z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.2 1.64l3.15-3.15A11 11 0 0 0 12 1a11 11 0 0 0-9.82 6.04l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/></svg>
+                    Signed in with Google
+                  </div>
+                  <div class="dcard-btns" style="margin-top:14px">
+                    <button class="s-btn gold" type="submit" id="pf-save">Save changes</button>
+                  </div>
+                  <p class="pnote" id="pf-note"></p>
+                </form>
+              </div>
+
               <!-- download -->
               <div class="dcard glass">
                 <h2>Modulus Studio</h2>
@@ -182,13 +234,22 @@
               </div>
 
               <!-- account -->
-              <div class="dcard glass">
-                <h2>Account</h2>
+              <div class="dcard glass full">
                 <div class="acctmeta">
-                  <span class="who">You can sign out here; your credits and plan stay on the account.</span>
+                  <span class="who">Signed out devices keep your plan and credits. To delete your account, email <a href="mailto:james@modulustech.ai?subject=Delete%20my%20Modulus%20account" style="color:var(--s-gold)">james@modulustech.ai</a> and we'll remove it within 30 days.</span>
                   <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
                 </div>
               </div>
+            </div>
+
+            <!-- dashboard footer -->
+            <div class="dashfoot">
+              <div class="links">
+                <a href="/terms">Terms</a>
+                <a href="/privacy">Privacy</a>
+                <a href="mailto:james@modulustech.ai?subject=Modulus%20Studio%20support">Support</a>
+              </div>
+              <div class="copy">&copy; 2026 Modulus Technologies</div>
             </div>
           </div>
 
