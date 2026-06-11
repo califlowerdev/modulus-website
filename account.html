@@ -24,16 +24,39 @@
     .creditnum { font-family: var(--font-display); font-weight: 600; font-size: clamp(44px, 6vw, 62px); color: #fff; line-height: 1; }
     .creditof { color: var(--s-ink3); font-size: 15px; }
     .creditof b { color: var(--s-ink); }
-    .tiers3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
-    .tier3 { position: relative; border: 1px solid var(--s-line); border-radius: 16px; padding: 20px 18px 16px; background: rgba(255,255,255,.025); display: flex; flex-direction: column; }
-    .tier3.pop { border-color: rgba(228,199,125,.45); background: rgba(228,199,125,.05); }
-    .tier3 .pop-pill { position: absolute; top: -11px; right: 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #0c1424; background: linear-gradient(90deg, var(--s-gold2), var(--s-gold)); padding: 4px 10px; border-radius: var(--pill); }
-    .tier3 h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: #fff; margin: 0 0 2px; }
+    /* Tier identity colors: each plan owns a hue so the row reads as four
+       distinct things, not one gold blur. Free = silver, Starter = gold,
+       Pro = jade, Studio = violet. */
+    .tiers3 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
+    .tier3 { --tier: var(--s-gold); position: relative; border: 1px solid var(--s-line); border-radius: 16px; padding: 20px 16px 16px; background: rgba(255,255,255,.025); display: flex; flex-direction: column; }
+    .tier3[data-plan="free"] { --tier: #9FB3CC; }
+    .tier3[data-plan="starter"] { --tier: #E4C77D; }
+    .tier3[data-plan="pro"] { --tier: #4FD1A5; }
+    .tier3[data-plan="studio"] { --tier: #9D8CFF; }
+    .tier3::before { content: ""; position: absolute; top: 0; left: 16px; right: 16px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, var(--tier), transparent); opacity: .9; }
+    .tier3.is-current { border-color: color-mix(in srgb, var(--tier) 55%, transparent); background: color-mix(in srgb, var(--tier) 8%, transparent); box-shadow: 0 0 38px -18px var(--tier); }
+    .tier3 .pop-pill { position: absolute; top: -11px; right: 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #0c1424; background: linear-gradient(90deg, #3FBF9F, #6FE3BE); padding: 4px 10px; border-radius: var(--pill); }
+    .tier3 h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--tier); margin: 0 0 2px; }
     .tier3 .t-price { color: #fff; font-weight: 600; font-size: 15px; }
     .tier3 .t-price .per { color: var(--s-ink3); font-weight: 400; font-size: 13px; }
     .tier3 .t-creds { color: var(--s-ink3); font-size: 13px; margin: 4px 0 14px; }
+    .tier3 .t-creds .t-cr { color: var(--tier); font-weight: 600; }
     .tier3 .s-btn { margin-top: auto; width: 100%; justify-content: center; font-size: 14px; padding: 10px 16px; }
-    .s-btn.is-current { background: transparent; color: var(--s-ink3); border: 1px solid var(--s-line); cursor: default; pointer-events: none; box-shadow: none; }
+    .s-btn.is-current { background: transparent; color: var(--tier); border: 1px solid color-mix(in srgb, var(--tier) 50%, transparent); cursor: default; pointer-events: none; box-shadow: none; }
+    .t-state { margin-top: auto; padding: 10px 0 2px; font-size: 13px; color: var(--s-ink3); }
+    .tier3.is-current .t-state { color: var(--tier); font-weight: 600; }
+    /* Plan badge in the header picks up the tier color too. */
+    .planbadge[data-plan="free"] { color: #9FB3CC; background: rgba(159,179,204,.12); border-color: rgba(159,179,204,.32); }
+    .planbadge[data-plan="pro"] { color: #4FD1A5; background: rgba(79,209,165,.12); border-color: rgba(79,209,165,.32); }
+    .planbadge[data-plan="studio"] { color: #9D8CFF; background: rgba(157,140,255,.12); border-color: rgba(157,140,255,.32); }
+    /* The credits gauge speaks in color: green while healthy, gold in the
+       middle, red when running out. backend.js sets data-level. */
+    #creditsCard .usagebar > span { background: linear-gradient(90deg, #3FBF9F, #6FE3BE); }
+    #creditsCard[data-level="mid"] .usagebar > span { background: linear-gradient(90deg, var(--s-gold2), var(--s-gold)); }
+    #creditsCard[data-level="low"] .usagebar > span { background: linear-gradient(90deg, #C94F5E, #E2606B); }
+    #creditsCard .usagepct b { color: #4FD1A5; }
+    #creditsCard[data-level="mid"] .usagepct b { color: var(--s-gold); }
+    #creditsCard[data-level="low"] .usagepct b { color: #E2606B; }
     .acctmeta { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
     .acctmeta .who { color: var(--s-ink3); font-size: 14px; }
     .acctmeta .who b { color: var(--s-ink); }
@@ -43,7 +66,8 @@
     #usageRefillRow { white-space: nowrap; }
     .creditrow { flex-wrap: wrap; }
     .dash .dcard-h { flex-wrap: wrap; }
-    @media (max-width: 860px) { .tiers3 { grid-template-columns: 1fr; } }
+    @media (max-width: 1100px) { .tiers3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .tiers3 { grid-template-columns: 1fr; } }
   </style>
   <script>
     /* Pre-paint: if a Supabase session is stored, show the branded loader
@@ -86,7 +110,7 @@
             <div class="dashgrid">
               <!-- credits hero (seeds read as "loading", never as missing
                    data; backend.js renderPlan overwrites every value) -->
-              <div class="dcard glass full">
+              <div class="dcard glass full" id="creditsCard">
                 <div class="dcard-h"><h2>Credits</h2><span class="usagepct"><b id="usagePct">&hellip;</b> left</span></div>
                 <div class="creditrow">
                   <span class="creditnum" id="usageUsed">&hellip;</span>
@@ -115,6 +139,12 @@
                      data-plan + .amt/.per/.t-cr keep numbers synced to
                      MODULUS_PLANS in site.js. -->
                 <div class="tiers3">
+                  <div class="tier3" data-plan="free">
+                    <h3>Free Trial</h3>
+                    <div class="t-price"><span class="amt">$0</span> <span class="per">to start</span></div>
+                    <div class="t-creds"><span class="t-cr">25</span> credits at sign-up &middot; every tool unlocked</div>
+                    <div class="t-state" id="freePlanState">Where everyone starts</div>
+                  </div>
                   <div class="tier3" data-plan="starter">
                     <h3>Starter</h3>
                     <div class="t-price"><span class="amt">$19</span> <span class="per">/ month</span></div>

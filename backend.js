@@ -375,10 +375,16 @@
     var status = row && row.status;
     var canceled = status === "canceled";
     setText("acctPlanBadge", name ? (name + " plan") : "No active plan");
+    // Tier color on the header badge (CSS keys off data-plan).
+    var badge = document.getElementById("acctPlanBadge");
+    if (badge) badge.setAttribute("data-plan", plan || "none");
     setText("usageUsed", balance.toLocaleString());
     setText("usageLimit", limit ? limit.toLocaleString() : "");
     setText("usagePct", pctLeft + "%");
     var bar = document.getElementById("usageBar"); if (bar) bar.style.width = pctLeft + "%";
+    // Gauge color tracks how much is left: ok = green, mid = gold, low = red.
+    var hero = document.getElementById("creditsCard");
+    if (hero) hero.setAttribute("data-level", pctLeft > 50 ? "ok" : pctLeft > 20 ? "mid" : "low");
     // Dashboard v2: the refill line reads honestly per plan type and status.
     // A trial's grant is one-time; only live subscriptions refill; a canceled
     // plan ENDS on the period end instead of renewing.
@@ -424,6 +430,15 @@
   // "Upgrade"). Free/null plans keep plain "Upgrade" everywhere.
   var TIER_ORDER = { starter: 1, pro: 2, studio: 3 };
   function markCurrentPlan(planKey) {
+    // Highlight the whole card for the active plan (Free Trial included, so
+    // a trial user sees where they stand in the lineup).
+    var cards = document.querySelectorAll(".tier3[data-plan]");
+    for (var c = 0; c < cards.length; c++) {
+      var isCard = !!planKey && cards[c].getAttribute("data-plan") === planKey;
+      cards[c].classList.toggle("is-current", isCard);
+    }
+    var freeState = document.getElementById("freePlanState");
+    if (freeState) freeState.textContent = planKey === "free" ? "Your current plan" : "Where everyone starts";
     var btns = document.querySelectorAll("[data-checkout]");
     var curRank = TIER_ORDER[planKey] || 0;
     for (var i = 0; i < btns.length; i++) {
