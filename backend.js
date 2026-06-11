@@ -38,19 +38,30 @@
   var hasAuth = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
   function fnUrl(name) { return CONFIG.SUPABASE_URL.replace(/\/$/, "") + "/functions/v1/" + name; }
 
-  function loadScript(src) {
+  function loadScript(src, integrity) {
     return new Promise(function (resolve, reject) {
       var s = document.createElement("script");
-      s.src = src; s.async = true; s.onload = resolve; s.onerror = reject;
+      s.src = src;
+      // Subresource Integrity (audit A03): pin the supabase-js bundle to an
+      // exact hash so a poisoned CDN file is refused by the browser. crossOrigin
+      // is required for SRI to be enforced on a cross-origin script.
+      if (integrity) { s.integrity = integrity; s.crossOrigin = "anonymous"; }
+      s.async = true; s.onload = resolve; s.onerror = reject;
       document.head.appendChild(s);
     });
   }
+
+  // Pinned supabase-js: exact version + SRI hash. To bump, fetch the new
+  // version's /dist/umd/supabase.js and recompute:
+  //   openssl dgst -sha384 -binary supabase.js | openssl base64 -A
+  var SUPABASE_JS_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.1/dist/umd/supabase.js";
+  var SUPABASE_JS_SRI = "sha384-EjUdIVmzWliPzdzhxZ9ZoO0etXLKWuUPUftAGxP6qH6Lm4oLwoLaJR0Ba4pIDiDL";
 
   /* ---------------------------- AUTH (Supabase) --------------------------- */
   var sb = null;
   function ensureClient() {
     if (sb) return Promise.resolve(sb);
-    return loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2").then(function () {
+    return loadScript(SUPABASE_JS_URL, SUPABASE_JS_SRI).then(function () {
       sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
         auth: {
           persistSession: true,

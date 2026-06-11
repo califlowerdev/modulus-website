@@ -76,6 +76,11 @@
   status = 301
   force = true
 [[redirects]]
+  from = "/trust.html"
+  to = "/trust"
+  status = 301
+  force = true
+[[redirects]]
   from = "/terms.html"
   to = "/terms"
   status = 301

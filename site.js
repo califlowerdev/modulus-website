@@ -87,14 +87,14 @@
               '<div class="footer-col"><h5>Account</h5><a class="login" data-auth-login href="/login">Sign in</a></div>' +
             '</div>' +
           '</div>' +
-          '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/subprocessors">Sub-processors</a></span></div>' +
+          '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/subprocessors">Sub-processors</a> &middot; <a href="/trust">Trust</a></span></div>' +
         '</div></footer>';
     }
     // App pages get a slim dark footer.
     if (document.body.getAttribute("data-section") === "app") {
       return '<footer class="footer app-footer"><div class="wrap">' +
           '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span>' +
-          '<span class="footer-legal"><a href="/studio">Modulus Studio</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/subprocessors">Sub-processors</a></span></div>' +
+          '<span class="footer-legal"><a href="/studio">Modulus Studio</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/subprocessors">Sub-processors</a> &middot; <a href="/trust">Trust</a></span></div>' +
         '</div></footer>';
     }
 
@@ -109,7 +109,7 @@
             '<div class="footer-col"><h5>Get started</h5><a href="/contact">Book a call</a><a href="/login">Login</a></div>' +
           '</div>' +
         '</div>' +
-        '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/subprocessors">Sub-processors</a> &middot; Agentic AI for SMBs.</span></div>' +
+        '<div class="footer-bottom"><span>&copy; 2026 Modulus Technologies. All rights reserved.</span><span class="footer-legal"><a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a> &middot; <a href="/subprocessors">Sub-processors</a> &middot; <a href="/trust">Trust</a> &middot; Agentic AI for SMBs.</span></div>' +
       '</div></footer>';
   }
 

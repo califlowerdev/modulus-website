@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modulus Technologies — Trust &amp; Security</title>
+  <meta name="description" content="Modulus Technologies security posture, data processing, and sub-processors for business buyers." />
+  <link rel="canonical" href="https://modulustech.ai/trust" />
+  <meta name="theme-color" content="#0C1B2E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="redo.css" />
+  <style>
+    .legal { max-width: 760px; margin: 0 auto; }
+    .legal .updated { color: var(--ink-3); font-size: 14px; margin-bottom: 8px; }
+    .legal h2 { font-size: 22px; margin: 34px 0 12px; }
+    .legal p, .legal li { color: var(--ink-2); font-size: 16px; line-height: 1.7; }
+    .legal ul { padding-left: 22px; margin-bottom: 14px; } .legal li { margin-bottom: 10px; }
+    .legal a { color: var(--gold-deep); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main id="main">
+
+    <section class="hero sec-paper" style="padding-bottom:clamp(32px,5vh,56px)">
+      <div class="wrap">
+        <span class="eyebrow fade-up">For business buyers</span>
+        <h1 class="fade-up d1" style="font-size:clamp(38px,5.5vw,68px)">Trust &amp; <span class="acc">Security</span>.</h1>
+      </div>
+    </section>
+
+    <section class="sec-paper" style="padding-top:0">
+      <div class="wrap legal reveal">
+        <p class="updated">Last updated: June 11, 2026</p>
+        <p>Everything a buyer's security and procurement team needs, in one place. For anything not covered here, email <a href="mailto:james@modulustech.ai?subject=Security%20questions">james@modulustech.ai</a> and we will respond quickly.</p>
+
+        <h2>How your data is handled</h2>
+        <ul>
+          <li><b>Access control.</b> Every customer record is isolated at the database level, so one account can never read another account's data.</li>
+          <li><b>Encryption.</b> Data is encrypted in transit (HTTPS/TLS) and at rest by our infrastructure providers.</li>
+          <li><b>AI content.</b> Material you process in Modulus Studio is used only to produce your output. It is not sold, and our metering layer never stores the content of your sources or drafts.</li>
+          <li><b>Secrets.</b> Provider keys and payment secrets live only on the server side, never in the desktop app or the browser. The desktop app keeps your session token in your operating system's secure store.</li>
+          <li><b>Payments.</b> Card data is handled entirely by Stripe; Modulus never sees or stores full card numbers.</li>
+        </ul>
+
+        <h2>Documents</h2>
+        <ul>
+          <li><a href="/subprocessors">Sub-processor list</a> — every third party that can touch your data, what it does, and where it operates. We give 30 days' notice before adding a new one.</li>
+          <li><a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms of Service</a>.</li>
+          <li><b>Data Processing Agreement (DPA):</b> available for signature on request — email us and we will send the current version.</li>
+          <li><b>Security questionnaire:</b> we are happy to complete your standard questionnaire (CAIQ or similar) under NDA.</li>
+        </ul>
+
+        <h2>Roadmap</h2>
+        <p><b>SOC 2 Type 2 (Security):</b> on our roadmap as we move upmarket. In the meantime we lead with the DPA, the sub-processor list, and a completed security questionnaire for due diligence.</p>
+
+        <h2>Contact</h2>
+        <p>Security or compliance questions: <a href="mailto:james@modulustech.ai?subject=Security%20questions">james@modulustech.ai</a>.</p>
+      </div>
+    </section>
+
+  </main>
+  <script src="site.js"></script>
+</body>
+</html>
