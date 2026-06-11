@@ -42,7 +42,16 @@ body {
   line-height: 1.6;
   letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
+  /* Sticky footer: on short pages (signed-out dashboard, 404, legal pages on
+     big monitors) the footer used to hug the content and leave a dead band of
+     background below it. Body becomes a full-height column; main grows to
+     fill, pushing the injected footer to the true bottom of the viewport. */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+main { flex: 1 0 auto; width: 100%; }
+.footer { flex-shrink: 0; margin-top: auto; width: 100%; }
 h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.06; letter-spacing: -0.025em; }
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
