@@ -83,11 +83,6 @@
     .pnote { font-size: 13px; margin-top: 8px; min-height: 18px; }
     .pnote.ok { color: #4FD1A5; } .pnote.err { color: #E2606B; }
     .provider-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--s-ink2); background: rgba(255,255,255,.04); border: 1px solid var(--s-line); border-radius: var(--pill); padding: 7px 13px; }
-    /* Dashboard footer */
-    .dashfoot { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--s-line); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-    .dashfoot .links a { color: var(--s-ink3); font-size: 13px; text-decoration: none; margin-right: 18px; }
-    .dashfoot .links a:hover { color: var(--s-ink); }
-    .dashfoot .copy { color: var(--s-ink3); font-size: 12.5px; }
   </style>
   <script>
     /* Pre-paint: if a Supabase session is stored, show the branded loader
@@ -240,16 +235,6 @@
                   <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
                 </div>
               </div>
-            </div>
-
-            <!-- dashboard footer -->
-            <div class="dashfoot">
-              <div class="links">
-                <a href="/terms">Terms</a>
-                <a href="/privacy">Privacy</a>
-                <a href="mailto:james@modulustech.ai?subject=Modulus%20Studio%20support">Support</a>
-              </div>
-              <div class="copy">&copy; 2026 Modulus Technologies</div>
             </div>
           </div>
 
