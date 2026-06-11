@@ -12,6 +12,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="redo.css" />
   <link rel="stylesheet" href="studio.css" />
+  <style>
+    /* ------------------------------------------------------------------
+       Account dashboard v2 (2026-06-11) - scoped to this page only.
+       Builds on studio.css's glass/dcard vocabulary; adds the credits
+       hero, the three-tier upgrade row, and current-plan button states.
+       ------------------------------------------------------------------ */
+    .dash2-sub { color: var(--s-ink3); font-size: 14px; margin-top: 8px; }
+    .dash2-sub b { color: var(--s-ink); font-weight: 600; }
+    .creditrow { display: flex; align-items: baseline; gap: 12px; margin-top: 6px; }
+    .creditnum { font-family: var(--font-display); font-weight: 600; font-size: clamp(44px, 6vw, 62px); color: #fff; line-height: 1; }
+    .creditof { color: var(--s-ink3); font-size: 15px; }
+    .creditof b { color: var(--s-ink); }
+    .tiers3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+    .tier3 { position: relative; border: 1px solid var(--s-line); border-radius: 16px; padding: 20px 18px 16px; background: rgba(255,255,255,.025); display: flex; flex-direction: column; }
+    .tier3.pop { border-color: rgba(228,199,125,.45); background: rgba(228,199,125,.05); }
+    .tier3 .pop-pill { position: absolute; top: -11px; right: 14px; font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #0c1424; background: linear-gradient(90deg, var(--s-gold2), var(--s-gold)); padding: 4px 10px; border-radius: var(--pill); }
+    .tier3 h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: #fff; margin: 0 0 2px; }
+    .tier3 .t-price { color: #fff; font-weight: 600; font-size: 15px; }
+    .tier3 .t-price .per { color: var(--s-ink3); font-weight: 400; font-size: 13px; }
+    .tier3 .t-creds { color: var(--s-ink3); font-size: 13px; margin: 4px 0 14px; }
+    .tier3 .s-btn { margin-top: auto; width: 100%; justify-content: center; font-size: 14px; padding: 10px 16px; }
+    .s-btn.is-current { background: transparent; color: var(--s-ink3); border: 1px solid var(--s-line); cursor: default; pointer-events: none; box-shadow: none; }
+    .acctmeta { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .acctmeta .who { color: var(--s-ink3); font-size: 14px; }
+    .acctmeta .who b { color: var(--s-ink); }
+    /* Phone-width resilience: the hero meta sentence and the refill date get
+       their own rows instead of fracturing side by side. */
+    .dash .usagemeta { flex-wrap: wrap; gap: 6px 16px; }
+    #usageRefillRow { white-space: nowrap; }
+    .creditrow { flex-wrap: wrap; }
+    .dash .dcard-h { flex-wrap: wrap; }
+    @media (max-width: 860px) { .tiers3 { grid-template-columns: 1fr; } }
+  </style>
   <script>
     /* Pre-paint: if a Supabase session is stored, show the branded loader
        instead of flashing the signed-out card while the session validates.
@@ -39,45 +72,71 @@
             <a class="s-btn gold" href="/login">Sign in</a>
           </div>
 
-          <!-- signed in: the dashboard -->
+          <!-- signed in: the dashboard (v2, 2026-06-11) -->
           <div id="acctSignedIn" style="display:none">
             <div class="dashhead">
-              <div><span class="s-eyebrow">Your account</span><h1 id="acctHello">Welcome back.</h1></div>
-              <span class="planbadge" id="acctPlanBadge">&mdash;</span>
+              <div>
+                <span class="s-eyebrow">Your account</span>
+                <h1 id="acctHello">Welcome back.</h1>
+                <p class="dash2-sub">Signed in as <b id="acctEmail">&mdash;</b></p>
+              </div>
+              <span class="planbadge" id="acctPlanBadge">&hellip;</span>
             </div>
 
             <div class="dashgrid">
-              <!-- usage -->
+              <!-- credits hero (seeds read as "loading", never as missing
+                   data; backend.js renderPlan overwrites every value) -->
               <div class="dcard glass full">
-                <div class="dcard-h"><h2>Credits this month</h2><span class="usagepct"><b id="usagePct">0%</b> left</span></div>
+                <div class="dcard-h"><h2>Credits</h2><span class="usagepct"><b id="usagePct">&hellip;</b> left</span></div>
+                <div class="creditrow">
+                  <span class="creditnum" id="usageUsed">&hellip;</span>
+                  <span class="creditof">of <b id="usageLimit">&hellip;</b> credits</span>
+                </div>
                 <div class="usagebar"><span id="usageBar"></span></div>
                 <div class="usagemeta">
-                  <span><b id="usageUsed">0</b> of <b id="usageLimit">&mdash;</b> credits left</span>
-                  <span>Refills <b id="usageRefill">&mdash;</b></span>
+                  <span>Generations, source checks, and transcription all spend from this balance.</span>
+                  <span id="usageRefillRow"></span>
                 </div>
-                <p class="hint" id="noPlanHint">No active plan yet. <a href="/studio#pricing">Choose a plan</a> to start generating.</p>
+                <p class="hint" id="noPlanHint" style="display:none"></p>
               </div>
 
-              <!-- plan & billing -->
-              <div class="dcard glass">
-                <h2>Plan &amp; billing</h2>
-                <div class="kv"><span>Plan</span><b id="billPlan">&mdash;</b></div>
-                <div class="kv"><span>Price</span><b id="billPrice">&mdash;</b></div>
-                <div class="kv"><span>Status</span><b id="billStatus">&mdash;</b></div>
-                <div class="kv"><span>Renews</span><b id="billRenew">&mdash;</b></div>
-                <!-- Upgrade straight from the dashboard: each button starts a
-                     secure Stripe checkout for that tier (wired by backend.js
-                     wireCheckout via data-checkout, same as the pricing page). -->
-                <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08)">
-                  <p class="muted" style="margin:0 0 10px;font-size:13px">Upgrade your plan</p>
-                  <div class="dcard-btns" style="flex-wrap:wrap;gap:8px">
-                    <a class="s-btn gold" href="/studio#pricing" data-checkout="starter">Starter &middot; $19/mo</a>
-                    <a class="s-btn gold" href="/studio#pricing" data-checkout="pro">Pro &middot; $39/mo</a>
-                    <a class="s-btn gold" href="/studio#pricing" data-checkout="studio">Studio &middot; $99/mo</a>
-                  </div>
-                  <p class="hint" style="margin-top:10px">Secure checkout by Stripe. <a href="/studio#pricing">Compare plans</a></p>
+              <!-- plan + upgrade -->
+              <div class="dcard glass full">
+                <div class="dcard-h">
+                  <h2>Your plan</h2>
+                  <span class="muted" style="font-size:14px">Current:&nbsp;<b id="billPlan" style="color:var(--s-ink)">&hellip;</b><span id="billPriceWrap" style="display:none">&nbsp;&middot;&nbsp;<b id="billPrice" style="color:var(--s-ink)"></b></span></span>
                 </div>
-                <div class="dcard-btns" style="margin-top:12px">
+                <div class="kv" id="billStatusRow" style="display:none"><span>Status</span><b id="billStatus"></b></div>
+                <div class="kv" id="billRenewRow" style="display:none"><span id="billRenewLabel">Renews</span><b id="billRenew"></b></div>
+
+                <!-- Each button starts a secure Stripe checkout for that tier
+                     (wired by backend.js wireCheckout via data-checkout). The
+                     button matching the active plan renders as "Current plan";
+                     data-plan + .amt/.per/.t-cr keep numbers synced to
+                     MODULUS_PLANS in site.js. -->
+                <div class="tiers3">
+                  <div class="tier3" data-plan="starter">
+                    <h3>Starter</h3>
+                    <div class="t-price"><span class="amt">$19</span> <span class="per">/ month</span></div>
+                    <div class="t-creds"><span class="t-cr">600</span> credits a month &middot; full-strength source checks</div>
+                    <a class="s-btn gold" href="/studio#pricing" data-checkout="starter" data-plan-btn>Upgrade</a>
+                  </div>
+                  <div class="tier3 pop" data-plan="pro">
+                    <span class="pop-pill">Most popular</span>
+                    <h3>Pro</h3>
+                    <div class="t-price"><span class="amt">$39</span> <span class="per">/ month</span></div>
+                    <div class="t-creds"><span class="t-cr">1,500</span> credits a month &middot; premium AI models</div>
+                    <a class="s-btn gold" href="/studio#pricing" data-checkout="pro" data-plan-btn>Upgrade</a>
+                  </div>
+                  <div class="tier3" data-plan="studio">
+                    <h3>Studio</h3>
+                    <div class="t-price"><span class="amt">$99</span> <span class="per">/ month</span></div>
+                    <div class="t-creds"><span class="t-cr">4,000</span> credits a month &middot; built for volume</div>
+                    <a class="s-btn gold" href="/studio#pricing" data-checkout="studio" data-plan-btn>Upgrade</a>
+                  </div>
+                </div>
+                <p class="hint" style="margin-top:14px">Secure checkout by Stripe &middot; cancel anytime &middot; <a href="/studio#pricing">compare plans in detail</a></p>
+                <div class="dcard-btns" style="margin-top:6px">
                   <a class="s-btn ghost" id="manageBillingBtn" href="#">Manage billing</a>
                 </div>
               </div>
@@ -85,7 +144,7 @@
               <!-- download -->
               <div class="dcard glass">
                 <h2>Modulus Studio</h2>
-                <p class="muted">Install the desktop app and sign in with this account.</p>
+                <p class="muted">Install the desktop app and sign in with this account. Your plan and credits follow you.</p>
                 <div class="dcard-btns">
                   <a class="s-btn gold" id="downloadBtn" href="/studio#download">Download for Windows</a>
                 </div>
@@ -93,9 +152,12 @@
               </div>
 
               <!-- account -->
-              <div class="dcard glass full acctrow2">
-                <div class="kv"><span>Signed in as&nbsp;&nbsp;</span><b id="acctEmail">&mdash;</b></div>
-                <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
+              <div class="dcard glass">
+                <h2>Account</h2>
+                <div class="acctmeta">
+                  <span class="who">You can sign out here; your credits and plan stay on the account.</span>
+                  <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
+                </div>
               </div>
             </div>
           </div>

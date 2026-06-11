@@ -294,8 +294,11 @@
         var tier = el.getAttribute("data-checkout");
         el.addEventListener("click", function (e) {
           e.preventDefault();
+          // Dashboard v2: the active plan's button is an indicator, not a buy.
+          if (el.getAttribute("data-current")) return;
           if (el.getAttribute("data-busy")) return;
           var label = el.textContent;
+          el.setAttribute("data-label", label);
           el.setAttribute("data-busy", "1");
           el.textContent = "Starting checkout…";
           function fail(msg) { el.textContent = label; el.removeAttribute("data-busy"); if (msg) alert(msg); }
@@ -314,6 +317,18 @@
         });
       })(els[i]);
     }
+    // Back-button resilience: leaving for Stripe and pressing Back restores
+    // the page from the back-forward cache with scripts NOT re-run, which
+    // would leave the clicked button stuck on "Starting checkout…" and dead
+    // (the data-busy guard). Restore any busy button to its saved label.
+    window.addEventListener("pageshow", function (e) {
+      if (!e.persisted) return;
+      var busy = document.querySelectorAll("[data-checkout][data-busy]");
+      for (var j = 0; j < busy.length; j++) {
+        busy[j].textContent = busy[j].getAttribute("data-label") || "Upgrade";
+        busy[j].removeAttribute("data-busy");
+      }
+    });
   }
 
   /* ------------------------- ACCOUNT DASHBOARD ---------------------------- */
@@ -334,6 +349,22 @@
     catch (e) { return "—"; }
   }
 
+  // Human labels for Stripe's subscription status enum. Raw values like
+  // "past_due" must never reach the screen.
+  var STATUS_LABELS = {
+    active: "Active",
+    trialing: "Trial",
+    past_due: "Payment past due",
+    canceled: "Canceled",
+    unpaid: "Payment needed",
+    incomplete: "Incomplete",
+    incomplete_expired: "Incomplete",
+    paused: "Paused"
+  };
+  function statusLabel(s) {
+    return STATUS_LABELS[s] || cap(String(s).replace(/_/g, " "));
+  }
+
   // Render the credits gauge as REMAINING balance out of the monthly grant.
   function renderPlan(row) {
     var plan = row && row.plan;
@@ -341,17 +372,76 @@
     var limit = (row && row.limit) || planLimit(plan) || 0;
     var balance = (row && typeof row.balance === "number") ? row.balance : 0;
     var pctLeft = limit ? Math.max(0, Math.min(100, Math.round(balance / limit * 100))) : 0;
+    var status = row && row.status;
+    var canceled = status === "canceled";
     setText("acctPlanBadge", name ? (name + " plan") : "No active plan");
-    setText("usageUsed", plan ? balance.toLocaleString() : "0");
-    setText("usageLimit", limit ? limit.toLocaleString() : "—");
+    setText("usageUsed", balance.toLocaleString());
+    setText("usageLimit", limit ? limit.toLocaleString() : "");
     setText("usagePct", pctLeft + "%");
     var bar = document.getElementById("usageBar"); if (bar) bar.style.width = pctLeft + "%";
-    setText("usageRefill", fmtDate(row && row.current_period_end));
+    // Dashboard v2: the refill line reads honestly per plan type and status.
+    // A trial's grant is one-time; only live subscriptions refill; a canceled
+    // plan ENDS on the period end instead of renewing.
+    var periodEnd = row && row.current_period_end;
+    var refillRow = document.getElementById("usageRefillRow");
+    if (refillRow) {
+      if (!plan) refillRow.textContent = "";
+      else if (!periodEnd) refillRow.textContent = "One-time trial credits";
+      else if (canceled) refillRow.innerHTML = "Usable until <b>" + fmtDate(periodEnd) + "</b>";
+      else refillRow.innerHTML = "Refills <b>" + fmtDate(periodEnd) + "</b>";
+    } else {
+      setText("usageRefill", fmtDate(periodEnd));
+    }
     setText("billPlan", name ? name : "No active plan");
-    setText("billPrice", planPriceLabel(plan));
-    setText("billStatus", (row && row.status) ? cap(row.status) : "—");
-    setText("billRenew", fmtDate(row && row.current_period_end));
-    var noPlan = document.getElementById("noPlanHint"); if (noPlan) noPlan.style.display = plan ? "none" : "";
+    var priceLabel = plan === "free" ? "$0" : planPriceLabel(plan);
+    setText("billPrice", priceLabel);
+    var pw = document.getElementById("billPriceWrap");
+    if (pw) pw.style.display = priceLabel === "—" ? "none" : "";
+    setText("billStatus", status ? statusLabel(status) : "");
+    setText("billRenew", fmtDate(periodEnd));
+    var renewLabel = document.getElementById("billRenewLabel");
+    if (renewLabel) renewLabel.textContent = canceled ? "Ends" : "Renews";
+    // Dashboard v2: hide empty detail rows instead of printing placeholder
+    // dashes. Old markup (no row wrappers) keeps the previous behavior.
+    var sRow = document.getElementById("billStatusRow");
+    if (sRow) sRow.style.display = status ? "" : "none";
+    var rRow = document.getElementById("billRenewRow");
+    if (rRow) rRow.style.display = periodEnd ? "" : "none";
+    var noPlan = document.getElementById("noPlanHint");
+    if (noPlan) {
+      if (plan) { noPlan.style.display = "none"; }
+      else {
+        noPlan.textContent = "We couldn't load your plan just now. Refresh in a moment, or pick a plan below.";
+        noPlan.style.display = "";
+      }
+    }
+    markCurrentPlan(plan);
+  }
+
+  // Dashboard v2: the tier button matching the active plan flips to a quiet
+  // "Current plan" state, and the other buttons label honestly relative to
+  // the current tier (a Studio subscriber sees "Switch" on Starter, not
+  // "Upgrade"). Free/null plans keep plain "Upgrade" everywhere.
+  var TIER_ORDER = { starter: 1, pro: 2, studio: 3 };
+  function markCurrentPlan(planKey) {
+    var btns = document.querySelectorAll("[data-checkout]");
+    var curRank = TIER_ORDER[planKey] || 0;
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      // Only relabel buttons that opted in (the dashboard tier cards); the
+      // /studio pricing cards keep their own labels.
+      if (!b.hasAttribute("data-plan-btn")) continue;
+      var key = b.getAttribute("data-checkout");
+      if (planKey && key === planKey) {
+        b.setAttribute("data-current", "1");
+        b.classList.add("is-current");
+        b.textContent = "Current plan";
+      } else {
+        b.removeAttribute("data-current");
+        b.classList.remove("is-current");
+        b.textContent = curRank && TIER_ORDER[key] < curRank ? "Switch" : "Upgrade";
+      }
+    }
   }
 
   function renderEntitlement(d) {
@@ -366,23 +456,40 @@
     });
   }
 
-  // Read the signed-in user's real plan + credits from the entitlement function.
-  function loadEntitlement() {
-    accessToken().then(function (token) {
-      if (!token) { renderPlan(null); return; }
-      fetch(fnUrl("entitlement"), { method: "GET", headers: { "Authorization": "Bearer " + token } })
+  // Read the signed-in user's real plan + credits from the entitlement
+  // function. Returns a promise resolving to the entitlement payload (or
+  // null) so callers can sequence on the FIRST render (loader handoff,
+  // post-checkout activation polling).
+  function loadEntitlement(opts) {
+    var skipRender = opts && opts.skipRender;
+    return accessToken().then(function (token) {
+      if (!token) { if (!skipRender) renderPlan(null); return null; }
+      return fetch(fnUrl("entitlement"), { method: "GET", headers: { "Authorization": "Bearer " + token } })
         .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (d) { renderEntitlement(d); })
-        .catch(function () { renderPlan(null); });
+        .then(function (d) { if (!skipRender) renderEntitlement(d); return d; })
+        .catch(function () { if (!skipRender) renderPlan(null); return null; });
     });
   }
 
-  // After a Stripe checkout the webhook grants credits asynchronously; poll a
-  // few times so the dashboard fills in within a few seconds.
+  // After a Stripe checkout the webhook grants credits asynchronously. Poll,
+  // but do NOT render entitlements that predate the purchase (the account
+  // still reads "Free Trial" until the webhook lands, and painting that
+  // would look like the payment failed). Keep "Activating..." up until a
+  // paid plan arrives; after the poll budget, level with the user.
   function pollEntitlement(n) {
-    if (n > 6) return;
-    loadEntitlement();
-    setTimeout(function () { pollEntitlement(n + 1); }, 5000);
+    if (n > 6) {
+      var hint = document.getElementById("noPlanHint");
+      if (hint) {
+        hint.textContent = "This is taking a little longer than usual. Your payment is safe; refresh in a minute and your plan will be here.";
+        hint.style.display = "";
+      }
+      return;
+    }
+    loadEntitlement({ skipRender: true }).then(function (d) {
+      var paid = d && d.plan && d.plan.key && d.plan.key !== "free" && d.subscription;
+      if (paid) { renderEntitlement(d); return; }
+      setTimeout(function () { pollEntitlement(n + 1); }, 5000);
+    });
   }
 
   function wireAccount() {
@@ -393,7 +500,16 @@
     var signOut = document.getElementById("signOutBtn");
     var manage = document.getElementById("manageBillingBtn");
     if (signOut) signOut.addEventListener("click", function (e) { e.preventDefault(); api.signOut(); });
-    if (manage) { if (CONFIG.STRIPE_PORTAL) manage.setAttribute("href", CONFIG.STRIPE_PORTAL); else manage.style.display = "none"; }
+    // Manage billing always has a destination: the Stripe customer portal
+    // once configured, a plain email to the founder until then. Hiding it
+    // while the page promises "cancel anytime" would leave no cancel path.
+    if (manage) {
+      manage.setAttribute(
+        "href",
+        CONFIG.STRIPE_PORTAL ||
+          "mailto:james@modulustech.ai?subject=Manage%20my%20Modulus%20billing",
+      );
+    }
     function show(signedIn) {
       // Session resolved: drop the pre-paint loader state (html[data-session])
       // and let inline styles decide what's visible.
@@ -420,20 +536,25 @@
       c.auth.getUser().then(function (r) {
         var user = r && r.data && r.data.user;
         if (!user) { show(false); return; }
-        show(true);
         var meta = user.user_metadata || {};
         var name = meta.full_name || meta.name || (user.email ? user.email.split("@")[0] : "there");
         setText("acctHello", "Welcome back, " + name + ".");
         setText("acctEmail", user.email || "");
         if (justSubscribed) {
+          // Post-checkout: reveal immediately with the Activating state; the
+          // poll holds it until the webhook's paid plan actually arrives.
+          show(true);
           setText("acctPlanBadge", "Activating…");
           var hint = document.getElementById("noPlanHint");
-          if (hint) { hint.textContent = "Finishing your subscription — your plan and credits will appear here in a moment."; hint.style.display = ""; }
+          if (hint) { hint.textContent = "Finishing your subscription. Your plan and credits will appear here in a moment."; hint.style.display = ""; }
           pollEntitlement(0);
           // Clean the URL so a refresh doesn't re-trigger.
           try { history.replaceState({}, "", "/account"); } catch (e) {}
         } else {
-          loadEntitlement();
+          // Normal load: keep the branded loader up until the first
+          // entitlement render so the dashboard never paints placeholder
+          // values. The promise resolves (never rejects) even on failure.
+          loadEntitlement().then(function () { show(true); });
         }
       });
     });

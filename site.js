@@ -126,6 +126,9 @@
       var amt = card.querySelector(".amt"); if (amt) amt.textContent = p.price;
       var per = card.querySelector(".per"); if (per) per.textContent = p.period;
       var cr = card.querySelector(".s-credits"); if (cr) cr.textContent = p.credits + " credits / month";
+      // Dashboard tier cards carry the credit count inline (.t-cr) so the
+      // perk copy around it survives the sync.
+      var tcr = card.querySelector(".t-cr"); if (tcr) tcr.textContent = p.credits;
     });
   }
 
