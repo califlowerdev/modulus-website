@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modulus Technologies — Sub-processors</title>
+  <meta name="description" content="The third-party sub-processors Modulus Technologies uses to provide its services." />
+  <link rel="canonical" href="https://modulustech.ai/subprocessors" />
+  <meta name="theme-color" content="#0C1B2E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="redo.css" />
+  <style>
+    .legal { max-width: 860px; margin: 0 auto; }
+    .legal .updated { color: var(--ink-3); font-size: 14px; margin-bottom: 8px; }
+    .legal p, .legal li, .legal td { color: var(--ink-2); font-size: 16px; line-height: 1.7; }
+    .legal table { width:100%; border-collapse:collapse; margin:20px 0; font-size:15px; }
+    .legal th, .legal td { border:1px solid var(--line, rgba(0,0,0,.12)); padding:10px 12px; text-align:left; vertical-align:top; }
+    .legal th { background: var(--paper-2, #f5f3ee); font-family: var(--font-sans); font-weight: 700; }
+    .legal a { color: var(--gold-deep); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main id="main">
+
+    <section class="hero sec-paper" style="padding-bottom:clamp(32px,5vh,56px)">
+      <div class="wrap">
+        <span class="eyebrow fade-up">Legal</span>
+        <h1 class="fade-up d1" style="font-size:clamp(38px,5.5vw,68px)">Sub-<span class="acc">processors</span>.</h1>
+      </div>
+    </section>
+
+    <section class="sec-paper" style="padding-top:0">
+      <div class="wrap legal reveal">
+        <p class="updated">Last updated: June 11, 2026</p>
+        <p>Modulus Technologies uses the third-party providers below to deliver its website and the Modulus Studio application. Each is bound by a data-processing agreement. We give customers at least 30 days' advance notice before adding or replacing a sub-processor that handles personal data, and you may object during that window.</p>
+        <table>
+          <thead><tr><th>Sub-processor</th><th>What it does</th><th>Data it may process</th><th>Primary location</th></tr></thead>
+          <tbody>
+            <tr><td>Supabase</td><td>Database, authentication, edge functions</td><td>Name, email, account and billing identifiers, usage</td><td>USA</td></tr>
+            <tr><td>Stripe</td><td>Payment processing</td><td>Name, email, billing and card metadata</td><td>USA / EU</td></tr>
+            <tr><td>Cloudflare</td><td>Metering proxy and edge auth</td><td>Auth token, request metadata</td><td>Global edge</td></tr>
+            <tr><td>OpenAI</td><td>Audio transcription (Whisper)</td><td>Audio you submit for transcription</td><td>USA</td></tr>
+            <tr><td>OpenRouter</td><td>Text generation and embeddings</td><td>Prompts and generated output</td><td>USA</td></tr>
+            <tr><td>Netlify</td><td>Website hosting and contact form</td><td>Contact-form submissions</td><td>USA / global CDN</td></tr>
+            <tr><td>GitHub</td><td>License delivery and app updates</td><td>License identifier</td><td>USA</td></tr>
+            <tr><td>Google</td><td>Optional "Sign in with Google"</td><td>Name, email</td><td>USA</td></tr>
+          </tbody>
+        </table>
+        <p>Questions: <a href="mailto:james@modulustech.ai">james@modulustech.ai</a>. See also our <a href="/privacy">Privacy Policy</a>.</p>
+      </div>
+    </section>
+
+  </main>
+  <script src="site.js"></script>
+</body>
+</html>

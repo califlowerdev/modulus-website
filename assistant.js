@@ -296,7 +296,7 @@
     '<section id="mod-ask-panel" role="dialog" aria-modal="true" aria-label="Ask Modulus assistant">' +
       '<header class="mod-hd">' +
         '<img src="/assets/modulus-mark.png" alt="" />' +
-        '<div><div class="t">Ask Modulus</div><div class="s"><i aria-hidden="true"></i>Instant answers, anytime</div></div>' +
+        '<div><div class="t">Ask Modulus</div><div class="s"><i aria-hidden="true"></i>AI assistant, answers may be imperfect</div></div>' +
         '<button class="hbtn x" aria-label="Close">&times;</button>' +
       '</header>' +
       '<div class="mod-body" id="mod-ask-body" aria-live="polite"></div>' +
