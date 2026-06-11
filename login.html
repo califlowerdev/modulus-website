@@ -73,6 +73,11 @@
     }
     /* The Google button, email sign-in, and create-account are wired by backend.js.
        Real auth runs once keys are set in backend.js; until then it shows the note. */
+    /* Deep link from the desktop app's sign-in gate: /login?mode=create lands
+       straight on the Create account tab. */
+    try {
+      if (new URLSearchParams(location.search).get("mode") === "create") setMode("create");
+    } catch (e) {}
   </script>
 </body>
 </html>

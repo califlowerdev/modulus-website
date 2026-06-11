@@ -107,8 +107,19 @@
     signInEmail: function (email, pw) {
       return ensureClient().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw }); });
     },
-    signUp: function (email, pw) {
-      return ensureClient().then(function (c) { return c.auth.signUp({ email: email, password: pw }); });
+    signUp: function (email, pw, name) {
+      // emailRedirectTo: the confirmation link should land on /account (an
+      // app page that loads the SDK and consumes the session fragment), not
+      // the homepage where supabase-js never loads and the token hash would
+      // just sit in the URL. /account is already in the Supabase redirect
+      // allowlist (the Google flow uses it). full_name goes into
+      // user_metadata so the dashboard greeting uses their actual name,
+      // same as Google-provider accounts.
+      return ensureClient().then(function (c) {
+        var opts = { emailRedirectTo: location.origin + "/account" };
+        if (name) opts.data = { full_name: name };
+        return c.auth.signUp({ email: email, password: pw, options: opts });
+      });
     },
     signOut: function () {
       return ensureClient().then(function (c) { return c.auth.signOut(); }).then(function () { location.reload(); });
@@ -145,6 +156,35 @@
     var foundation = document.getElementById("foundation");
     if (!form && !gbtn) return; // not the login page
 
+    // Password-recovery landing (the reset-password email links back here with
+    // type=recovery in the hash). Read the hash BEFORE ensureClient() runs —
+    // createClient's detectSessionInUrl consumes it. Without this branch the
+    // reset link just signs the user in and bounces to /account with the old
+    // (forgotten) password still in place, which locks desktop-app users out
+    // for good. Instead we show a set-new-password card.
+    var isRecovery = /type=recovery/.test(location.hash);
+    function enterRecovery() {
+      document.body.setAttribute("data-mode", "recovery");
+      function hide(el) { if (el) el.style.display = "none"; }
+      hide(document.querySelector(".authtabs"));
+      hide(document.getElementById("nameField"));
+      var emailInput = document.getElementById("a-email");
+      if (emailInput) {
+        // A hidden required field would silently block form submission.
+        emailInput.removeAttribute("required");
+        if (emailInput.closest) hide(emailInput.closest(".field"));
+      }
+      hide(document.querySelector(".forgot"));
+      hide(document.querySelector(".divider"));
+      hide(gbtn);
+      hide(document.querySelector(".authnote"));
+      var t = document.getElementById("authTitle"); if (t) t.textContent = "Choose a new password.";
+      var l = document.getElementById("authLead"); if (l) l.textContent = "Your reset link signed you in. Now set the new password for your account.";
+      var s = document.getElementById("authSubmit"); if (s) s.textContent = "Update password";
+      var p = document.getElementById("a-pass");
+      if (p) { p.setAttribute("autocomplete", "new-password"); p.value = ""; try { p.focus(); } catch (e) {} }
+    }
+
     // If already signed in (or just returned from a Google OAuth redirect),
     // leave the login form and go to the dashboard. While a stored session is
     // validating, login.html shows the branded loader (html[data-session]);
@@ -154,15 +194,32 @@
       var loading = document.getElementById("authLoading");
       if (loading) loading.style.display = "none";
     }
+    // Create-account deep link (the desktop app sends new users to
+    // /login?mode=create). A visitor with a live session would normally be
+    // bounced straight to /account, which silently swallows their clicked
+    // intent — so the auto-redirect is suppressed when the create tab was
+    // explicitly requested.
+    var isCreateIntent = false;
+    try { isCreateIntent = new URLSearchParams(location.search).get("mode") === "create"; } catch (e) {}
+
     if (hasAuth) {
       ensureClient().then(function (c) {
         c.auth.getSession().then(function (r) {
-          if (r.data && r.data.session) location.replace("/account");
-          else revealForm();
+          var session = r.data && r.data.session;
+          if (session && !isRecovery && !isCreateIntent) { location.replace("/account"); return; }
+          revealForm();
+          if (session && isCreateIntent) {
+            var who = session.user && session.user.email ? session.user.email : "an existing account";
+            note("You're already signed in as " + who + ". That account works in the desktop app too, or create a different one below.");
+          }
         });
-        c.auth.onAuthStateChange(function (_e, session) { if (session) location.replace("/account"); });
+        c.auth.onAuthStateChange(function (evt, session) {
+          if (evt === "PASSWORD_RECOVERY") { isRecovery = true; enterRecovery(); revealForm(); return; }
+          if (session && !isRecovery && !isCreateIntent) location.replace("/account");
+        });
       });
     } else { revealForm(); }
+    if (isRecovery) enterRecovery();
 
     function note(msg) {
       if (!foundation) return;
@@ -191,12 +248,34 @@
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         if (!hasAuth) return note();
+        // Recovery mode: the only field on screen is the new password.
+        if (document.body.getAttribute("data-mode") === "recovery") {
+          var npw = (document.getElementById("a-pass") || {}).value;
+          if (!npw || npw.length < 8) return note("Pick a password with at least 8 characters.");
+          ensureClient().then(function (c) { return c.auth.updateUser({ password: npw }); }).then(function (r) {
+            if (r && r.error) return note(r.error.message);
+            note("Password updated. Taking you to your account…");
+            setTimeout(function () { location.replace("/account"); }, 900);
+          }).catch(function (err) { note(String(err)); });
+          return;
+        }
         var email = (document.getElementById("a-email") || {}).value;
         var pw = (document.getElementById("a-pass") || {}).value;
+        var name = (document.getElementById("a-name") || {}).value;
         var creating = document.body.getAttribute("data-mode") === "create";
-        (creating ? api.signUp(email, pw) : api.signInEmail(email, pw)).then(function (r) {
+        (creating ? api.signUp(email, pw, name) : api.signInEmail(email, pw)).then(function (r) {
           if (r && r.error) return note(r.error.message);
-          if (creating) note("Almost there — check your email to confirm your account.");
+          if (creating) {
+            // With email confirmation on, signUp for an ALREADY-registered
+            // address returns an obfuscated success (identities: []) and no
+            // email is sent — without this check the user waits forever for
+            // a confirmation that never comes.
+            var u = r && r.data && r.data.user;
+            if (u && Object.prototype.toString.call(u.identities) === "[object Array]" && u.identities.length === 0) {
+              return note("Looks like you already have an account with this email. Sign in instead, or use Forgot password.");
+            }
+            note("Almost there. Check your email to confirm your account.");
+          }
           else location.href = "/account";
         }).catch(function (err) { note(String(err)); });
       });
