@@ -12,3 +12,6 @@ vercel.json
 Thumbs.db
 .DS_Store
 desktop.ini
+
+# Local preview tooling
+.claude/

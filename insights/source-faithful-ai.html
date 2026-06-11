@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Why Modulus Studio checks every draft against your source</title>
+  <meta name="description" content="Most AI tools will happily invent a quote you never said. This is the decision behind Modulus Studio: it works only from your source, and it checks every draft against it before you ever see the result." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="canonical" href="https://modulustech.ai/insights/source-faithful-ai" />
+  <meta name="theme-color" content="#0C1B2E" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Modulus Technologies" />
+  <meta property="og:title" content="Why Modulus Studio checks every draft against your source" />
+  <meta property="og:description" content="Most AI tools will happily invent a quote you never said. This is the decision behind Modulus Studio: it works only from your source, and it checks every draft against it." />
+  <meta property="og:url" content="https://modulustech.ai/insights/source-faithful-ai" />
+  <meta property="og:image" content="https://modulustech.ai/assets/modulus-mark.png" />
+  <meta property="article:published_time" content="2026-06-11" />
+  <meta property="article:author" content="James Denham" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" type="image/png" href="/assets/favicon-32.png" />
+  <link rel="stylesheet" href="/redo.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Why Modulus Studio checks every draft against your source",
+    "description": "Most AI tools will happily invent a quote you never said. This is the decision behind Modulus Studio: it works only from your source, and it checks every draft against it.",
+    "url": "https://modulustech.ai/insights/source-faithful-ai",
+    "datePublished": "2026-06-11",
+    "dateModified": "2026-06-11",
+    "author": { "@type": "Person", "name": "James Denham", "jobTitle": "Founder, Modulus Technologies", "url": "https://modulustech.ai/about", "sameAs": ["https://www.linkedin.com/in/james-denham-2b2332329"] },
+    "publisher": { "@type": "Organization", "name": "Modulus Technologies", "url": "https://modulustech.ai/", "logo": { "@type": "ImageObject", "url": "https://modulustech.ai/assets/modulus-mark.png" } },
+    "image": "https://modulustech.ai/assets/modulus-mark.png",
+    "mainEntityOfPage": "https://modulustech.ai/insights/source-faithful-ai"
+  }
+  </script>
+  <style>
+    .article { max-width: 680px; margin: 0 auto; }
+    .article .meta-row { display: flex; gap: 14px; align-items: center; color: var(--ink-3); font-size: 14px; margin-top: 22px; flex-wrap: wrap; }
+    .article .meta-row b { color: var(--ink-2); font-weight: 600; }
+    .article .meta-row a { color: var(--gold-deep); }
+    .article h2 { font-size: clamp(26px, 3.4vw, 34px); margin: 44px 0 16px; }
+    .article p { font-size: 18px; color: var(--ink-2); margin-bottom: 22px; line-height: 1.75; }
+    .article p.lead-p { font-size: 21px; color: var(--ink); }
+    .article .pull { border-left: 3px solid var(--gold); padding: 6px 0 6px 22px; margin: 30px 0; }
+    .article .pull p { font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--ink); margin: 0; line-height: 1.5; }
+    .article .sig { margin-top: 40px; padding-top: 26px; border-top: 1px solid var(--line); display: flex; gap: 16px; align-items: center; }
+    .article .sig .pmark { width: 52px; height: 52px; border-radius: 14px; background: radial-gradient(120% 120% at 30% 20%, var(--navy-2), var(--navy)); display: grid; place-items: center; flex: none; }
+    .article .sig .pmark span { font-family: var(--font-display); font-size: 22px; color: var(--gold-bright); }
+    .article .sig b { display: block; color: var(--ink); font-size: 17px; }
+    .article .sig span.role { color: var(--ink-2); font-size: 15px; }
+    .article .sig a { color: var(--gold-deep); font-weight: 600; font-size: 14px; }
+    .article .cta-band { margin-top: 44px; background: var(--paper-2); border: 1px solid var(--line); border-radius: 18px; padding: 28px 30px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .article .cta-band p { margin: 0; font-size: 16px; }
+    .crumb { font-size: 14px; color: var(--ink-3); }
+    .crumb a { color: var(--gold-deep); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <main id="main">
+
+    <section class="hero sec-paper" style="padding-bottom:clamp(28px,4vh,48px);text-align:left">
+      <div class="wrap article">
+        <p class="crumb fade-up"><a href="/insights">&larr; Insights</a></p>
+        <span class="eyebrow fade-up" style="margin-top:18px">Product</span>
+        <h1 class="fade-up d1" style="font-size:clamp(34px,5vw,56px);max-width:none;margin:14px 0 0;text-align:left">Why Modulus Studio checks every draft against your <span class="acc">source</span>.</h1>
+        <div class="meta-row fade-up d2"><b><a href="/about">James Denham</a></b><span>&middot;</span><span>Founder, Modulus Technologies</span><span>&middot;</span><span>June 2026</span><span>&middot;</span><span>5 min read</span></div>
+      </div>
+    </section>
+
+    <section class="sec-paper" style="padding-top:0">
+      <div class="wrap article reveal">
+        <p class="lead-p">The first time you hand your work to an AI tool, it usually goes one of two ways. Either you get something generic, or you get something that sounds almost right. The second one is worse. Almost right is where the invented quotes live.</p>
+
+        <p>If you preach, publish, or put your name on your words for a living, an invented quote isn't a small bug. It's a machine putting words in your mouth. And it does it confidently, which is what makes it dangerous.</p>
+
+        <p>I'm building Modulus Studio for people whose words are the product. Pastors, podcasters, authors, the small publisher with a backlog of recordings. So early on I made one decision about how the whole thing works, and everything else in the product follows from it.</p>
+
+        <h2>Your source is the only ground truth</h2>
+        <p>Most AI tools generate content <em>about</em> your topic. You type a prompt, the model leans on whatever it absorbed from the internet, and out comes something plausible. That gap between plausible and true is where fabrication comes from. The model is filling holes with the average of everyone else's words.</p>
+        <p>Studio doesn't work that way. You give it the actual source. A sermon recording, a podcast episode, a chapter you wrote. That source becomes the boundary of what it's allowed to say. Simple rule, big consequences.</p>
+
+        <div class="pull"><p>If it isn't in your talk, it doesn't belong in your article.</p></div>
+
+        <h2>Every draft gets checked before you see it</h2>
+        <p>A rule is only as good as its enforcement, and I don't trust first drafts. Mine or the machine's. So after Studio writes something, a separate verification pass re-reads the draft against your source and asks a boring question: can every claim in here actually be traced back?</p>
+        <p>A few things follow from that. If a line is presented as something you said, it has to appear in the source, or it gets cut. Not a paraphrase wearing quotation marks. The real thing or nothing. If the source can't support a claim, the claim gets rewritten or removed. And the draft takes its rhythm from how you actually talk, because the point is to sound like you, not like the same flattened AI voice everyone else publishes.</p>
+        <p>This costs us real compute. Checking every draft makes each piece slower than one-shot generation, and I'm fine with that trade. Speed means nothing if you have to fact-check the tool that was supposed to save you time.</p>
+
+        <h2>For churches, we go further</h2>
+        <p>A lot of the people Studio serves are churches and Christian publishers. The stakes there go past accuracy. Misrepresenting what a pastor taught can genuinely mislead a congregation, so theological content gets an extra review that checks drafts for doctrinal consistency with the source material. It's more work. For that audience it isn't optional.</p>
+
+        <h2>What you actually get</h2>
+        <p>One recording in. Articles, Q&amp;As, key quotes, social posts and a clean transcript out, each one checked against what you actually said before you ever see it. You still review everything, because your name is on it and that judgment belongs to you. But you're reviewing for taste, not hunting for lies.</p>
+        <p>I'm early, and I'm building this in the open. Source-faithfulness is the bar everything in Studio has to clear. It's the difference between a tool you can hand your life's work to and a tool you have to babysit.</p>
+
+        <div class="sig">
+          <div class="pmark" aria-hidden="true"><span>JD</span></div>
+          <div>
+            <b>James Denham</b>
+            <span class="role">Founder, Modulus Technologies. Building agentic AI for small businesses, in the open.</span><br />
+            <a href="/about">More about James &rarr;</a>
+          </div>
+        </div>
+
+        <div class="cta-band reveal">
+          <p><b>See it for yourself.</b> Modulus Studio turns one talk into a month of content, faithfully.</p>
+          <a class="btn btn-gold" href="/studio">Explore Modulus Studio</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <script src="/site.js"></script>
+</body>
+</html>

@@ -119,7 +119,19 @@
   };
   window.modulusAuth = api;
 
-  if (hasAuth) {
+  // Load the Supabase SDK eagerly ONLY where it can matter: on the app pages
+  // (login/dashboard) and for visitors who already have a stored session whose
+  // name should appear in the nav. Anonymous visitors on marketing pages skip
+  // the ~100KB supabase-js download entirely (page-experience/latency win);
+  // any auth action (sign-in click, etc.) still lazy-loads it on demand via
+  // ensureClient().
+  var isAppPage = document.body.getAttribute("data-section") === "app";
+  var hasStoredSession = false;
+  try {
+    var ref = (CONFIG.SUPABASE_URL.match(/^https:\/\/([a-z0-9-]+)\.supabase\.co/) || [])[1];
+    hasStoredSession = !!(ref && localStorage.getItem("sb-" + ref + "-auth-token"));
+  } catch (e) { /* storage blocked — treat as signed out */ }
+  if (hasAuth && (isAppPage || hasStoredSession)) {
     ensureClient().then(function (c) {
       c.auth.getSession().then(function (r) { if (r.data && r.data.session) reflectUser(r.data.session.user); });
       c.auth.onAuthStateChange(function (_evt, session) { reflectUser(session && session.user); });
@@ -134,13 +146,23 @@
     if (!form && !gbtn) return; // not the login page
 
     // If already signed in (or just returned from a Google OAuth redirect),
-    // leave the login form and go to the dashboard.
+    // leave the login form and go to the dashboard. While a stored session is
+    // validating, login.html shows the branded loader (html[data-session]);
+    // if the token turns out to be stale, reveal the form.
+    function revealForm() {
+      try { document.documentElement.removeAttribute("data-session"); } catch (e) {}
+      var loading = document.getElementById("authLoading");
+      if (loading) loading.style.display = "none";
+    }
     if (hasAuth) {
       ensureClient().then(function (c) {
-        c.auth.getSession().then(function (r) { if (r.data && r.data.session) location.replace("/account"); });
+        c.auth.getSession().then(function (r) {
+          if (r.data && r.data.session) location.replace("/account");
+          else revealForm();
+        });
         c.auth.onAuthStateChange(function (_e, session) { if (session) location.replace("/account"); });
       });
-    }
+    } else { revealForm(); }
 
     function note(msg) {
       if (!foundation) return;
@@ -294,8 +316,13 @@
     if (signOut) signOut.addEventListener("click", function (e) { e.preventDefault(); api.signOut(); });
     if (manage) { if (CONFIG.STRIPE_PORTAL) manage.setAttribute("href", CONFIG.STRIPE_PORTAL); else manage.style.display = "none"; }
     function show(signedIn) {
+      // Session resolved: drop the pre-paint loader state (html[data-session])
+      // and let inline styles decide what's visible.
+      try { document.documentElement.removeAttribute("data-session"); } catch (e) {}
+      var loading = document.getElementById("acctLoading");
+      if (loading) loading.style.display = "none";
       if (inEl) inEl.style.display = signedIn ? "" : "none";
-      if (outEl) outEl.style.display = signedIn ? "none" : "";
+      if (outEl) outEl.style.display = signedIn ? "none" : "block";
     }
 
     // Preview the populated dashboard without a backend: account.html?preview=1

@@ -8,7 +8,7 @@
    ============================================================ */
 :root {
   --s-bg: #070f1c; --s-bg2: #0b1727;
-  --s-ink: #eaf0f7; --s-ink2: rgba(234,240,247,.72); --s-ink3: rgba(234,240,247,.46);
+  --s-ink: #eaf0f7; --s-ink2: rgba(234,240,247,.72); --s-ink3: rgba(234,240,247,.58); /* .58 = AA for small text on the navy bg (.46 was borderline) */
   --s-line: rgba(255,255,255,.09);
   --s-gold: #E4C77D; --s-gold2: #C8A75B;
 }
@@ -18,6 +18,7 @@ body { color: var(--s-ink); }
 
 /* ---- shared chrome: nav -> dark glass ---- */
 .nav { background: rgba(7,15,28,.66) !important; backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid var(--s-line); }
+.nav.scrolled { background: rgba(7,15,28,.88) !important; box-shadow: 0 14px 36px -22px rgba(0,0,0,.8); }
 .nav .brand b { color: #fff; } .nav .brand .sub { color: var(--s-gold); }
 .nav-links a, .nav .login { color: var(--s-ink2); } .nav-links a:hover, .nav .login:hover { color: #fff; }
 .nav-toggle { color: var(--s-ink); }
@@ -78,6 +79,17 @@ body { color: var(--s-ink); }
 #nameField { display: none; }
 body[data-mode="create"] #nameField { display: block; }
 body[data-mode="create"] .forgot { display: none; }
+
+/* ============================================================
+   APP — session-aware first paint (no signed-out flash)
+   account.html / login.html set html[data-session] pre-paint when a
+   stored Supabase session exists; backend.js removes it once the
+   session resolves and inline styles take over.
+   ============================================================ */
+#acctLoading, #authLoading { display: none; }
+html[data-session] #acctLoading, html[data-session] #authLoading { display: flex; }
+html[data-session] #acctSignedOut { display: none; }
+html[data-session] .authcard { display: none; }
 
 /* ============================================================
    APP — dashboard

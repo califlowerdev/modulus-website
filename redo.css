@@ -9,7 +9,7 @@
   --paper-2: #F6F5F0;     /* warm off-white section */
   --ink: #0B0B0F;
   --ink-2: #5A6473;
-  --ink-3: #8A92A0;
+  --ink-3: #6E7886;   /* AA on white for small text (was #8A92A0 at ~3:1) */
   --navy: #0C1B2E;
   --navy-2: #0F2336;
   --gold: #C8A75B;
@@ -30,6 +30,11 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* anchored sections (e.g. /studio#pricing) land BELOW the sticky nav, not under it */
+[id] { scroll-margin-top: 84px; }
+/* phones: kill the gray tap flash; keep double-tap-zoom off interactive elements */
+a, button { -webkit-tap-highlight-color: transparent; }
+.btn, .s-btn, button, .nav-toggle { touch-action: manipulation; }
 body {
   font-family: var(--font-sans);
   background: var(--paper);
@@ -68,7 +73,9 @@ img { max-width: 100%; display: block; }
 .textlink:hover svg { transform: translateX(4px); }
 
 /* ---- Nav ----------------------------------------------------------------- */
-.nav { position: sticky; top: 0; z-index: 90; background: rgba(255,255,255,.72); backdrop-filter: saturate(180%) blur(16px); border-bottom: 1px solid var(--line); }
+.nav { position: sticky; top: 0; z-index: 90; background: rgba(255,255,255,.72); backdrop-filter: saturate(180%) blur(16px); border-bottom: 1px solid var(--line); transition: box-shadow .3s var(--ease), background .3s var(--ease); }
+/* once the page scrolls, the bar lifts off the canvas (site.js toggles .scrolled) */
+.nav.scrolled { background: rgba(255,255,255,.86); box-shadow: 0 12px 32px -22px rgba(11,11,15,.35); }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; color: var(--ink); }
 .brand-mark { width: 26px; height: 26px; border-radius: 7px; background: var(--navy); display: grid; place-items: center; flex: none; }
@@ -257,6 +264,13 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
 .cols-3 .col:nth-child(3) { transition-delay: .20s; }
 .cols-3 .col:nth-child(4) { transition-delay: .28s; }
 .cols-3 .col:hover { transition-delay: 0s; }
+/* same cascade for insight cards */
+.posts .post:nth-child(1) { transition-delay: .04s; }
+.posts .post:nth-child(2) { transition-delay: .12s; }
+.posts .post:nth-child(3) { transition-delay: .20s; }
+.posts .post:nth-child(4) { transition-delay: .04s; }
+.posts .post:nth-child(5) { transition-delay: .12s; }
+.posts .post:nth-child(6) { transition-delay: .20s; }
 
 /* value / feature icon tile (purposeful, not decorative) */
 .vicon { width: 46px; height: 46px; border-radius: 13px; background: rgba(200,167,91,.13); display: grid; place-items: center; color: var(--gold-deep); margin-bottom: 18px; transition: transform .25s var(--spring), background .25s; }
@@ -275,6 +289,18 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
 .hero { position: relative; overflow: hidden; }
 .hero > .wrap { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) { .field-canvas { display: none; } }
+
+/* ---- Loading (shared, site-wide) ------------------------------------------
+   Branded loading state for any async view. Usage:
+     <div class="mod-load-wrap"><div class="mod-load"></div><p>Loading…</p></div>
+   Gold ring works on both the light and dark (Studio) surfaces. */
+.mod-load-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 64px 24px; text-align: center; }
+.mod-load-wrap p { color: inherit; opacity: .65; font-size: 14.5px; margin: 0; }
+.mod-load { width: 42px; height: 42px; border-radius: 50%; border: 3px solid rgba(200,167,91,.22); border-top-color: var(--gold); animation: modSpin .8s linear infinite; }
+@keyframes modSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .mod-load { animation: none; border-color: var(--gold); border-top-color: rgba(200,167,91,.35); }
+}
 
 /* ---- Reveal -------------------------------------------------------------- */
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
@@ -296,7 +322,15 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
   .cols-3 { grid-template-columns: 1fr; gap: 40px; }
   .feature, .feature.flip { grid-template-columns: 1fr; gap: 40px; }
   .feature .vis { order: 2; }
+  /* founder: the 300px+1fr grid overflows narrow phones — stack it */
+  .founder { grid-template-columns: 1fr; gap: 30px; }
+  .portrait { max-width: 240px; }
+  .portrait .mono { font-size: 60px; }
 }
 /* On small phones, drop the "Technologies" wordmark so the top bar never crowds */
 @media (max-width: 600px) { .nav .brand .sub { display: none; } }
+/* phones: 16px inputs so iOS Safari doesn't zoom-jump on focus */
+@media (max-width: 640px) {
+  .field input, .field textarea, .news input, .authform .field input { font-size: 16px; }
+}
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .reveal { opacity: 1; transform: none; } }

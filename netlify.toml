@@ -76,6 +76,14 @@
   status = 301
   force = true
 
+# Pricing lives on Products — real 301 so crawlers never see the meta-refresh stub.
+# force = true because pricing.html exists and would otherwise serve at /pricing.
+[[redirects]]
+  from = "/pricing"
+  to = "/products#pricing"
+  status = 301
+  force = true
+
 # Old Solutions page folded into Services.
 [[redirects]]
   from = "/solutions"

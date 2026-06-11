@@ -4,7 +4,9 @@
    Above-the-fold uses CSS .fade-up (no JS); below-fold uses .reveal here.
    URLs are clean (extensionless); Netlify serves /services from services.html. */
 (function () {
-  var MARK = '<img class="brand-img" src="assets/modulus-mark.png" alt="Modulus" width="28" height="28" />';
+  // Root-absolute paths so injected chrome works on subfolder pages too
+  // (e.g. /insights/<article>) — every asset/script lives at the site root.
+  var MARK = '<img class="brand-img" src="/assets/modulus-mark.png" alt="Modulus" width="28" height="28" />';
 
   // ---- Single source of truth for Modulus Studio plan pricing -------------
   // Edit prices, credits, and limits HERE. The /studio pricing cards and the
@@ -144,15 +146,16 @@
     }
     if (document.querySelector(".field-canvas") && !document.querySelector('script[src*="hero-anim"]')) {
       var s = document.createElement("script");
-      s.src = "hero-anim.js";
+      s.src = "/hero-anim.js";
       document.body.appendChild(s);
     }
   }
 
   function boot() {
-    document.head.insertAdjacentHTML("beforeend",
-      '<link rel="icon" type="image/png" href="assets/favicon-32.png">' +
-      '<link rel="apple-touch-icon" href="assets/modulus-mark.png">');
+    if (!document.querySelector('link[rel="icon"]')) {
+      document.head.insertAdjacentHTML("beforeend", '<link rel="icon" type="image/png" href="/assets/favicon-32.png">');
+    }
+    document.head.insertAdjacentHTML("beforeend", '<link rel="apple-touch-icon" href="/assets/modulus-mark.png">');
     if (!document.querySelector('meta[name="theme-color"]')) {
       document.head.insertAdjacentHTML("beforeend", '<meta name="theme-color" content="#0C1B2E">');
     }
@@ -164,12 +167,12 @@
 
     // backend foundation (auth + assistant + checkout); inert until keys set in backend.js
     if (!document.querySelector('script[src*="backend.js"]')) {
-      var bjs = document.createElement("script"); bjs.src = "backend.js"; document.body.appendChild(bjs);
+      var bjs = document.createElement("script"); bjs.src = "/backend.js"; document.body.appendChild(bjs);
     }
 
     // "Ask Modulus" assistant widget (self-contained; no external services or keys)
     if (!document.querySelector('script[src*="assistant.js"]')) {
-      var ajs = document.createElement("script"); ajs.src = "assistant.js"; ajs.defer = true; document.body.appendChild(ajs);
+      var ajs = document.createElement("script"); ajs.src = "/assistant.js"; ajs.defer = true; document.body.appendChild(ajs);
     }
 
     var toggle = document.querySelector(".nav-toggle");
@@ -183,6 +186,17 @@
       entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); } });
     }, { threshold: 0.12 });
     document.querySelectorAll(".reveal").forEach(function (n) { obs.observe(n); });
+
+    // Nav lifts off the canvas once the page scrolls (shadow via .scrolled).
+    var navEl = document.querySelector(".nav");
+    if (navEl) {
+      var navTick = false;
+      var setNav = function () { navEl.classList.toggle("scrolled", window.scrollY > 8); navTick = false; };
+      window.addEventListener("scroll", function () {
+        if (!navTick) { navTick = true; requestAnimationFrame(setNav); }
+      }, { passive: true });
+      setNav();
+    }
 
     // Deep-link fix: the header/footer are injected after the page loads,
     // which cancels the browser's native jump-to-anchor (so /products#pricing

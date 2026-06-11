@@ -5,18 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Modulus Studio — Sign in</title>
   <meta name="description" content="Sign in or create your Modulus Studio account." />
+  <meta name="robots" content="noindex" />
   <meta name="theme-color" content="#070f1c" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="redo.css" />
   <link rel="stylesheet" href="studio.css" />
+  <script>
+    /* Pre-paint: a stored session means we're about to bounce to /account, so
+       show the loader instead of flashing the sign-in form. backend.js reveals
+       the form if the stored token turns out to be stale. */
+    try { if (localStorage.getItem("sb-deypezfcawzdcfhnckxp-auth-token")) document.documentElement.setAttribute("data-session", "1"); } catch (e) {}
+  </script>
 </head>
 <body data-section="app" data-mode="signin">
   <main id="main">
     <div class="authwrap">
       <div class="authglow"></div>
       <div class="wrap">
+        <div id="authLoading" class="mod-load-wrap" aria-live="polite">
+          <div class="mod-load" aria-hidden="true"></div>
+          <p>Signing you in…</p>
+        </div>
         <div class="authcard glass fade-up">
           <img class="mk" src="assets/modulus-mark.png" alt="Modulus" />
           <h1 id="authTitle">Welcome back.</h1>

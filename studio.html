@@ -7,7 +7,7 @@
   <meta name="description" content="Modulus Studio turns your sermons, podcasts, and writing into articles, Q&As, social posts, and clean transcripts. Faithful to the source, never fabricated. A product of Modulus Technologies." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="canonical" href="https://modulustech.ai/studio" />
   <meta name="theme-color" content="#070f1c" />
   <meta property="og:type" content="website" />
@@ -17,6 +17,37 @@
   <meta property="og:url" content="https://modulustech.ai/studio" />
   <meta property="og:image" content="https://modulustech.ai/assets/modulus-mark.png" />
   <meta name="twitter:card" content="summary" />
+  <link rel="icon" type="image/png" href="/assets/favicon-32.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Modulus Studio",
+    "url": "https://modulustech.ai/studio",
+    "image": "https://modulustech.ai/assets/modulus-mark.png",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Windows 10, Windows 11",
+    "description": "A premium desktop studio that turns sermons, podcasts, and writing into articles, Q&As, key quotes, social posts, and clean transcripts — in your voice, faithful to the source.",
+    "publisher": { "@type": "Organization", "name": "Modulus Technologies", "url": "https://modulustech.ai/" },
+    "offers": [
+      { "@type": "Offer", "name": "Starter", "price": "19", "priceCurrency": "USD", "url": "https://modulustech.ai/studio#pricing", "availability": "https://schema.org/PreOrder", "description": "600 credits / month" },
+      { "@type": "Offer", "name": "Pro", "price": "39", "priceCurrency": "USD", "url": "https://modulustech.ai/studio#pricing", "availability": "https://schema.org/PreOrder", "description": "1,500 credits / month" },
+      { "@type": "Offer", "name": "Studio", "price": "99", "priceCurrency": "USD", "url": "https://modulustech.ai/studio#pricing", "availability": "https://schema.org/PreOrder", "description": "4,000 credits / month" }
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "What is a credit?", "acceptedAnswer": { "@type": "Answer", "text": "A credit is a unit of usage. Generating, repurposing, and transcribing each spend credits. Most pieces of content cost a few credits." } },
+      { "@type": "Question", "name": "What happens if I run out?", "acceptedAnswer": { "@type": "Answer", "text": "Add a top-up pack anytime, or your credits refill next month." } },
+      { "@type": "Question", "name": "Can I cancel anytime?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Plans are month to month." } },
+      { "@type": "Question", "name": "Do you offer custom work?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. See the consulting path above, or book a call and we will scope it with you." } }
+    ]
+  }
+  </script>
   <link rel="stylesheet" href="redo.css" />
   <style>
     /* ============================================================
@@ -24,7 +55,7 @@
        Deep navy, glass, gold; signature cursor-aurora + tilt cards.
        (Self-contained on this page; overrides the shared light chrome.)
        ============================================================ */
-    :root { --s-bg:#070f1c; --s-bg2:#0b1727; --s-ink:#eaf0f7; --s-ink2:rgba(234,240,247,.72); --s-ink3:rgba(234,240,247,.46); --s-line:rgba(255,255,255,.09); --s-gold:#E4C77D; --s-gold2:#C8A75B; }
+    :root { --s-bg:#070f1c; --s-bg2:#0b1727; --s-ink:#eaf0f7; --s-ink2:rgba(234,240,247,.72); --s-ink3:rgba(234,240,247,.58); --s-line:rgba(255,255,255,.09); --s-gold:#E4C77D; --s-gold2:#C8A75B; }
     html, body { background: var(--s-bg); }
     body { color: var(--s-ink); }
     ::selection { background: rgba(228,199,125,.28); }
@@ -147,12 +178,33 @@
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
     .reveal.in { opacity: 1; transform: none; }
 
+    /* scroll choreography: pricing tiers + steps rise in sequence */
+    .s-tiers .s-tier:nth-child(1), .s-steps .step:nth-child(1) { transition-delay: .04s; }
+    .s-tiers .s-tier:nth-child(2), .s-steps .step:nth-child(2) { transition-delay: .14s; }
+    .s-tiers .s-tier:nth-child(3), .s-steps .step:nth-child(3) { transition-delay: .24s; }
+    /* the transform fan: output chips cascade out once the row reveals */
+    .fan .chip { opacity: 0; transform: translateX(-10px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+    .fan.in .chip { opacity: 1; transform: none; }
+    .fan.in .chip:nth-child(1) { transition-delay: .15s; }
+    .fan.in .chip:nth-child(2) { transition-delay: .27s; }
+    .fan.in .chip:nth-child(3) { transition-delay: .39s; }
+    .fan.in .chip:nth-child(4) { transition-delay: .51s; }
+    .fan.in .chip:nth-child(5) { transition-delay: .63s; }
+
+    /* dark nav scroll state (the shared light shadow is invisible on navy) */
+    .nav.scrolled { background: rgba(7,15,28,.88) !important; box-shadow: 0 14px 36px -22px rgba(0,0,0,.8); }
+
     @media (max-width: 820px) {
       .s-feat, .s-feat.rev { grid-template-columns: 1fr; } .s-feat.rev .s-copy { order: 0; }
       .s-steps { grid-template-columns: 1fr; }
       .s-tiers { grid-template-columns: 1fr; }
       .s-ent { flex-direction: column; align-items: flex-start; }
       .fan { flex-direction: column; } .fan .arrow { transform: rotate(90deg); }
+    }
+    /* small phones: keep the top bar uncrowded — Sign in lives in the drawer */
+    @media (max-width: 480px) {
+      .nav-right .login { display: none; }
+      .nav-right .btn { padding: 9px 14px !important; font-size: 13px !important; }
     }
     @media (prefers-reduced-motion: reduce) { .s-orb, .win-row::after { animation: none; } }
   </style>
@@ -170,7 +222,7 @@
         <h1 class="fade-up d1">Turn one talk into <span class="acc">a month of content</span>.</h1>
         <p class="s-sub fade-up d2">A premium desktop studio that turns your sermons, podcasts, and writing into articles, Q&amp;As, key quotes, social posts, and clean transcripts. In your voice, faithful to the source, never fabricated.</p>
         <div class="s-cta fade-up d3">
-          <a class="s-btn gold" href="mailto:jamesdenhamiv@gmail.com?subject=Early%20access%20to%20Modulus%20Studio&body=I'd%20love%20early%20access%20to%20Modulus%20Studio.">
+          <a class="s-btn gold" href="mailto:james@modulustech.ai?subject=Early%20access%20to%20Modulus%20Studio&body=I'd%20love%20early%20access%20to%20Modulus%20Studio.">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             Request early access
           </a>
@@ -247,7 +299,7 @@
     <!-- HOW IT WORKS -->
     <section class="s-sec" id="how" style="padding-top:0">
       <div class="swrap">
-        <div class="reveal" style="text-align:center;margin-bottom:40px"><span class="s-eyebrow">How it works</span><h2 style="font-family:var(--font-display);color:#fff;font-size:clamp(26px,3.6vw,42px);margin-top:12px">From one recording to a week of content.</h2></div>
+        <div class="reveal" style="text-align:center;margin-bottom:40px"><span class="s-eyebrow">How it works</span><h2 style="font-family:var(--font-display);color:#fff;font-size:clamp(26px,3.6vw,42px);margin-top:12px">From one recording to a month of content.</h2></div>
         <div class="s-steps">
           <div class="glass tilt step reveal"><div class="k">01</div><h3>Add your source</h3><p>Upload audio, a PDF, or paste text. Modulus transcribes and reads it end to end.</p></div>
           <div class="glass tilt step reveal"><div class="k">02</div><h3>Pick what to make</h3><p>Article, Q&amp;A, quotes, or social — tuned to your voice and audience.</p></div>
@@ -276,7 +328,7 @@
               <li>Your voice and source-faithful checks</li>
               <li>Cancel anytime</li>
             </ul>
-            <a class="s-btn ghost full" href="mailto:jamesdenhamiv@gmail.com?subject=Early%20access%3A%20Starter%20plan&body=I'd%20love%20early%20access%20to%20Modulus%20Studio%20(Starter%20plan)." data-checkout="starter">Get started</a>
+            <a class="s-btn ghost full" href="mailto:james@modulustech.ai?subject=Early%20access%3A%20Starter%20plan&body=I'd%20love%20early%20access%20to%20Modulus%20Studio%20(Starter%20plan)." data-checkout="starter">Get started</a>
           </div>
           <div class="glass s-tier feat reveal" data-plan="pro">
             <span class="s-pop">Most popular</span>
@@ -290,7 +342,7 @@
               <li>Premium AI models</li>
               <li>Priority generation</li>
             </ul>
-            <a class="s-btn gold full" href="mailto:jamesdenhamiv@gmail.com?subject=Early%20access%3A%20Pro%20plan&body=I'd%20love%20early%20access%20to%20Modulus%20Studio%20(Pro%20plan)." data-checkout="pro">Choose Pro</a>
+            <a class="s-btn gold full" href="mailto:james@modulustech.ai?subject=Early%20access%3A%20Pro%20plan&body=I'd%20love%20early%20access%20to%20Modulus%20Studio%20(Pro%20plan)." data-checkout="pro">Choose Pro</a>
           </div>
           <div class="glass s-tier reveal" data-plan="studio">
             <div class="s-tk">Studio</div>
@@ -303,7 +355,7 @@
               <li>Best for high-volume output</li>
               <li>Top-up packs available</li>
             </ul>
-            <a class="s-btn ghost full" href="mailto:jamesdenhamiv@gmail.com?subject=Early%20access%3A%20Studio%20plan&body=I'd%20love%20early%20access%20to%20Modulus%20Studio%20(Studio%20plan)." data-checkout="studio">Choose Studio</a>
+            <a class="s-btn ghost full" href="mailto:james@modulustech.ai?subject=Early%20access%3A%20Studio%20plan&body=I'd%20love%20early%20access%20to%20Modulus%20Studio%20(Studio%20plan)." data-checkout="studio">Choose Studio</a>
           </div>
         </div>
         <div class="glass s-ent reveal">
@@ -331,7 +383,7 @@
         <h2>Bring your content to life.</h2>
         <p>Modulus Studio is launching soon for Windows. Request early access and we'll get you in as the doors open.</p>
         <div class="s-cta" style="margin-top:30px">
-          <a class="s-btn gold" href="mailto:jamesdenhamiv@gmail.com?subject=Early%20access%20to%20Modulus%20Studio&body=I'd%20love%20early%20access%20to%20Modulus%20Studio.">
+          <a class="s-btn gold" href="mailto:james@modulustech.ai?subject=Early%20access%20to%20Modulus%20Studio&body=I'd%20love%20early%20access%20to%20Modulus%20Studio.">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
             Request early access
           </a>

@@ -9,15 +9,27 @@
   <meta name="theme-color" content="#070f1c" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="redo.css" />
   <link rel="stylesheet" href="studio.css" />
+  <script>
+    /* Pre-paint: if a Supabase session is stored, show the branded loader
+       instead of flashing the signed-out card while the session validates.
+       The "sb-<ref>-auth-token" key mirrors backend.js's SUPABASE_URL ref. */
+    try { if (localStorage.getItem("sb-deypezfcawzdcfhnckxp-auth-token")) document.documentElement.setAttribute("data-session", "1"); } catch (e) {}
+  </script>
 </head>
 <body data-section="app">
   <main id="main">
     <section class="dash">
       <div class="wrap">
         <div class="acctcard-wrap" id="accountCard">
+
+          <!-- validating a stored session (shown pre-paint via html[data-session]) -->
+          <div id="acctLoading" class="mod-load-wrap" aria-live="polite">
+            <div class="mod-load" aria-hidden="true"></div>
+            <p>Loading your account…</p>
+          </div>
 
           <!-- signed out -->
           <div id="acctSignedOut" class="signedout glass">

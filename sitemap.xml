@@ -4,9 +4,9 @@
   <url><loc>https://modulustech.ai/services</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://modulustech.ai/studio</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://modulustech.ai/products</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://modulustech.ai/pricing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://modulustech.ai/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modulustech.ai/insights</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://modulustech.ai/insights/source-faithful-ai</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://modulustech.ai/contact</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
   <url><loc>https://modulustech.ai/privacy</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
   <url><loc>https://modulustech.ai/terms</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
