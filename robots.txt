@@ -1,6 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /account
-Disallow: /login
 
 Sitemap: https://modulustech.ai/sitemap.xml

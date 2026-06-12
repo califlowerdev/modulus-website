@@ -94,11 +94,19 @@
   status = 301
   force = true
 
+# The download: a stable URL the site links everywhere; points at the current
+# versioned installer asset. Update the target on each release.
+[[redirects]]
+  from = "/download"
+  to = "https://github.com/califlowerdev/modulus-releases/releases/download/v1.139.0/Modulus.Studio_1.139.0_x64-setup.exe"
+  status = 302
+
 # Old Solutions page folded into Services.
 [[redirects]]
   from = "/solutions"
   to = "/services"
   status = 301
+  force = true
 [[redirects]]
   from = "/solutions.html"
   to = "/services"

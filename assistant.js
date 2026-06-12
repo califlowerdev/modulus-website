@@ -50,8 +50,8 @@
     { id: "studio",
       k: ["studio", "first product", "repurpose", "repurposer", "content tool", "what product", "desktop app", "month of content"],
       boost: ["modulus studio", "what's modulus studio"],
-      a: "Modulus Studio turns one talk, sermon, or recording into a month of content: articles, Q&As, key quotes, social posts, and clean transcripts. In your voice, faithful to the source, never fabricated.\n\nIt's a premium Windows desktop app, launching soon. You can [request early access](/studio#download) today.",
-      chips: ["How much does it cost?", "Is it accurate?", "Explore Studio"] },
+      a: "Modulus Studio turns one talk, sermon, or recording into a month of content: articles, Q&As, key quotes, social posts, and clean transcripts. In your voice, faithful to the source, never fabricated.\n\nIt's a premium Windows desktop app, available now. [Create your free account](/login?mode=create) and you get 25 credits to try everything.",
+      chips: ["How much does it cost?", "Is it accurate?", "Download for Windows"] },
 
     { id: "pricing",
       k: ["price", "pricing", "cost", "how much", "plan", "plans", "subscription", "tier", "pay", "monthly", "cheap", "expensive"],
@@ -92,14 +92,14 @@
     { id: "start",
       k: ["get started", "getting started", "begin", "start", "try", "trial", "sign up", "signup", "how do i start", "early access", "access", "waitlist", "join"],
       boost: ["how do i get started", "request early access"],
-      a: "Modulus Studio is launching soon for Windows. [Request early access](/studio#download) and you're in as the doors open.\n\nWant something custom for your business instead? [Book a short call](/contact) and we'll map one workflow worth automating. No pitch, just a concrete first move.",
-      chips: ["Request early access", "Book a call", "See plans"] },
+      a: "Easy: [create your free account](/login?mode=create), and 25 credits come with it so you can genuinely try everything. Then [download Modulus Studio for Windows](/download), sign in, and you're making content in minutes. Upgrade to a monthly plan whenever the trial credits run low.\n\nWant something custom for your business instead? [Book a short call](/contact) and we'll map one workflow worth automating. No pitch, just a concrete first move.",
+      chips: ["Download for Windows", "How much does it cost?", "See plans"] },
 
     { id: "download",
       k: ["download", "install", "windows", "mac", "apple", "linux", "app store", "where do i get"],
       boost: ["download for windows"],
-      a: "Modulus Studio runs on Windows 10/11 and updates itself automatically, with Mac on the roadmap. It's in early access right now. [Request access](/studio#download) and we'll get you in as the doors open.",
-      chips: ["Request early access", "How much does it cost?"] },
+      a: "Modulus Studio runs on Windows 10/11 and updates itself automatically, with Mac on the roadmap. [Download it here](/download), sign in with your Modulus account, and you're set. Heads up: on the very first install Windows may ask you to confirm; click More info, then Run anyway.",
+      chips: ["Download for Windows", "How much does it cost?"] },
 
     { id: "cancel",
       k: ["cancel", "cancellation", "refund", "month to month", "commit", "contract", "lock in"],
@@ -155,8 +155,8 @@
 
     { id: "keys",
       k: ["api key", "api keys", "openai key", "openrouter", "byok", "bring your own", "managed", "keys"],
-      a: "Today the Studio desktop app works with your own AI key, so you stay in control of cost. A fully managed version, where you just sign in and use it with no keys at all, is on the way.",
-      chips: ["What's Modulus Studio?", "Request early access"] }
+      a: "No keys, no setup. You just sign in with your Modulus account and Studio handles all the AI behind the scenes. Your plan's credits cover everything, so there is nothing to configure and no separate AI bill.",
+      chips: ["What's Modulus Studio?", "How much does it cost?"] }
   ];
 
   var GREET = IS_STUDIO_WORLD
@@ -176,6 +176,8 @@
     "Sign in": "/login",
     "Read the latest insight": "/insights/source-faithful-ai",
     "Request early access": "/studio#download",
+    "Download for Windows": "/download",
+    "Start free": "/login?mode=create",
     "Email us": "mailto:james@modulustech.ai"
   };
 

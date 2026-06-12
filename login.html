@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modulus Studio — Sign in</title>
+  <title>Modulus Studio | Sign in</title>
   <meta name="description" content="Sign in or create your Modulus Studio account." />
   <meta name="robots" content="noindex" />
   <meta name="theme-color" content="#070f1c" />
@@ -44,9 +44,10 @@
             <div class="field"><label for="a-pass">Password</label><input id="a-pass" type="password" autocomplete="current-password" required minlength="8" /></div>
             <div class="forgot"><a href="#" data-auth="forgot">Forgot password?</a></div>
             <button class="s-btn gold full" type="submit" id="authSubmit">Sign in</button>
+            <p id="agreeLine" style="display:none;margin-top:10px;font-size:12px;color:rgba(234,240,247,.55);text-align:center">By creating an account you agree to the <a href="/terms" style="color:#E4C77D">Terms</a> and <a href="/privacy" style="color:#E4C77D">Privacy Policy</a>.</p>
           </form>
 
-          <div class="foundation" id="foundation">This is the front-end. Real sign-in turns on once we wire the backend (Google + email).</div>
+          <div class="foundation" id="foundation">Having trouble signing in? Email james@modulustech.ai and we will sort it out.</div>
 
           <div class="divider">or</div>
 
@@ -70,6 +71,8 @@
       document.getElementById("authLead").textContent = m === "create" ? "Start with Modulus Studio and grow from there." : "Sign in to manage your Modulus Studio account.";
       document.getElementById("authSubmit").textContent = m === "create" ? "Create account" : "Sign in";
       document.getElementById("a-pass").setAttribute("autocomplete", m === "create" ? "new-password" : "current-password");
+      var agree = document.getElementById("agreeLine");
+      if (agree) agree.style.display = m === "create" ? "" : "none";
     }
     /* The Google button, email sign-in, and create-account are wired by backend.js.
        Real auth runs once keys are set in backend.js; until then it shows the note. */

@@ -212,6 +212,12 @@
     // explicitly requested.
     var isCreateIntent = false;
     try { isCreateIntent = new URLSearchParams(location.search).get("mode") === "create"; } catch (e) {}
+    // A plan chosen before sign-in (pricing button or deep link) rides along
+    // in localStorage; the dashboard resumes that checkout after auth.
+    try {
+      var planParam = new URLSearchParams(location.search).get("plan");
+      if (planParam) localStorage.setItem("modulus-pending-plan", planParam);
+    } catch (e) {}
 
     if (hasAuth) {
       ensureClient().then(function (c) {
@@ -314,7 +320,13 @@
           el.textContent = "Starting checkout…";
           function fail(msg) { el.textContent = label; el.removeAttribute("data-busy"); if (msg) alert(msg); }
           accessToken().then(function (token) {
-            if (!token) { window.location.assign("/login"); return; } // sign in, then pick a plan
+            if (!token) {
+              // Carry the chosen plan through the sign-in detour so the
+              // dashboard can resume checkout instead of dropping intent.
+              try { localStorage.setItem("modulus-pending-plan", tier); } catch (e2) {}
+              window.location.assign("/login?plan=" + encodeURIComponent(tier));
+              return;
+            }
             return fetch(fnUrl("create-checkout"), {
               method: "POST",
               headers: { "content-type": "application/json", "Authorization": "Bearer " + token },
@@ -688,7 +700,19 @@
           // Normal load: keep the branded loader up until the first
           // entitlement render so the dashboard never paints placeholder
           // values. The promise resolves (never rejects) even on failure.
-          loadEntitlement().then(function () { show(true); });
+          loadEntitlement().then(function (d) {
+            show(true);
+            // Resume a checkout the visitor started before signing in. Only
+            // when they are not already on a paid plan, and only once.
+            var pending = null;
+            try { pending = localStorage.getItem("modulus-pending-plan"); } catch (e) {}
+            if (!pending) return;
+            try { localStorage.removeItem("modulus-pending-plan"); } catch (e) {}
+            var paid = d && d.plan && d.plan.key && d.plan.key !== "free" && d.subscription;
+            if (paid) return;
+            var btn = document.querySelector('[data-checkout="' + pending + '"]');
+            if (btn && !btn.getAttribute("data-current")) btn.click();
+          });
         }
       });
     });
