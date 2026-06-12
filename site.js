@@ -15,9 +15,9 @@
   // are a no-JS / SEO fallback that syncPlanCards() overwrites from this
   // object on load. Exposed on window so the injected backend.js can read it.
   window.MODULUS_PLANS = {
-    starter: { name: "Starter", price: "$19", period: "/ month", credits: "600",   limit: 600 },
-    pro:     { name: "Pro",     price: "$39", period: "/ month", credits: "1,500", limit: 1500 },
-    studio:  { name: "Studio",  price: "$99", period: "/ month", credits: "4,000", limit: 4000 }
+    starter: { name: "Starter", price: "$19", period: "/ month", credits: "600",   limit: 600,  seats: 1 },
+    pro:     { name: "Pro",     price: "$39", period: "/ month", credits: "1,500", limit: 1500, seats: 3 },
+    studio:  { name: "Studio",  price: "$99", period: "/ month", credits: "4,000", limit: 4000, seats: 5 }
   };
   var LINKS = [
     ["Services", "/services"],

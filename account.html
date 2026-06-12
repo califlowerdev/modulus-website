@@ -91,6 +91,59 @@
     .dpanel[hidden] { display: none !important; }
     /* Phones: tightened so all four tabs fit a 375px viewport without scroll. */
     @media (max-width: 640px) { .dtabs { gap: 2px; padding: 4px; } .dtab { padding: 8px 8px; font-size: 12.5px; } }
+    /* ------------------------------------------------------------------
+       Dashboard v3 (2026-06-11): usage insights + motion.
+       ------------------------------------------------------------------ */
+    /* Daily usage chart: one bar per day, gold fading down. */
+    .uchart { display: flex; align-items: flex-end; gap: 5px; height: 110px; margin-top: 16px; }
+    .uchart .ubar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; height: 100%; }
+    .uchart .ubar i { display: block; width: 100%; height: 0%; min-height: 3px; border-radius: 5px 5px 2px 2px; background: linear-gradient(180deg, var(--s-gold), rgba(228,199,125,.22)); transition: height .8s cubic-bezier(.22,1,.36,1); }
+    .uchart .ubar.zero i { background: rgba(255,255,255,.06); }
+    .uchart .ubar b { font-size: 9.5px; color: var(--s-ink3); text-align: center; margin-top: 6px; font-weight: 500; }
+    .ucap { font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--s-ink3); margin: 20px 0 10px; font-weight: 600; }
+    /* Per-feature breakdown bars; each feature owns a hue (--fc). */
+    .ubreak { display: grid; gap: 9px; }
+    .ubrow { display: grid; grid-template-columns: minmax(86px, 112px) 1fr auto; gap: 12px; align-items: center; font-size: 13px; }
+    .ubrow .f { color: var(--s-ink2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ubrow .v { color: var(--s-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .ubrow .bar { height: 6px; border-radius: 4px; background: rgba(255,255,255,.06); overflow: hidden; }
+    .ubrow .bar i { display: block; height: 100%; width: 0%; border-radius: 4px; background: var(--fc, var(--s-gold)); transition: width .8s cubic-bezier(.22,1,.36,1); }
+    /* Team tab: roster rows, invite form, seat meter. */
+    .trow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--s-line); font-size: 14px; flex-wrap: wrap; }
+    .trow:last-child { border-bottom: 0; }
+    .trow .t-who { color: var(--s-ink); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .trow .t-meta { color: var(--s-ink3); font-size: 12.5px; }
+    .trow .t-act { display: flex; gap: 8px; flex-wrap: wrap; }
+    .t-link { background: none; border: 0; padding: 0; font: inherit; font-size: 13px; font-weight: 600; color: var(--s-gold); cursor: pointer; }
+    .t-link.danger { color: #E2606B; }
+    .t-pill { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--s-ink3); border: 1px solid var(--s-line); border-radius: var(--pill); padding: 3px 9px; }
+    .seatdots { display: flex; gap: 5px; margin: 4px 0 14px; }
+    .seatdots i { width: 26px; height: 7px; border-radius: 4px; background: rgba(255,255,255,.08); }
+    .seatdots i.on { background: linear-gradient(90deg, var(--s-gold2), var(--s-gold)); }
+    .seatdots i.pend { background: rgba(228,199,125,.32); }
+    .tinvite { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .tinvite input { flex: 1; min-width: 200px; box-sizing: border-box; background: rgba(255,255,255,.04); border: 1px solid var(--s-line); border-radius: 10px; padding: 11px 13px; font-size: 14px; color: var(--s-ink); font-family: inherit; }
+    .tinvite input:focus { outline: none; border-color: rgba(228,199,125,.5); }
+    .tnote { font-size: 13px; margin-top: 10px; min-height: 18px; color: var(--s-ink3); }
+    .tnote.ok { color: #4FD1A5; } .tnote.err { color: #E2606B; }
+    .a-by { font-style: normal; color: var(--s-ink3); font-size: 12px; font-weight: 400; }
+    /* Low-credit nudge inside the credits hero. */
+    .nudge { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 14px; padding: 12px 14px; border: 1px solid rgba(226,96,107,.32); background: rgba(201,79,94,.08); border-radius: 12px; font-size: 13.5px; color: var(--s-ink2); }
+    .s-btn.sm { padding: 8px 14px; font-size: 13px; }
+    /* Motion: cards rise in (staggered) whenever a tab is shown; gentle
+       hover lift; the credits gauge eases to its width. */
+    .dpanel.panel-in > .dcard { animation: cardIn .5s cubic-bezier(.22,1,.36,1) backwards; }
+    .dpanel.panel-in > .dcard:nth-child(2) { animation-delay: .07s; }
+    .dpanel.panel-in > .dcard:nth-child(3) { animation-delay: .14s; }
+    .dpanel.panel-in > .dcard:nth-child(4) { animation-delay: .21s; }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .dash .dcard { transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+    .dash .dcard:hover { transform: translateY(-2px); border-color: rgba(228,199,125,.26); }
+    #creditsCard .usagebar > span { transition: width .9s cubic-bezier(.22,1,.36,1); }
+    @media (prefers-reduced-motion: reduce) {
+      .dpanel.panel-in > .dcard { animation: none; }
+      .dash .dcard, #creditsCard .usagebar > span, .uchart .ubar i, .ubrow .bar i { transition: none; }
+    }
   </style>
   <script>
     /* Pre-paint: if a Supabase session is stored, show the branded loader
@@ -134,8 +187,9 @@
                  a post-checkout return (?checkout=success) opens Plan & billing. -->
             <div class="dtabs" id="dashTabs" role="tablist" aria-label="Dashboard sections">
               <button class="dtab on" type="button" role="tab" data-tab="overview" aria-selected="true">Overview</button>
-              <button class="dtab" type="button" role="tab" data-tab="plan" aria-selected="false">Plan &amp; billing</button>
+              <button class="dtab" type="button" role="tab" data-tab="plan" aria-selected="false">Plan</button>
               <button class="dtab" type="button" role="tab" data-tab="activity" aria-selected="false">Activity</button>
+              <button class="dtab" type="button" role="tab" data-tab="team" aria-selected="false">Team</button>
               <button class="dtab" type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button>
             </div>
 
@@ -154,7 +208,20 @@
                   <span>Generations, source checks, and transcription all spend from this balance.</span>
                   <span id="usageRefillRow"></span>
                 </div>
+                <div class="nudge" id="lowCreditNudge" style="display:none">
+                  <span id="lowCreditMsg"></span>
+                  <button class="s-btn gold sm" type="button" data-goto-tab="plan">See plans</button>
+                </div>
                 <p class="hint" id="noPlanHint" style="display:none"></p>
+              </div>
+
+              <!-- usage insights (entitlement v8 `usage`; hidden until data arrives) -->
+              <div class="dcard glass full" id="usageCard" style="display:none">
+                <div class="dcard-h"><h2>Usage</h2><span class="muted" style="font-size:13px">Daily credits, last 14 days</span></div>
+                <div class="uchart" id="usageChart" aria-hidden="true"></div>
+                <div class="ucap">By feature &middot; last 30 days</div>
+                <div class="ubreak" id="usageBreak"></div>
+                <p class="hint" id="usagePace" style="margin-top:16px"></p>
               </div>
 
               <!-- plan at a glance (renderPlan fills ovPlanName/ovPlanHint) -->
@@ -211,13 +278,13 @@
                     <span class="pop-pill">Most popular</span>
                     <h3>Pro</h3>
                     <div class="t-price"><span class="amt">$39</span> <span class="per">/ month</span></div>
-                    <div class="t-creds"><span class="t-cr">1,500</span> credits a month &middot; premium AI models</div>
+                    <div class="t-creds"><span class="t-cr">1,500</span> credits a month &middot; 3 team seats</div>
                     <a class="s-btn gold" href="/studio#pricing" data-checkout="pro" data-plan-btn>Upgrade</a>
                   </div>
                   <div class="tier3" data-plan="studio">
                     <h3>Studio</h3>
                     <div class="t-price"><span class="amt">$99</span> <span class="per">/ month</span></div>
-                    <div class="t-creds"><span class="t-cr">4,000</span> credits a month &middot; built for volume</div>
+                    <div class="t-creds"><span class="t-cr">4,000</span> credits a month &middot; 5 team seats</div>
                     <a class="s-btn gold" href="/studio#pricing" data-checkout="studio" data-plan-btn>Upgrade</a>
                   </div>
                 </div>
@@ -236,6 +303,14 @@
                 <div id="activityList" style="margin-top:8px">
                   <div class="act-empty" id="activityEmpty">Loading your recent activity&hellip;</div>
                 </div>
+              </div>
+            </div>
+
+            <!-- TEAM (rendered by backend.js renderTeam from entitlement v9) -->
+            <div class="dashgrid dpanel" data-panel="team" role="tabpanel" aria-label="Team" hidden>
+              <div class="dcard glass full" id="teamCard">
+                <div class="dcard-h"><h2>Team</h2><span class="muted" id="teamSeatNote" style="font-size:13px"></span></div>
+                <div id="teamBody" style="margin-top:8px"><div class="act-empty">Loading your team&hellip;</div></div>
               </div>
             </div>
 
@@ -288,7 +363,7 @@
     (function () {
       var bar = document.getElementById("dashTabs");
       if (!bar) return;
-      var names = ["overview", "plan", "activity", "settings"];
+      var names = ["overview", "plan", "activity", "team", "settings"];
       function show(name) {
         if (names.indexOf(name) < 0) name = "overview";
         var btns = bar.querySelectorAll(".dtab");
@@ -299,7 +374,13 @@
         }
         var panels = document.querySelectorAll(".dpanel");
         for (var p = 0; p < panels.length; p++) {
-          if (panels[p].getAttribute("data-panel") === name) panels[p].removeAttribute("hidden");
+          if (panels[p].getAttribute("data-panel") === name) {
+            panels[p].removeAttribute("hidden");
+            // Replay the card entrance every time the tab is shown.
+            panels[p].classList.remove("panel-in");
+            void panels[p].offsetWidth;
+            panels[p].classList.add("panel-in");
+          }
           else panels[p].setAttribute("hidden", "");
         }
       }

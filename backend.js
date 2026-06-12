@@ -366,6 +366,28 @@
   function planLimit(plan) { var p = planInfo(plan); return p ? p.limit : 0; }
   function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
   function setText(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; }
+  function reducedMotion() {
+    try { return window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; }
+    catch (e) { return false; }
+  }
+  // Animate a number from its last shown value to `to` (~800ms ease-out).
+  // data-val remembers the landing value so re-renders don't replay from 0.
+  function countUp(id, to) {
+    var el = document.getElementById(id);
+    if (el == null) return;
+    var from = parseFloat(el.getAttribute("data-val") || "0") || 0;
+    el.setAttribute("data-val", String(to));
+    if (reducedMotion() || from === to) { el.textContent = to.toLocaleString(); return; }
+    var start = null, dur = 800;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min(1, (ts - start) / dur);
+      p = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(from + (to - from) * p).toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
   function fmtDate(s) {
     if (!s) return "—";
     try { return new Date(s).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }); }
@@ -401,10 +423,13 @@
     // Tier color on the header badge (CSS keys off data-plan).
     var badge = document.getElementById("acctPlanBadge");
     if (badge) badge.setAttribute("data-plan", plan || "none");
-    setText("usageUsed", balance.toLocaleString());
+    countUp("usageUsed", balance);
     setText("usageLimit", limit ? limit.toLocaleString() : "");
     setText("usagePct", pctLeft + "%");
-    var bar = document.getElementById("usageBar"); if (bar) bar.style.width = pctLeft + "%";
+    // Set the gauge width a beat after render so the CSS transition plays
+    // once the dashboard is actually visible (it renders behind the loader).
+    var bar = document.getElementById("usageBar");
+    if (bar) setTimeout(function () { bar.style.width = pctLeft + "%"; }, 90);
     // Gauge color tracks how much is left: ok = green, mid = gold, low = red.
     var hero = document.getElementById("creditsCard");
     if (hero) hero.setAttribute("data-level", pctLeft > 50 ? "ok" : pctLeft > 20 ? "mid" : "low");
@@ -436,6 +461,21 @@
     if (sRow) sRow.style.display = status ? "" : "none";
     var rRow = document.getElementById("billRenewRow");
     if (rRow) rRow.style.display = periodEnd ? "" : "none";
+    // Low-credit nudge (dashboard v3): only when a real plan is low, with
+    // honest copy per situation. The button deep-links to the Plan tab.
+    var nudge = document.getElementById("lowCreditNudge");
+    if (nudge) {
+      var low = !!plan && limit > 0 && pctLeft <= 20;
+      nudge.style.display = low ? "" : "none";
+      if (low) {
+        var lowMsg = plan === "free"
+          ? "Your trial credits are almost used up. Pick a plan to keep creating."
+          : canceled
+            ? "Running low, and your plan ends " + fmtDate(periodEnd) + ". Restart a plan to keep your credits coming."
+            : "Running low for this cycle. Credits refill " + fmtDate(periodEnd) + ", or upgrade for more headroom.";
+        setText("lowCreditMsg", lowMsg);
+      }
+    }
     // Overview tab's plan-at-a-glance card (tabs, 2026-06-11): name plus one
     // honest status line; the full detail lives on the Plan & billing tab.
     setText("ovPlanName", name ? name : "no plan yet");
@@ -494,6 +534,8 @@
 
   function renderEntitlement(d) {
     renderActivity(d && d.recent);
+    renderUsage(d && d.usage, d && typeof d.balance === "number" ? d.balance : 0);
+    renderTeam(d && d.team);
     if (!d || !d.plan) { renderPlan(null); return; }
     renderPlan({
       plan: d.plan.key,
@@ -502,6 +544,287 @@
       balance: typeof d.balance === "number" ? d.balance : 0,
       limit: d.plan.monthly_credits || 0,
       current_period_end: d.subscription ? d.subscription.current_period_end : null
+    });
+  }
+
+  /* --------------------- USAGE INSIGHTS (dashboard v3) -------------------- */
+  // Renders the Overview usage card from entitlement v8's `usage` aggregates:
+  // a 14-day daily bar chart, a 30-day per-feature breakdown, and an honest
+  // pace/runway sentence. Hidden entirely while the API doesn't send `usage`
+  // (v7 and earlier), so the dashboard degrades cleanly.
+  var FEATURE_COLORS = {
+    "Generation": "#E4C77D",
+    "Source check": "#4FD1A5",
+    "Transcription": "#9D8CFF",
+    "Indexing": "#9FB3CC"
+  };
+  function fmtCredits(c) {
+    if (c >= 1) return (Math.round(c * 10) / 10).toLocaleString();
+    return c > 0 ? "under 1" : "0";
+  }
+  function renderUsage(usage, balance) {
+    var card = document.getElementById("usageCard");
+    if (!card) return;
+    if (!usage) { card.style.display = "none"; return; }
+    card.style.display = "";
+    var byDay = {};
+    var daily = usage.daily || [];
+    for (var i = 0; i < daily.length; i++) byDay[daily[i].d] = daily[i].credits;
+    // Last 14 days, zero-filled, oldest first. Day keys are UTC to match the
+    // server's bucketing.
+    var days = [], max = 0;
+    for (var k = 13; k >= 0; k--) {
+      var dt = new Date(Date.now() - k * 86400000);
+      var cr = byDay[dt.toISOString().slice(0, 10)] || 0;
+      if (cr > max) max = cr;
+      days.push({ label: dt.getUTCDate(), credits: cr, dt: dt });
+    }
+    var chart = document.getElementById("usageChart");
+    if (chart) {
+      var html = "";
+      for (var j = 0; j < days.length; j++) {
+        var d = days[j];
+        var pct = max ? Math.max(4, Math.round(d.credits / max * 100)) : 0;
+        var title = d.dt.toLocaleDateString(undefined, { month: "short", day: "numeric" }) +
+          " · " + fmtCredits(d.credits) + (d.credits === 1 ? " credit" : " credits");
+        html += '<span class="ubar' + (d.credits ? "" : " zero") + '" title="' + esc(title) + '">' +
+          '<i data-h="' + pct + '"></i><b>' + d.label + "</b></span>";
+      }
+      chart.innerHTML = html;
+      // Heights land a beat later so the grow-in transition plays on screen.
+      setTimeout(function () {
+        var bars = chart.querySelectorAll("i[data-h]");
+        for (var b = 0; b < bars.length; b++) bars[b].style.height = bars[b].getAttribute("data-h") + "%";
+      }, reducedMotion() ? 0 : 140);
+    }
+    var brk = document.getElementById("usageBreak");
+    if (brk) {
+      var feats = (usage.by_feature || []).slice(0, 4);
+      if (!feats.length) {
+        brk.innerHTML = '<p class="hint" style="margin:0">No usage yet. Open Modulus Studio and run your first generation; your numbers show up here.</p>';
+      } else {
+        var fmax = feats[0].credits || 1;
+        var fh = "";
+        for (var f = 0; f < feats.length; f++) {
+          var fe = feats[f];
+          var color = FEATURE_COLORS[fe.feature] || "#E4C77D";
+          fh += '<div class="ubrow"><span class="f">' + esc(fe.feature) + '</span>' +
+            '<span class="bar"><i style="--fc:' + color + '" data-w="' + Math.max(3, Math.round(fe.credits / fmax * 100)) + '"></i></span>' +
+            '<span class="v">' + fmtCredits(fe.credits) + " credits</span></div>";
+        }
+        brk.innerHTML = fh;
+        setTimeout(function () {
+          var ws = brk.querySelectorAll("i[data-w]");
+          for (var w = 0; w < ws.length; w++) ws[w].style.width = ws[w].getAttribute("data-w") + "%";
+        }, reducedMotion() ? 0 : 140);
+      }
+    }
+    // Pace and runway, computed from the last 7 days. Never alarmist: round
+    // up to a floor of 1 day and switch to "months" past 90 days.
+    var pace = document.getElementById("usagePace");
+    if (pace) {
+      var sum7 = 0;
+      for (var p = days.length - 7; p < days.length; p++) sum7 += days[p].credits;
+      var avg = sum7 / 7;
+      if (avg <= 0) {
+        pace.textContent = "No usage this week. Your balance isn't going anywhere.";
+      } else {
+        var daysLeft = balance / avg;
+        var avgLabel = avg >= 1 ? String(Math.round(avg * 10) / 10) : "under 1";
+        pace.textContent = daysLeft > 90
+          ? "You're averaging " + avgLabel + " credits a day this week. At that pace you have months of headroom."
+          : "You're averaging " + avgLabel + " credits a day this week. Your balance covers about " +
+            Math.max(1, Math.round(daysLeft)) + " more " + (Math.max(1, Math.round(daysLeft)) === 1 ? "day" : "days") + " at that pace.";
+      }
+    }
+  }
+
+  /* ------------------------ TEAM SEATS (v9, 2026-06-11) ------------------- */
+  // The owner of a Pro (3 seats) or Studio (5 seats) plan invites teammates
+  // by share-link; everyone shares the plan's credit pool. The `team` edge
+  // function manages the roster; entitlement v9 reports it.
+  function teamReq(action, payload) {
+    return accessToken().then(function (token) {
+      if (!token) return { ok: false, status: 401, d: { error: "not_authenticated" } };
+      var body = payload || {};
+      body.action = action;
+      return fetch(fnUrl("team"), {
+        method: "POST",
+        headers: { "content-type": "application/json", "Authorization": "Bearer " + token },
+        body: JSON.stringify(body)
+      }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, status: r.status, d: d }; }); });
+    }).catch(function () { return { ok: false, status: 0, d: { error: "network", message: "Network hiccup. Try again." } }; });
+  }
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+      document.body.removeChild(ta);
+      if (ok) resolve(); else reject(new Error("copy"));
+    });
+  }
+  function joinUrl(token) { return "https://modulustech.ai/join?token=" + token; }
+  function renderTeam(team) {
+    var body = document.getElementById("teamBody");
+    var note = document.getElementById("teamSeatNote");
+    if (!body) return;
+    if (!team) {
+      if (note) note.textContent = "";
+      body.innerHTML = '<p class="hint" style="margin:0">Team info didn\'t load just now. Refresh in a moment.</p>';
+      return;
+    }
+    if (team.role === "member") {
+      if (note) note.textContent = "Shared plan";
+      body.innerHTML =
+        '<p class="muted" style="margin:0 0 6px">You\'re on <b style="color:var(--s-ink)">' + esc(team.owner_email || "your team owner") + "</b>'s team.</p>" +
+        '<p class="hint" style="margin:0 0 14px">You share their plan and credits; anything you create spends from the team balance.</p>' +
+        '<button class="t-link danger" type="button" data-team-leave>Leave team</button>' +
+        '<p class="tnote" id="teamNote"></p>';
+      return;
+    }
+    var seats = team.seats || 1;
+    var members = team.members || [];
+    var invites = team.invites || [];
+    var used = 1 + members.length;
+    if (note) note.textContent = used + " of " + seats + (seats === 1 ? " seat" : " seats") + " used";
+    if (seats <= 1) {
+      body.innerHTML =
+        '<p class="muted" style="margin:0 0 6px">Bring your team.</p>' +
+        '<p class="hint" style="margin:0 0 14px">Pro includes 3 seats and Studio includes 5. Teammates sign in with their own account and share one pool of credits, so a whole ministry or content team runs on one plan.</p>' +
+        '<button class="s-btn gold sm" type="button" data-goto-tab="plan">See plans</button>';
+      return;
+    }
+    var html = '<div class="seatdots" aria-hidden="true">';
+    for (var s = 0; s < seats; s++) {
+      html += '<i class="' + (s < used ? "on" : s < used + invites.length ? "pend" : "") + '"></i>';
+    }
+    html += "</div>";
+    html += '<div class="trow"><span class="t-who">You</span><span class="t-pill">Owner</span></div>';
+    for (var i = 0; i < members.length; i++) {
+      var m = members[i];
+      html += '<div class="trow"><span class="t-who">' + esc(m.email || "Teammate") +
+        '</span><span class="t-act"><span class="t-meta">Joined ' + esc(fmtDate(m.added_at)) +
+        '</span><button class="t-link danger" type="button" data-team-remove="' + esc(m.id) + '">Remove</button></span></div>';
+    }
+    for (var v = 0; v < invites.length; v++) {
+      var inv = invites[v];
+      html += '<div class="trow"><span class="t-who">' + esc(inv.email) +
+        '</span><span class="t-act"><span class="t-meta">Invited &middot; expires ' + esc(fmtDate(inv.expires_at)) +
+        '</span><button class="t-link" type="button" data-team-copy="' + esc(inv.token) + '">Copy link</button>' +
+        '<button class="t-link danger" type="button" data-team-revoke="' + esc(inv.token) + '">Revoke</button></span></div>';
+    }
+    if (used + invites.length < seats) {
+      html += '<form class="tinvite" id="teamInviteForm" autocomplete="off">' +
+        '<input id="teamInviteEmail" type="email" required placeholder="teammate@company.com" aria-label="Teammate email" />' +
+        '<button class="s-btn gold sm" type="submit" id="teamInviteBtn">Create invite link</button></form>';
+    }
+    html += '<p class="hint" style="margin-top:12px">Each teammate creates their own free account, then your link moves them onto this plan. Everyone shares this plan\'s credits, and the activity feed shows who spent what.</p>';
+    html += '<p class="tnote" id="teamNote"></p>';
+    body.innerHTML = html;
+  }
+  function teamNote(msg, ok) {
+    var n = document.getElementById("teamNote");
+    if (n) { n.textContent = msg; n.className = "tnote " + (ok ? "ok" : "err"); }
+  }
+  function wireTeamActions() {
+    var body = document.getElementById("teamBody");
+    if (!body || body.getAttribute("data-wired")) return;
+    body.setAttribute("data-wired", "1");
+    body.addEventListener("click", function (ev) {
+      var t = ev.target;
+      var el = t && t.closest ? t.closest("[data-team-copy],[data-team-revoke],[data-team-remove],[data-team-leave]") : null;
+      if (!el) return;
+      ev.preventDefault();
+      if (el.hasAttribute("data-team-copy")) {
+        var url = joinUrl(el.getAttribute("data-team-copy"));
+        copyText(url)
+          .then(function () { teamNote("Invite link copied. Send it to your teammate however you like.", true); })
+          .catch(function () { teamNote("Couldn't copy automatically. The link: " + url, false); });
+        return;
+      }
+      var action = el.hasAttribute("data-team-revoke") ? "revoke" : el.hasAttribute("data-team-remove") ? "remove" : "leave";
+      if (action === "remove" && !window.confirm("Remove this teammate? They keep their own account but lose access to this plan's credits.")) return;
+      if (action === "leave" && !window.confirm("Leave this team? You'll go back to your own plan.")) return;
+      var payload = action === "revoke" ? { token: el.getAttribute("data-team-revoke") }
+        : action === "remove" ? { member_id: el.getAttribute("data-team-remove") } : {};
+      el.setAttribute("disabled", "1");
+      teamReq(action, payload).then(function (res) {
+        if (!res.ok) {
+          el.removeAttribute("disabled");
+          teamNote((res.d && res.d.message) || "That didn't work. Try again in a moment.", false);
+          return;
+        }
+        if (action === "leave") { window.location.reload(); return; }
+        loadEntitlement().then(function () {
+          teamNote(action === "revoke" ? "Invite revoked. The seat is free again." : "Teammate removed.", true);
+        });
+      });
+    });
+    body.addEventListener("submit", function (ev) {
+      var form = ev.target;
+      if (!form || form.id !== "teamInviteForm") return;
+      ev.preventDefault();
+      var input = document.getElementById("teamInviteEmail");
+      var btn = document.getElementById("teamInviteBtn");
+      var email = (input && input.value || "").trim();
+      if (!email) return;
+      if (btn) { btn.setAttribute("disabled", "1"); btn.textContent = "Creating…"; }
+      teamReq("invite", { email: email }).then(function (res) {
+        if (!res.ok) {
+          if (btn) { btn.removeAttribute("disabled"); btn.textContent = "Create invite link"; }
+          teamNote((res.d && res.d.message) || "Couldn't create the invite.", false);
+          return;
+        }
+        var url = res.d && res.d.url;
+        loadEntitlement().then(function () {
+          if (url) {
+            copyText(url)
+              .then(function () { teamNote("Invite created and the link is on your clipboard. Send it to " + email + ".", true); })
+              .catch(function () { teamNote("Invite created. Use Copy link above to grab it.", true); });
+          } else { teamNote("Invite created.", true); }
+        });
+      });
+    });
+  }
+  // /join page: accept an invite link. Signed out -> stash the token, send
+  // them to sign in; the dashboard finishes the join when they land back.
+  function wireJoin() {
+    var card = document.getElementById("joinCard");
+    if (!card) return;
+    var status = document.getElementById("joinStatus");
+    var signIn = document.getElementById("joinSignIn");
+    var go = document.getElementById("joinGo");
+    function say(msg) { if (status) status.textContent = msg; }
+    var m = location.search.match(/[?&]token=([0-9a-fA-F-]{16,})/);
+    var token = m ? m[1] : null;
+    if (!token) { try { token = localStorage.getItem("modulus-pending-join"); } catch (e) {} }
+    if (!token) { say("This invite link is missing its code. Ask your team owner for a fresh one."); return; }
+    try { localStorage.setItem("modulus-pending-join", token); } catch (e) {}
+    if (!hasAuth) { say("Sign in, or create a free account with the invited email, to take your seat."); if (signIn) signIn.style.display = ""; return; }
+    accessToken().then(function (tok) {
+      if (!tok) {
+        say("Sign in, or create a free account with the invited email, to take your seat.");
+        if (signIn) signIn.style.display = "";
+        return;
+      }
+      say("Accepting your invite…");
+      teamReq("accept", { token: token }).then(function (res) {
+        try { localStorage.removeItem("modulus-pending-join"); } catch (e) {}
+        if (res.ok) {
+          say("You're in. You now share " + ((res.d && res.d.owner_email) || "your team owner") + "'s plan and credits.");
+          if (go) go.style.display = "";
+        } else {
+          say((res.d && res.d.message) || "Couldn't accept this invite.");
+          if (res.d && res.d.error === "wrong_email" && signIn) {
+            signIn.textContent = "Sign in with the invited email";
+            signIn.style.display = "";
+          } else if (go) { go.style.display = ""; }
+        }
+      });
     });
   }
 
@@ -534,7 +857,9 @@
       var c = typeof e.credits === "number" ? e.credits : 0;
       var cost = c >= 1 ? (Math.round(c * 10) / 10).toLocaleString() + " credits"
         : c > 0 ? "<1 credit" : "free";
-      html += '<div class="actrow"><span class="a-feat">' + esc(e.feature || "Activity") +
+      // v9: on a team, each charge names who spent it ("You" or their email).
+      var by = e.by ? ' <i class="a-by">&middot; ' + esc(e.by) + "</i>" : "";
+      html += '<div class="actrow"><span class="a-feat">' + esc(e.feature || "Activity") + by +
         '</span><span class="a-when">' + esc(relTime(e.at)) + '</span>' +
         '<span class="a-cost">' + cost + '</span></div>';
     }
@@ -668,19 +993,57 @@
       if (loading) loading.style.display = "none";
       if (inEl) inEl.style.display = signedIn ? "" : "none";
       if (outEl) outEl.style.display = signedIn ? "none" : "block";
+      // First reveal: replay the card entrance on whichever tab is visible
+      // (the tab script handles subsequent switches).
+      if (signedIn) {
+        var vis = document.querySelector(".dpanel:not([hidden])");
+        if (vis) { vis.classList.remove("panel-in"); void vis.offsetWidth; vis.classList.add("panel-in"); }
+      }
     }
 
+    wireTeamActions();
+
     // Preview the populated dashboard without a backend: account.html?preview=1
+    // (add &low=1 for the low-credit nudge, &member=1 / &solo=1 for team states)
     if (/[?&]preview=1/.test(location.search)) {
       show(true);
       setText("acctHello", "Welcome back, James.");
       setText("acctEmail", "you@modulustech.ai");
-      renderPlan({ plan: "pro", display_name: "Pro", status: "active", balance: 1280, limit: 1500, current_period_end: "2026-07-01" });
+      var lowDemo = /[?&]low=1/.test(location.search);
+      renderPlan({ plan: "pro", display_name: "Pro", status: "active", balance: lowDemo ? 140 : 1280, limit: 1500, current_period_end: "2026-07-01" });
       renderActivity([
         { feature: "Source check", credits: 2.4, at: new Date(Date.now() - 6e4).toISOString() },
         { feature: "Generation", credits: 0.9, at: new Date(Date.now() - 36e5).toISOString() },
         { feature: "Indexing", credits: 0.36, at: new Date(Date.now() - 72e5).toISOString() }
       ]);
+      var demoDaily = [];
+      var demoSpend = [3.2, 0, 5.1, 7.8, 2.4, 0, 1.2, 9.6, 4.3, 6.1, 0, 2.8, 5.5, 3.9];
+      for (var di = 0; di < 14; di++) {
+        demoDaily.push({ d: new Date(Date.now() - (13 - di) * 86400000).toISOString().slice(0, 10), credits: demoSpend[di] });
+      }
+      renderUsage({
+        window_days: 30,
+        total_credits: 86.4,
+        by_feature: [
+          { feature: "Generation", credits: 41.2 },
+          { feature: "Source check", credits: 28.7 },
+          { feature: "Transcription", credits: 12.1 },
+          { feature: "Indexing", credits: 4.4 }
+        ],
+        daily: demoDaily,
+        capped: false
+      }, lowDemo ? 140 : 1280);
+      if (/[?&]member=1/.test(location.search)) {
+        renderTeam({ role: "member", owner_email: "owner@ministry.org" });
+      } else if (/[?&]solo=1/.test(location.search)) {
+        renderTeam({ role: "owner", seats: 1, members: [], invites: [] });
+      } else {
+        renderTeam({
+          role: "owner", seats: 3,
+          members: [{ id: "m1", email: "editor@ministry.org", added_at: "2026-06-01T00:00:00Z" }],
+          invites: [{ token: "demo-token-1234", email: "writer@ministry.org", created_at: "2026-06-10T00:00:00Z", expires_at: "2026-06-24T00:00:00Z" }]
+        });
+      }
       return;
     }
     if (!hasAuth) { show(false); return; }
@@ -707,10 +1070,21 @@
           // Clean the URL so a refresh doesn't re-trigger.
           try { history.replaceState({}, "", "/account"); } catch (e) {}
         } else {
+          // Finish a join that started on /join while signed out: accept the
+          // stashed invite first so the very first render shows the team.
+          var pendingJoin = null;
+          try { pendingJoin = localStorage.getItem("modulus-pending-join"); } catch (e) {}
+          if (pendingJoin) { try { localStorage.removeItem("modulus-pending-join"); } catch (e) {} }
+          var preStep = pendingJoin
+            ? teamReq("accept", { token: pendingJoin }).then(function (res) {
+                if (res.ok) { try { window.location.hash = "#team"; } catch (e) {} }
+                else if (res.d && res.d.message) { window.alert(res.d.message); }
+              })
+            : Promise.resolve();
           // Normal load: keep the branded loader up until the first
           // entitlement render so the dashboard never paints placeholder
           // values. The promise resolves (never rejects) even on failure.
-          loadEntitlement().then(function (d) {
+          preStep.then(function () { return loadEntitlement(); }).then(function (d) {
             show(true);
             // Resume a checkout the visitor started before signing in. Only
             // when they are not already on a paid plan, and only once.
@@ -728,7 +1102,7 @@
     });
   }
 
-  function boot() { wireLogin(); wireCheckout(); wireAccount(); }
+  function boot() { wireLogin(); wireCheckout(); wireAccount(); wireJoin(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();
