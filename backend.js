@@ -436,6 +436,16 @@
     if (sRow) sRow.style.display = status ? "" : "none";
     var rRow = document.getElementById("billRenewRow");
     if (rRow) rRow.style.display = periodEnd ? "" : "none";
+    // Overview tab's plan-at-a-glance card (tabs, 2026-06-11): name plus one
+    // honest status line; the full detail lives on the Plan & billing tab.
+    setText("ovPlanName", name ? name : "no plan yet");
+    var ovHint = document.getElementById("ovPlanHint");
+    if (ovHint) {
+      if (!plan) ovHint.textContent = "Pick a plan to get monthly credits.";
+      else if (!periodEnd) ovHint.textContent = "One-time trial credits. Every tool unlocked.";
+      else if (canceled) ovHint.textContent = "Ends " + fmtDate(periodEnd) + ".";
+      else ovHint.textContent = "Renews " + fmtDate(periodEnd) + ".";
+    }
     var noPlan = document.getElementById("noPlanHint");
     if (noPlan) {
       if (plan) { noPlan.style.display = "none"; }

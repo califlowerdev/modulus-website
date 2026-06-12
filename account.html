@@ -57,9 +57,6 @@
     #creditsCard .usagepct b { color: #4FD1A5; }
     #creditsCard[data-level="mid"] .usagepct b { color: var(--s-gold); }
     #creditsCard[data-level="low"] .usagepct b { color: #E2606B; }
-    .acctmeta { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-    .acctmeta .who { color: var(--s-ink3); font-size: 14px; }
-    .acctmeta .who b { color: var(--s-ink); }
     /* Phone-width resilience: the hero meta sentence and the refill date get
        their own rows instead of fracturing side by side. */
     .dash .usagemeta { flex-wrap: wrap; gap: 6px 16px; }
@@ -83,6 +80,17 @@
     .pnote { font-size: 13px; margin-top: 8px; min-height: 18px; }
     .pnote.ok { color: #4FD1A5; } .pnote.err { color: #E2606B; }
     .provider-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--s-ink2); background: rgba(255,255,255,.04); border: 1px solid var(--s-line); border-radius: var(--pill); padding: 7px 13px; }
+    /* Dashboard tabs (2026-06-11): segmented control under the header.
+       Active tab = gold pill, matching the s-btn gold vocabulary. */
+    .dtabs { display: flex; gap: 4px; margin: 20px 0 6px; padding: 5px; border: 1px solid var(--s-line); border-radius: 14px; background: rgba(255,255,255,.03); width: max-content; max-width: 100%; overflow-x: auto; }
+    .dtab { appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--s-ink3); font-family: inherit; font-size: 14px; font-weight: 600; letter-spacing: .01em; padding: 9px 18px; border-radius: 10px; cursor: pointer; white-space: nowrap; transition: color .16s ease, background .16s ease; }
+    .dtab:hover { color: var(--s-ink); }
+    .dtab.on { color: #0c1424; background: linear-gradient(90deg, var(--s-gold2), var(--s-gold)); }
+    /* .dashgrid sets display:grid, which would beat the hidden attribute's
+       UA display:none. Make hidden win. */
+    .dpanel[hidden] { display: none !important; }
+    /* Phones: tightened so all four tabs fit a 375px viewport without scroll. */
+    @media (max-width: 640px) { .dtabs { gap: 2px; padding: 4px; } .dtab { padding: 8px 8px; font-size: 12.5px; } }
   </style>
   <script>
     /* Pre-paint: if a Supabase session is stored, show the branded loader
@@ -122,7 +130,17 @@
               <span class="planbadge" id="acctPlanBadge">&hellip;</span>
             </div>
 
-            <div class="dashgrid">
+            <!-- Tabs (2026-06-11): deep-linkable via #plan / #activity / #settings;
+                 a post-checkout return (?checkout=success) opens Plan & billing. -->
+            <div class="dtabs" id="dashTabs" role="tablist" aria-label="Dashboard sections">
+              <button class="dtab on" type="button" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+              <button class="dtab" type="button" role="tab" data-tab="plan" aria-selected="false">Plan &amp; billing</button>
+              <button class="dtab" type="button" role="tab" data-tab="activity" aria-selected="false">Activity</button>
+              <button class="dtab" type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button>
+            </div>
+
+            <!-- OVERVIEW -->
+            <div class="dashgrid dpanel" data-panel="overview" role="tabpanel" aria-label="Overview">
               <!-- credits hero (seeds read as "loading", never as missing
                    data; backend.js renderPlan overwrites every value) -->
               <div class="dcard glass full" id="creditsCard">
@@ -139,6 +157,29 @@
                 <p class="hint" id="noPlanHint" style="display:none"></p>
               </div>
 
+              <!-- plan at a glance (renderPlan fills ovPlanName/ovPlanHint) -->
+              <div class="dcard glass">
+                <h2>Your plan</h2>
+                <p class="muted" style="margin-top:6px">You're on <b id="ovPlanName" style="color:var(--s-ink)">&hellip;</b>.</p>
+                <p class="hint" id="ovPlanHint"></p>
+                <div class="dcard-btns">
+                  <button class="s-btn ghost" type="button" data-goto-tab="plan">Manage plan</button>
+                </div>
+              </div>
+
+              <!-- download -->
+              <div class="dcard glass">
+                <h2>Modulus Studio</h2>
+                <p class="muted">Install the desktop app and sign in with this account. Your plan and credits follow you.</p>
+                <div class="dcard-btns">
+                  <a class="s-btn gold" id="downloadBtn" href="/download">Download for Windows</a>
+                </div>
+                <p class="hint">Windows 10 / 11 &middot; updates automatically. First install: if Windows asks, click More info, then Run anyway.</p>
+              </div>
+            </div>
+
+            <!-- PLAN & BILLING -->
+            <div class="dashgrid dpanel" data-panel="plan" role="tabpanel" aria-label="Plan and billing" hidden>
               <!-- plan + upgrade -->
               <div class="dcard glass full">
                 <div class="dcard-h">
@@ -185,7 +226,10 @@
                   <a class="s-btn ghost" id="manageBillingBtn" href="#">Manage billing</a>
                 </div>
               </div>
+            </div>
 
+            <!-- ACTIVITY -->
+            <div class="dashgrid dpanel" data-panel="activity" role="tabpanel" aria-label="Activity" hidden>
               <!-- recent activity -->
               <div class="dcard glass full">
                 <div class="dcard-h"><h2>Recent activity</h2><span class="muted" style="font-size:13px">Your last few credit charges</span></div>
@@ -193,7 +237,10 @@
                   <div class="act-empty" id="activityEmpty">Loading your recent activity&hellip;</div>
                 </div>
               </div>
+            </div>
 
+            <!-- SETTINGS -->
+            <div class="dashgrid dpanel" data-panel="settings" role="tabpanel" aria-label="Settings" hidden>
               <!-- profile settings -->
               <div class="dcard glass">
                 <h2>Profile</h2>
@@ -218,20 +265,12 @@
                 </form>
               </div>
 
-              <!-- download -->
-              <div class="dcard glass">
-                <h2>Modulus Studio</h2>
-                <p class="muted">Install the desktop app and sign in with this account. Your plan and credits follow you.</p>
-                <div class="dcard-btns">
-                  <a class="s-btn gold" id="downloadBtn" href="/download">Download for Windows</a>
-                </div>
-                <p class="hint">Windows 10 / 11 &middot; updates automatically. First install: if Windows asks, click More info, then Run anyway.</p>
-              </div>
-
               <!-- account -->
-              <div class="dcard glass full">
-                <div class="acctmeta">
-                  <span class="who">Signing out never touches your plan or credits; they live on your account, not this device. To delete your account, email <a href="mailto:james@modulustech.ai?subject=Delete%20my%20Modulus%20account" style="color:var(--s-gold)">james@modulustech.ai</a> and we'll remove it within 30 days.</span>
+              <div class="dcard glass">
+                <h2>Account</h2>
+                <p class="muted" style="margin-top:6px">Signing out never touches your plan or credits; they live on your account, not this device.</p>
+                <p class="hint">To delete your account, email <a href="mailto:james@modulustech.ai?subject=Delete%20my%20Modulus%20account" style="color:var(--s-gold)">james@modulustech.ai</a> and we'll remove it within 30 days.</p>
+                <div class="dcard-btns">
                   <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
                 </div>
               </div>
@@ -242,6 +281,48 @@
       </div>
     </section>
   </main>
+  <script>
+    /* Dashboard tabs (2026-06-11). Deep-linkable: #plan, #activity, #settings.
+       A post-checkout return (?checkout=success) opens Plan & billing so the
+       activating state is front and center. */
+    (function () {
+      var bar = document.getElementById("dashTabs");
+      if (!bar) return;
+      var names = ["overview", "plan", "activity", "settings"];
+      function show(name) {
+        if (names.indexOf(name) < 0) name = "overview";
+        var btns = bar.querySelectorAll(".dtab");
+        for (var i = 0; i < btns.length; i++) {
+          var on = btns[i].getAttribute("data-tab") === name;
+          btns[i].classList.toggle("on", on);
+          btns[i].setAttribute("aria-selected", on ? "true" : "false");
+        }
+        var panels = document.querySelectorAll(".dpanel");
+        for (var p = 0; p < panels.length; p++) {
+          if (panels[p].getAttribute("data-panel") === name) panels[p].removeAttribute("hidden");
+          else panels[p].setAttribute("hidden", "");
+        }
+      }
+      function go(name) {
+        show(name);
+        // Overview keeps a clean URL; other tabs get a shareable #hash.
+        try { history.replaceState(null, "", name === "overview" ? location.pathname + location.search : "#" + name); } catch (e) {}
+      }
+      bar.addEventListener("click", function (ev) {
+        var b = ev.target && ev.target.closest ? ev.target.closest(".dtab") : null;
+        if (b) go(b.getAttribute("data-tab"));
+      });
+      // "Manage plan" on the overview card (and any future cross-tab links).
+      document.addEventListener("click", function (ev) {
+        var b = ev.target && ev.target.closest ? ev.target.closest("[data-goto-tab]") : null;
+        if (b) { ev.preventDefault(); go(b.getAttribute("data-goto-tab")); }
+      });
+      window.addEventListener("hashchange", function () { show((location.hash || "#overview").slice(1)); });
+      var initial = (location.hash || "").slice(1);
+      if (names.indexOf(initial) < 0) initial = /[?&]checkout=success/.test(location.search) ? "plan" : "overview";
+      show(initial);
+    })();
+  </script>
   <script src="site.js"></script>
 </body>
 </html>

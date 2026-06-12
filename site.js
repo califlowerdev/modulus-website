@@ -185,8 +185,10 @@
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
     });
 
+    // Reveal replays in BOTH scroll directions (James 2026-06-11): keep observing
+    // and toggle the class, so sections animate again every time they re-enter.
     var obs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); obs.unobserve(e.target); } });
+      entries.forEach(function (e) { e.target.classList.toggle("in", e.isIntersecting); });
     }, { threshold: 0.12 });
     document.querySelectorAll(".reveal").forEach(function (n) { obs.observe(n); });
 
