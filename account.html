@@ -256,6 +256,16 @@
                 <div class="kv" id="billStatusRow" style="display:none"><span>Status</span><b id="billStatus"></b></div>
                 <div class="kv" id="billRenewRow" style="display:none"><span id="billRenewLabel">Renews</span><b id="billRenew"></b></div>
 
+                <!-- Shown to team members instead of the tier grid: they share
+                     the owner's plan and don't buy their own (backend.js). -->
+                <div id="memberBilling" style="display:none">
+                  <p class="muted" style="margin:10px 0 4px">You're on <b id="memberOwnerEmail" style="color:var(--s-ink)">your team owner</b>'s plan.</p>
+                  <p class="hint" style="margin:0 0 14px">They handle billing and upgrades. Your credits come from the shared team pool. To get a plan of your own, leave the team first.</p>
+                  <div class="dcard-btns"><button class="s-btn ghost" type="button" data-goto-tab="team">Go to Team</button></div>
+                </div>
+
+                <!-- Owner/solo billing controls (hidden for members) -->
+                <div id="ownerBilling">
                 <!-- Each button starts a secure Stripe checkout for that tier
                      (wired by backend.js wireCheckout via data-checkout). The
                      button matching the active plan renders as "Current plan";
@@ -292,6 +302,7 @@
                 <div class="dcard-btns" style="margin-top:6px">
                   <a class="s-btn ghost" id="manageBillingBtn" href="#">Manage billing</a>
                 </div>
+                </div><!-- /#ownerBilling -->
               </div>
             </div>
 
@@ -310,7 +321,10 @@
             <div class="dashgrid dpanel" data-panel="team" role="tabpanel" aria-label="Team" hidden>
               <div class="dcard glass full" id="teamCard">
                 <div class="dcard-h"><h2>Team</h2><span class="muted" id="teamSeatNote" style="font-size:13px"></span></div>
-                <div id="teamBody" style="margin-top:8px"><div class="act-empty">Loading your team&hellip;</div></div>
+                <div id="teamBody" tabindex="-1" style="margin-top:8px;outline:none"><div class="act-empty">Loading your team&hellip;</div></div>
+                <!-- Persistent live region: survives renderTeam's innerHTML
+                     rewrites so action outcomes are announced to screen readers. -->
+                <p class="tnote" id="teamNote" role="status" aria-live="polite"></p>
               </div>
             </div>
 
@@ -364,6 +378,19 @@
       var bar = document.getElementById("dashTabs");
       if (!bar) return;
       var names = ["overview", "plan", "activity", "team", "settings"];
+      // Wire the ARIA tabs relationship (panel ids + aria-controls) once, so
+      // screen readers announce the pairing the roles already promise.
+      (function () {
+        var btns = bar.querySelectorAll(".dtab");
+        for (var i = 0; i < btns.length; i++) {
+          var nm = btns[i].getAttribute("data-tab");
+          var panel = document.querySelector('.dpanel[data-panel="' + nm + '"]');
+          if (panel) {
+            if (!panel.id) panel.id = "panel-" + nm;
+            btns[i].setAttribute("aria-controls", panel.id);
+          }
+        }
+      })();
       function show(name) {
         if (names.indexOf(name) < 0) name = "overview";
         var btns = bar.querySelectorAll(".dtab");
@@ -371,6 +398,9 @@
           var on = btns[i].getAttribute("data-tab") === name;
           btns[i].classList.toggle("on", on);
           btns[i].setAttribute("aria-selected", on ? "true" : "false");
+          // Roving tabindex: only the selected tab is in the Tab order; arrows
+          // move between the rest (ARIA tabs pattern).
+          btns[i].tabIndex = on ? 0 : -1;
         }
         var panels = document.querySelectorAll(".dpanel");
         for (var p = 0; p < panels.length; p++) {
@@ -392,6 +422,24 @@
       bar.addEventListener("click", function (ev) {
         var b = ev.target && ev.target.closest ? ev.target.closest(".dtab") : null;
         if (b) go(b.getAttribute("data-tab"));
+      });
+      // Arrow / Home / End move focus and selection across the tabs.
+      bar.addEventListener("keydown", function (ev) {
+        var k = ev.key;
+        var btns = bar.querySelectorAll(".dtab");
+        var idx = -1, i;
+        if (k === "Home") idx = 0;
+        else if (k === "End") idx = btns.length - 1;
+        else {
+          var dir = (k === "ArrowRight" || k === "ArrowDown") ? 1 : (k === "ArrowLeft" || k === "ArrowUp") ? -1 : 0;
+          if (!dir) return;
+          for (i = 0; i < btns.length; i++) { if (btns[i] === document.activeElement) idx = i; }
+          if (idx < 0) return;
+          idx = (idx + dir + btns.length) % btns.length;
+        }
+        ev.preventDefault();
+        btns[idx].focus();
+        go(btns[idx].getAttribute("data-tab"));
       });
       // "Manage plan" on the overview card (and any future cross-tab links).
       document.addEventListener("click", function (ev) {

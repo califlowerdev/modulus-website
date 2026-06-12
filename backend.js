@@ -314,6 +314,9 @@
           // Dashboard v2: the active plan's button is an indicator, not a buy.
           if (el.getAttribute("data-current")) return;
           if (el.getAttribute("data-busy")) return;
+          // A team member shares the owner's plan; the server rejects their
+          // checkout, but never start one (the button is hidden anyway).
+          if (dashIsMember) { alert("You're on a team plan and share its credits. To buy your own plan, leave the team first from the Team tab."); return; }
           var label = el.textContent;
           el.setAttribute("data-label", label);
           el.setAttribute("data-busy", "1");
@@ -334,7 +337,7 @@
             }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
               .then(function (res) {
                 if (res.ok && res.d && res.d.url) { window.location.assign(res.d.url); }
-                else { fail((res.d && res.d.error) || "Couldn't start checkout. Please try again."); }
+                else { fail((res.d && (res.d.message || res.d.error)) || "Couldn't start checkout. Please try again."); }
               });
           }).catch(function () { fail("Couldn't start checkout. Please try again."); });
         });
@@ -467,12 +470,21 @@
     if (nudge) {
       var low = !!plan && limit > 0 && pctLeft <= 20;
       nudge.style.display = low ? "" : "none";
+      var nudgeBtn = nudge.querySelector("[data-goto-tab]");
       if (low) {
-        var lowMsg = plan === "free"
-          ? "Your trial credits are almost used up. Pick a plan to keep creating."
-          : canceled
-            ? "Running low, and your plan ends " + fmtDate(periodEnd) + ". Restart a plan to keep your credits coming."
-            : "Running low for this cycle. Credits refill " + fmtDate(periodEnd) + ", or upgrade for more headroom.";
+        var lowMsg;
+        if (dashIsMember) {
+          // A member can't buy; point them at the owner, not a checkout.
+          lowMsg = "Your team's shared credits are running low. Ask " + (dashOwnerEmail || "your team owner") + " about topping up or upgrading.";
+          if (nudgeBtn) { nudgeBtn.textContent = "View team"; nudgeBtn.setAttribute("data-goto-tab", "team"); }
+        } else {
+          lowMsg = plan === "free"
+            ? "Your trial credits are almost used up. Pick a plan to keep creating."
+            : canceled
+              ? "Running low, and your plan ends " + fmtDate(periodEnd) + ". Restart a plan to keep your credits coming."
+              : "Running low for this cycle. Credits refill " + fmtDate(periodEnd) + ", or upgrade for more headroom.";
+          if (nudgeBtn) { nudgeBtn.textContent = "See plans"; nudgeBtn.setAttribute("data-goto-tab", "plan"); }
+        }
         setText("lowCreditMsg", lowMsg);
       }
     }
@@ -532,10 +544,34 @@
     }
   }
 
+  // Team role for the signed-in user, set on every entitlement render so the
+  // billing UI (Plan tab, low-credit nudge, checkout) can stay team-aware.
+  var dashIsMember = false;
+  var dashOwnerEmail = null;
+
+  // A team member shares the owner's plan, so they never buy their own. Swap
+  // the tier grid + Manage billing for a short "your owner handles billing"
+  // notice, and neuter any checkout button that might still be in the DOM.
+  function applyMemberBilling() {
+    var memberBox = document.getElementById("memberBilling");
+    var ownerBox = document.getElementById("ownerBilling");
+    if (memberBox) memberBox.style.display = dashIsMember ? "" : "none";
+    if (ownerBox) ownerBox.style.display = dashIsMember ? "none" : "";
+    if (dashIsMember) {
+      setText("memberOwnerEmail", dashOwnerEmail || "your team owner");
+      setText("billPlan", "Shared team plan");
+      var pw = document.getElementById("billPriceWrap");
+      if (pw) pw.style.display = "none";
+    }
+  }
+
   function renderEntitlement(d) {
+    dashIsMember = !!(d && d.team && d.team.role === "member");
+    dashOwnerEmail = dashIsMember ? d.team.owner_email : null;
     renderActivity(d && d.recent);
-    renderUsage(d && d.usage, d && typeof d.balance === "number" ? d.balance : 0);
+    renderUsage(d && d.usage, d && typeof d.balance === "number" ? d.balance : 0, d && d.team);
     renderTeam(d && d.team);
+    applyMemberBilling();
     if (!d || !d.plan) { renderPlan(null); return; }
     renderPlan({
       plan: d.plan.key,
@@ -562,7 +598,8 @@
     if (c >= 1) return (Math.round(c * 10) / 10).toLocaleString();
     return c > 0 ? "under 1" : "0";
   }
-  function renderUsage(usage, balance) {
+  function renderUsage(usage, balance, team) {
+    var onTeamMember = !!(team && team.role === "member");
     var card = document.getElementById("usageCard");
     if (!card) return;
     if (!usage) { card.style.display = "none"; return; }
@@ -626,11 +663,18 @@
       var sum7 = 0;
       for (var p = days.length - 7; p < days.length; p++) sum7 += days[p].credits;
       var avg = sum7 / 7;
-      if (avg <= 0) {
+      var avgLabel = avg >= 1 ? String(Math.round(avg * 10) / 10) : "under 1";
+      // A member's usage is their own slice, but the balance is the shared
+      // pool, so projecting a runway off one person's pace would be wrong.
+      // Show their pace and name the shared pool instead of a day count.
+      if (onTeamMember) {
+        pace.textContent = avg <= 0
+          ? "No usage from you this week. Teammates spend from the same shared balance."
+          : "You're averaging " + avgLabel + " credits a day this week. That's your pace alone; teammates spend from the same shared balance.";
+      } else if (avg <= 0) {
         pace.textContent = "No usage this week. Your balance isn't going anywhere.";
       } else {
         var daysLeft = balance / avg;
-        var avgLabel = avg >= 1 ? String(Math.round(avg * 10) / 10) : "under 1";
         pace.textContent = daysLeft > 90
           ? "You're averaging " + avgLabel + " credits a day this week. At that pace you have months of headroom."
           : "You're averaging " + avgLabel + " credits a day this week. Your balance covers about " +
@@ -645,7 +689,7 @@
   // function manages the roster; entitlement v9 reports it.
   function teamReq(action, payload) {
     return accessToken().then(function (token) {
-      if (!token) return { ok: false, status: 401, d: { error: "not_authenticated" } };
+      if (!token) return { ok: false, status: 401, d: { error: "not_authenticated", message: "Your session expired. Sign in again to manage your team." } };
       var body = payload || {};
       body.action = action;
       return fetch(fnUrl("team"), {
@@ -672,6 +716,10 @@
     var body = document.getElementById("teamBody");
     var note = document.getElementById("teamSeatNote");
     if (!body) return;
+    // The #teamNote live region lives outside #teamBody so it survives these
+    // innerHTML writes; clear any stale outcome message on each re-render.
+    var stale = document.getElementById("teamNote");
+    if (stale) { stale.textContent = ""; stale.className = "tnote"; }
     if (!team) {
       if (note) note.textContent = "";
       body.innerHTML = '<p class="hint" style="margin:0">Team info didn\'t load just now. Refresh in a moment.</p>';
@@ -682,27 +730,37 @@
       body.innerHTML =
         '<p class="muted" style="margin:0 0 6px">You\'re on <b style="color:var(--s-ink)">' + esc(team.owner_email || "your team owner") + "</b>'s team.</p>" +
         '<p class="hint" style="margin:0 0 14px">You share their plan and credits; anything you create spends from the team balance.</p>' +
-        '<button class="t-link danger" type="button" data-team-leave>Leave team</button>' +
-        '<p class="tnote" id="teamNote"></p>';
+        '<button class="t-link danger" type="button" data-team-leave>Leave team</button>';
       return;
     }
     var seats = team.seats || 1;
     var members = team.members || [];
     var invites = team.invites || [];
     var used = 1 + members.length;
-    if (note) note.textContent = used + " of " + seats + (seats === 1 ? " seat" : " seats") + " used";
-    if (seats <= 1) {
+    // Genuinely solo (no teammates, no invites, 1-seat plan): show the upsell
+    // and a blank seat note, not a contradictory "1 of 1 seat used".
+    if (seats <= 1 && !members.length && !invites.length) {
+      if (note) note.textContent = "";
       body.innerHTML =
         '<p class="muted" style="margin:0 0 6px">Bring your team.</p>' +
         '<p class="hint" style="margin:0 0 14px">Pro includes 3 seats and Studio includes 5. Teammates sign in with their own account and share one pool of credits, so a whole ministry or content team runs on one plan.</p>' +
         '<button class="s-btn gold sm" type="button" data-goto-tab="plan">See plans</button>';
       return;
     }
+    // Over capacity (e.g. the plan was downgraded below the roster size): keep
+    // the roster and Remove buttons visible so the owner can get back in range.
+    var overCapacity = used > seats;
+    if (note) note.textContent = used + " of " + seats + (seats === 1 ? " seat" : " seats") + " used";
+    var cap = Math.max(seats, used + invites.length);
     var html = '<div class="seatdots" aria-hidden="true">';
-    for (var s = 0; s < seats; s++) {
+    for (var s = 0; s < cap; s++) {
       html += '<i class="' + (s < used ? "on" : s < used + invites.length ? "pend" : "") + '"></i>';
     }
     html += "</div>";
+    if (overCapacity) {
+      html += '<p class="hint" style="margin:0 0 12px;color:#E2606B">Your current plan includes ' + seats + (seats === 1 ? " seat" : " seats") +
+        '. Remove teammates below, or upgrade to keep the whole team.</p>';
+    }
     html += '<div class="trow"><span class="t-who">You</span><span class="t-pill">Owner</span></div>';
     for (var i = 0; i < members.length; i++) {
       var m = members[i];
@@ -723,7 +781,6 @@
         '<button class="s-btn gold sm" type="submit" id="teamInviteBtn">Create invite link</button></form>';
     }
     html += '<p class="hint" style="margin-top:12px">Each teammate creates their own free account, then your link moves them onto this plan. Everyone shares this plan\'s credits, and the activity feed shows who spent what.</p>';
-    html += '<p class="tnote" id="teamNote"></p>';
     body.innerHTML = html;
   }
   function teamNote(msg, ok) {
@@ -748,18 +805,22 @@
       }
       var action = el.hasAttribute("data-team-revoke") ? "revoke" : el.hasAttribute("data-team-remove") ? "remove" : "leave";
       if (action === "remove" && !window.confirm("Remove this teammate? They keep their own account but lose access to this plan's credits.")) return;
-      if (action === "leave" && !window.confirm("Leave this team? You'll go back to your own plan.")) return;
+      if (action === "leave" && !window.confirm("Leave this team? You'll lose access to its shared credits and go back to your own account.")) return;
       var payload = action === "revoke" ? { token: el.getAttribute("data-team-revoke") }
         : action === "remove" ? { member_id: el.getAttribute("data-team-remove") } : {};
       el.setAttribute("disabled", "1");
       teamReq(action, payload).then(function (res) {
         if (!res.ok) {
           el.removeAttribute("disabled");
+          if (res.status === 401) { teamNote("Your session expired. Sign in again to manage your team.", false); return; }
           teamNote((res.d && res.d.message) || "That didn't work. Try again in a moment.", false);
           return;
         }
         if (action === "leave") { window.location.reload(); return; }
         loadEntitlement().then(function () {
+          // The re-render replaced the button that had focus; move focus to the
+          // team region so keyboard users aren't dumped back to <body>.
+          var tb = document.getElementById("teamBody"); if (tb) tb.focus();
           teamNote(action === "revoke" ? "Invite revoked. The seat is free again." : "Teammate removed.", true);
         });
       });
@@ -776,11 +837,16 @@
       teamReq("invite", { email: email }).then(function (res) {
         if (!res.ok) {
           if (btn) { btn.removeAttribute("disabled"); btn.textContent = "Create invite link"; }
+          if (res.status === 401) { teamNote("Your session expired. Sign in again to manage your team.", false); return; }
           teamNote((res.d && res.d.message) || "Couldn't create the invite.", false);
           return;
         }
         var url = res.d && res.d.url;
         loadEntitlement().then(function () {
+          // Re-render dropped focus; land it on the fresh invite input if a
+          // seat remains, else the team region.
+          var inp = document.getElementById("teamInviteEmail");
+          if (inp) { inp.focus(); } else { var tb = document.getElementById("teamBody"); if (tb) tb.focus(); }
           if (url) {
             copyText(url)
               .then(function () { teamNote("Invite created and the link is on your clipboard. Send it to " + email + ".", true); })
@@ -813,15 +879,29 @@
       }
       say("Accepting your invite…");
       teamReq("accept", { token: token }).then(function (res) {
-        try { localStorage.removeItem("modulus-pending-join"); } catch (e) {}
+        var err = res.d && res.d.error;
+        // Keep the stashed token only when retrying could still work: a
+        // wrong-account session (sign out, sign in right) or a network blip.
+        // Terminal failures (used/expired/revoked) clear it.
+        var keepStash = !res.ok && (err === "wrong_email" || err === "network");
+        if (!keepStash) { try { localStorage.removeItem("modulus-pending-join"); } catch (e) {} }
         if (res.ok) {
           say("You're in. You now share " + ((res.d && res.d.owner_email) || "your team owner") + "'s plan and credits.");
           if (go) go.style.display = "";
         } else {
           say((res.d && res.d.message) || "Couldn't accept this invite.");
-          if (res.d && res.d.error === "wrong_email" && signIn) {
-            signIn.textContent = "Sign in with the invited email";
+          if (err === "wrong_email" && signIn) {
+            // Bare /login would bounce a live (wrong-account) session straight
+            // back to the dashboard. Sign them out first so the form shows;
+            // the kept stash lets /account finish the join after they sign in.
+            signIn.textContent = "Sign out and sign in with the invited email";
             signIn.style.display = "";
+            signIn.addEventListener("click", function (ev) {
+              ev.preventDefault();
+              ensureClient().then(function (c) { return c.auth.signOut(); })
+                .then(function () { location.href = "/login"; })
+                .catch(function () { location.href = "/login"; });
+            });
           } else if (go) { go.style.display = ""; }
         }
       });
@@ -1010,7 +1090,11 @@
       setText("acctHello", "Welcome back, James.");
       setText("acctEmail", "you@modulustech.ai");
       var lowDemo = /[?&]low=1/.test(location.search);
+      var memberDemo = /[?&]member=1/.test(location.search);
+      dashIsMember = memberDemo;
+      dashOwnerEmail = memberDemo ? "owner@ministry.org" : null;
       renderPlan({ plan: "pro", display_name: "Pro", status: "active", balance: lowDemo ? 140 : 1280, limit: 1500, current_period_end: "2026-07-01" });
+      applyMemberBilling();
       renderActivity([
         { feature: "Source check", credits: 2.4, at: new Date(Date.now() - 6e4).toISOString() },
         { feature: "Generation", credits: 0.9, at: new Date(Date.now() - 36e5).toISOString() },
@@ -1032,11 +1116,17 @@
         ],
         daily: demoDaily,
         capped: false
-      }, lowDemo ? 140 : 1280);
-      if (/[?&]member=1/.test(location.search)) {
+      }, lowDemo ? 140 : 1280, memberDemo ? { role: "member", owner_email: "owner@ministry.org" } : null);
+      if (memberDemo) {
         renderTeam({ role: "member", owner_email: "owner@ministry.org" });
       } else if (/[?&]solo=1/.test(location.search)) {
         renderTeam({ role: "owner", seats: 1, members: [], invites: [] });
+      } else if (/[?&]over=1/.test(location.search)) {
+        // Downgraded below the roster: 2 members on a now-1-seat plan.
+        renderTeam({ role: "owner", seats: 1, members: [
+          { id: "m1", email: "editor@ministry.org", added_at: "2026-06-01T00:00:00Z" },
+          { id: "m2", email: "writer@ministry.org", added_at: "2026-06-03T00:00:00Z" }
+        ], invites: [] });
       } else {
         renderTeam({
           role: "owner", seats: 3,
@@ -1066,19 +1156,25 @@
           setText("acctPlanBadge", "Activating…");
           var hint = document.getElementById("noPlanHint");
           if (hint) { hint.textContent = "Finishing your subscription. Your plan and credits will appear here in a moment."; hint.style.display = ""; }
+          // They just bought their own plan, so any stale invite would only
+          // ever fail (has_own_plan). Discard it instead of firing a confusing
+          // alert on this load.
+          try { localStorage.removeItem("modulus-pending-join"); } catch (e) {}
           pollEntitlement(0);
           // Clean the URL so a refresh doesn't re-trigger.
           try { history.replaceState({}, "", "/account"); } catch (e) {}
         } else {
           // Finish a join that started on /join while signed out: accept the
-          // stashed invite first so the very first render shows the team.
+          // stashed invite first so the very first render shows the team. Keep
+          // the stash on a network error so the next load can retry.
           var pendingJoin = null;
           try { pendingJoin = localStorage.getItem("modulus-pending-join"); } catch (e) {}
-          if (pendingJoin) { try { localStorage.removeItem("modulus-pending-join"); } catch (e) {} }
           var preStep = pendingJoin
             ? teamReq("accept", { token: pendingJoin }).then(function (res) {
+                var keep = !res.ok && res.d && res.d.error === "network";
+                if (!keep) { try { localStorage.removeItem("modulus-pending-join"); } catch (e) {} }
                 if (res.ok) { try { window.location.hash = "#team"; } catch (e) {} }
-                else if (res.d && res.d.message) { window.alert(res.d.message); }
+                else if (!keep && res.d && res.d.message) { window.alert(res.d.message); }
               })
             : Promise.resolve();
           // Normal load: keep the branded loader up until the first
@@ -1087,13 +1183,16 @@
           preStep.then(function () { return loadEntitlement(); }).then(function (d) {
             show(true);
             // Resume a checkout the visitor started before signing in. Only
-            // when they are not already on a paid plan, and only once.
+            // when entitlement actually loaded (d may be null on a transient
+            // failure; treating null as "not paid" could double-bill), they
+            // are not already on a paid plan, and not on a team.
             var pending = null;
             try { pending = localStorage.getItem("modulus-pending-plan"); } catch (e) {}
             if (!pending) return;
+            if (!d) return; // entitlement failed to load; leave intent for next time
             try { localStorage.removeItem("modulus-pending-plan"); } catch (e) {}
-            var paid = d && d.plan && d.plan.key && d.plan.key !== "free" && d.subscription;
-            if (paid) return;
+            var paid = d.plan && d.plan.key && d.plan.key !== "free" && d.subscription;
+            if (paid || dashIsMember) return;
             var btn = document.querySelector('[data-checkout="' + pending + '"]');
             if (btn && !btn.getAttribute("data-current")) btn.click();
           });
