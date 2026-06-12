@@ -336,8 +336,20 @@
               body: JSON.stringify({ plan_key: tier, return_url: location.origin + "/account" })
             }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
               .then(function (res) {
-                if (res.ok && res.d && res.d.url) { window.location.assign(res.d.url); }
-                else { fail((res.d && (res.d.message || res.d.error)) || "Couldn't start checkout. Please try again."); }
+                if (res.ok && res.d && res.d.url) { window.location.assign(res.d.url); return; }
+                // Existing subscribers switch plans in the Stripe portal
+                // (prorated) instead of stacking a second subscription.
+                if (res.d && res.d.error === "use_portal") {
+                  fail();
+                  var mb = document.getElementById("manageBillingBtn");
+                  if (mb) { mb.click(); }
+                  else {
+                    alert(res.d.message || "You already have a plan. Switch it from Manage billing on your dashboard.");
+                    window.location.assign("/account#plan");
+                  }
+                  return;
+                }
+                fail((res.d && (res.d.message || res.d.error)) || "Couldn't start checkout. Please try again.");
               });
           }).catch(function () { fail("Couldn't start checkout. Please try again."); });
         });
