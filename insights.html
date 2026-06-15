@@ -7,7 +7,8 @@
   <meta name="description" content="Practical thinking on where AI agents create leverage for real businesses, and where they do not. No hype." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
   <link rel="canonical" href="https://modulustech.ai/insights" />
   <meta name="theme-color" content="#0C1B2E" />
   <meta property="og:type" content="website" />
@@ -19,7 +20,7 @@
   <meta name="twitter:card" content="summary" />
   <link rel="stylesheet" href="redo.css" />
   <style>
-    .posts { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .posts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; max-width: 760px; margin: 0 auto; }
     .post { display: block; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--paper); box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 18px 44px -30px rgba(11,11,15,.22); transition: transform .25s var(--ease), box-shadow .25s; }
     .post:hover { transform: translateY(-4px); box-shadow: 0 28px 60px -34px rgba(11,11,15,.32); }
     .post .thumb { aspect-ratio: 16/9; background: radial-gradient(300px 160px at 70% 20%, rgba(200,167,91,.18), transparent 70%), var(--navy); }
@@ -48,12 +49,8 @@
     <section class="sec-soft">
       <div class="wrap">
         <div class="posts">
+          <a class="post reveal" href="/insights/agent-not-chatbot"><div class="thumb"></div><div class="pbody"><div class="cat">Product</div><h3>Agent, not chatbot: the difference that matters</h3><div class="meta">June 2026 · 5 min · James Denham</div></div></a>
           <a class="post reveal" href="/insights/source-faithful-ai"><div class="thumb"></div><div class="pbody"><div class="cat">Product</div><h3>Why Modulus Studio checks every draft against your source</h3><div class="meta">June 2026 · 5 min · James Denham</div></div></a>
-          <article class="post reveal"><div class="thumb"></div><div class="pbody"><div class="cat">Strategy</div><h3>Where AI agents actually save small businesses time</h3><div class="meta">Coming soon · 6 min</div></div></article>
-          <article class="post reveal"><div class="thumb"></div><div class="pbody"><div class="cat">Product</div><h3>Agent, not chatbot: the difference that matters</h3><div class="meta">Coming soon · 5 min</div></div></article>
-          <article class="post reveal"><div class="thumb"></div><div class="pbody"><div class="cat">Playbook</div><h3>How to pick the first workflow to automate</h3><div class="meta">Coming soon · 7 min</div></div></article>
-          <article class="post reveal"><div class="thumb"></div><div class="pbody"><div class="cat">Strategy</div><h3>The real cost of work you keep doing by hand</h3><div class="meta">Coming soon · 6 min</div></div></article>
-          <article class="post reveal"><div class="thumb"></div><div class="pbody"><div class="cat">Field notes</div><h3>Building Modulus in the open</h3><div class="meta">Coming soon · 4 min</div></div></article>
         </div>
       </div>
     </section>

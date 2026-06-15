@@ -38,13 +38,13 @@
     return best;
   }
 
-  function resize() {
-    var r = field.getBoundingClientRect();
-    w = r.width; h = r.height;
-    canvas.width = Math.round(w * DPR); canvas.height = Math.round(h * DPR);
-    canvas.style.width = w + "px"; canvas.style.height = h + "px";
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
+  // v2 (2026-06-12): split the cheap canvas + text re-measure from the
+  // expensive particle rebuild. A mobile URL bar showing or hiding fires
+  // resize with only a HEIGHT change, and re-rolling every particle there made
+  // the whole field flicker. Particles are now only rebuilt when the WIDTH
+  // actually changes.
+  var lastW = -1;
+  function measureBoxes(r) {
     // calm only behind real text: the hero block, section headings, founder quote
     boxes = [];
     var texts = field.querySelectorAll(".hero .wrap, h2, .founder .quote");
@@ -56,8 +56,15 @@
         x1: tr.left - r.left + tr.width, y1: tr.top - r.top + tr.height
       });
     }
-
-    var count = Math.max(48, Math.min(280, Math.round((w * h) / 10000)));
+  }
+  function buildParticles() {
+    // Sparser nodes on small screens: a phone shows the field full-frame and
+    // runs on a battery, so the density is dialed down there (bigger divisor =
+    // fewer dots, lower cap).
+    var small = w < 700;
+    var divisor = small ? 20000 : 10000;
+    var capMax = small ? 90 : 280;
+    var count = Math.max(40, Math.min(capMax, Math.round((w * h) / divisor)));
     particles = [];
     for (var k = 0; k < count; k++) {
       particles.push({
@@ -68,6 +75,15 @@
         _v: 1
       });
     }
+  }
+  function resize() {
+    var r = field.getBoundingClientRect();
+    w = r.width; h = r.height;
+    canvas.width = Math.round(w * DPR); canvas.height = Math.round(h * DPR);
+    canvas.style.width = w + "px"; canvas.style.height = h + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    measureBoxes(r);
+    if (Math.abs(w - lastW) > 1) { lastW = w; buildParticles(); }
   }
 
   function step() {

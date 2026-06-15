@@ -9,12 +9,12 @@
   --paper-2: #F6F5F0;     /* warm off-white section */
   --ink: #0B0B0F;
   --ink-2: #5A6473;
-  --ink-3: #6E7886;   /* AA on white for small text (was #8A92A0 at ~3:1) */
+  --ink-3: #69727E;   /* AA on white (4.9:1) for small text; was #6E7886 at 4.47 */
   --navy: #0C1B2E;
   --navy-2: #0F2336;
   --gold: #C8A75B;
   --gold-bright: #DBBE78;
-  --gold-deep: #9C7D3C;   /* gold text on light (AA-safe) */
+  --gold-deep: #8C6F33;   /* gold text on light, AA-safe (4.7:1); was #9C7D3C at 3.88 */
   --cream: #F4EDD8;
   --line: rgba(11,11,15,0.09);
   --line-on-navy: rgba(244,237,216,0.14);

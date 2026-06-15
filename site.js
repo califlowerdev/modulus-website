@@ -103,7 +103,7 @@
           '<div><a class="brand" href="/">' + MARK + '<b>Modulus</b></a>' +
             '<p class="footer-tag">The infrastructure for unbounded ambition.</p></div>' +
           '<div class="footer-cols">' +
-            '<div class="footer-col"><h5>Products</h5><a href="/studio">Modulus Studio</a><a href="/products#pricing">Pricing</a><a href="/products">Roadmap</a></div>' +
+            '<div class="footer-col"><h5>Products</h5><a href="/studio">Modulus Studio</a><a href="/for-churches">For churches</a><a href="/products#pricing">Pricing</a><a href="/products">Roadmap</a></div>' +
             '<div class="footer-col"><h5>Company</h5><a href="/about">About</a><a href="/insights">Insights</a><a href="/contact">Contact</a></div>' +
             '<div class="footer-col"><h5>Use cases</h5><a href="/services#growth">Growth</a><a href="/services#operations">Operations</a><a href="/services#content">Content</a><a href="/services#support">Support</a></div>' +
             '<div class="footer-col"><h5>Get started</h5><a href="/contact">Book a call</a><a href="/login">Login</a></div>' +
