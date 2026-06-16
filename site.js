@@ -229,9 +229,8 @@
   // Sends a single anonymized pageview to the Cloudflare ingest Worker when the
   // page is hidden (tab switch / navigation away). No cookies, no localStorage,
   // no identifiers from the browser; the Worker derives a rotating daily hash at
-  // the edge. Inert until collect.modulustech.ai is live — sendBeacon to a
-  // missing host just no-ops, so shipping this early is safe.
-  var ANALYTICS_ENDPOINT = "https://collect.modulustech.ai";
+  // the edge (deployed on its workers.dev URL; see ANALYTICS_ENDPOINT below).
+  var ANALYTICS_ENDPOINT = "https://modulus-analytics-ingest.modulustech.workers.dev";
   function analyticsBeacon() {
     try {
       // Honor privacy signals — do not even build a payload.
