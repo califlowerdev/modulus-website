@@ -38,6 +38,11 @@
   var hasAuth = !!(CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY);
   function fnUrl(name) { return CONFIG.SUPABASE_URL.replace(/\/$/, "") + "/functions/v1/" + name; }
 
+  // The Modulus admin account. NOT a secret: this only reveals the owner-only
+  // Marketing tab in the UI. The data behind it is gated server-side in the
+  // admin-analytics edge function, which 403s any token whose user id != this.
+  var OWNER_UID = "0e83d99f-9140-425a-acb5-52779d1e09aa";
+
   function loadScript(src, integrity) {
     return new Promise(function (resolve, reject) {
       var s = document.createElement("script");
@@ -118,7 +123,7 @@
     signInEmail: function (email, pw) {
       return ensureClient().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw }); });
     },
-    signUp: function (email, pw, name) {
+    signUp: function (email, pw, name, marketing) {
       // emailRedirectTo: the confirmation link should land on /account (an
       // app page that loads the SDK and consumes the session fragment), not
       // the homepage where supabase-js never loads and the token hash would
@@ -128,7 +133,21 @@
       // same as Google-provider accounts.
       return ensureClient().then(function (c) {
         var opts = { emailRedirectTo: location.origin + "/account" };
-        if (name) opts.data = { full_name: name };
+        var data = {};
+        if (name) data.full_name = name;
+        // Capture marketing consent + provenance at the moment of signup. This
+        // lives in user_metadata (durable, immediate — no accounts row exists
+        // yet) and is copied to public.accounts.marketing_opt_in when the email
+        // system goes live. ALWAYS recorded (true or false) so an explicit
+        // decline is on record, not just an absence.
+        data.marketing_opt_in = !!marketing;
+        data.marketing_consent = {
+          opt_in: !!marketing,
+          at: new Date().toISOString(),
+          source: "signup_form",
+          text: "Send me product updates and occasional tips. No spam, unsubscribe anytime."
+        };
+        opts.data = data;
         return c.auth.signUp({ email: email, password: pw, options: opts });
       });
     },
@@ -279,8 +298,10 @@
         var email = (document.getElementById("a-email") || {}).value;
         var pw = (document.getElementById("a-pass") || {}).value;
         var name = (document.getElementById("a-name") || {}).value;
+        var optinEl = document.getElementById("a-marketing");
+        var marketing = !!(optinEl && optinEl.checked);
         var creating = document.body.getAttribute("data-mode") === "create";
-        (creating ? api.signUp(email, pw, name) : api.signInEmail(email, pw)).then(function (r) {
+        (creating ? api.signUp(email, pw, name, marketing) : api.signInEmail(email, pw)).then(function (r) {
           if (r && r.error) return note(r.error.message);
           if (creating) {
             // With email confirmation on, signUp for an ALREADY-registered
@@ -959,9 +980,121 @@
   }
 
   function esc(s) {
-    return String(s == null ? "" : s).replace(/[&<>"]/g, function (ch) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch];
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (ch) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
     });
+  }
+
+  /* --------------------------- MARKETING TAB ------------------------------ */
+  // Owner-only analytics. Calls the admin-analytics edge function (which 403s
+  // anyone but the owner) and paints the funnel, sources, top pages, and recent
+  // signups. The email address is the ONLY PII shown, and only to the owner.
+  var mktLoadedDays = null;
+  function initMarketing() {
+    var tab = document.getElementById("mktTab");
+    if (tab) tab.hidden = false;
+    // Wire the range segmented control once.
+    var seg = document.getElementById("mktRange");
+    if (seg && !seg.dataset.wired) {
+      seg.dataset.wired = "1";
+      seg.addEventListener("click", function (e) {
+        var b = e.target.closest(".segbtn"); if (!b) return;
+        var btns = seg.querySelectorAll(".segbtn");
+        for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("on", btns[i] === b);
+        loadMarketing(parseInt(b.getAttribute("data-days"), 10) || 7);
+      });
+    }
+    // Default to 7 days on first reveal.
+    loadMarketing(7);
+  }
+
+  function fmtNum(n) {
+    n = Number(n) || 0;
+    return n >= 1000 ? n.toLocaleString("en-US") : String(n);
+  }
+  function relTime(iso) {
+    if (!iso) return "";
+    var then = new Date(iso).getTime();
+    if (isNaN(then)) return "";
+    var s = Math.max(0, (Date.now() - then) / 1000);
+    if (s < 3600) return Math.floor(s / 60) + "m ago";
+    if (s < 86400) return Math.floor(s / 3600) + "h ago";
+    if (s < 86400 * 30) return Math.floor(s / 86400) + "d ago";
+    try { return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" }); }
+    catch (e) { return ""; }
+  }
+
+  function loadMarketing(days) {
+    if (mktLoadedDays === days) return; // avoid a redundant refetch on tab re-click
+    accessToken().then(function (token) {
+      if (!token) return;
+      return fetch(fnUrl("admin-analytics") + "?days=" + days, {
+        method: "GET", headers: { "Authorization": "Bearer " + token }
+      }).then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (res) {
+          if (!res || !res.ok || !res.dashboard) { renderMarketingError(); return; }
+          mktLoadedDays = days;
+          renderMarketing(res.dashboard);
+        })
+        .catch(function () { renderMarketingError(); });
+    });
+  }
+
+  function renderMarketingError() {
+    var box = document.getElementById("mRecent");
+    if (box) box.innerHTML = '<p class="muted" style="margin:0">Analytics didn\'t load just now. Refresh in a moment.</p>';
+  }
+
+  function rankList(id, rows, labelKey, valKey, emptyMsg) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!rows || !rows.length) { el.innerHTML = '<p class="muted" style="margin:0">' + esc(emptyMsg) + "</p>"; return; }
+    var html = "";
+    for (var i = 0; i < rows.length && i < 8; i++) {
+      var label = rows[i][labelKey];
+      html += '<div class="rankrow"><span class="rk-label">' + esc(label || "direct / none") +
+        '</span><span class="rk-val">' + fmtNum(rows[i][valKey]) + "</span></div>";
+    }
+    el.innerHTML = html;
+  }
+
+  function renderMarketing(d) {
+    var pv = d.pageviews || 0, uv = d.unique_visitors || 0;
+    var signups = d.signups_window || 0, paid = d.paid_active || 0;
+    setText("mPageviews", fmtNum(pv));
+    setText("mVisitors", fmtNum(uv));
+    setText("mSignups", fmtNum(signups));
+    setText("mPaid", fmtNum(paid));
+
+    // Visitor -> signup conversion for the window (guard divide-by-zero).
+    var conv = uv > 0 ? (signups / uv * 100) : 0;
+    var fill = document.getElementById("mFunnelFill");
+    if (fill) fill.style.width = Math.max(2, Math.min(100, conv)).toFixed(1) + "%";
+    setText("mConv", uv > 0
+      ? conv.toFixed(1) + "% of visitors signed up in this window."
+      : "No visitor data yet — pageviews start flowing once the analytics Worker is live.");
+
+    setText("mOptedIn", fmtNum(d.opted_in || 0));
+    rankList("mSources", d.top_sources, "source", "visits", "No traffic sources yet.");
+    rankList("mPages", d.top_pages, "path", "visits", "No pageviews yet.");
+
+    var recent = document.getElementById("mRecent");
+    if (recent) {
+      var rs = d.recent_signups || [];
+      if (!rs.length) { recent.innerHTML = '<p class="muted" style="margin:0">No signups yet.</p>'; }
+      else {
+        var html = "";
+        for (var i = 0; i < rs.length; i++) {
+          var r = rs[i];
+          var tag = r.plan && r.plan !== "free"
+            ? '<span class="em-tag paid">' + esc(r.plan) + "</span>"
+            : (r.marketing_opt_in ? '<span class="em-tag in">opted in</span>' : '<span class="em-tag out">no email</span>');
+          html += '<div class="emailrow"><span class="em-addr">' + esc(r.email) +
+            '</span><span class="em-when">' + esc(relTime(r.created_at)) + "</span>" + tag + "</div>";
+        }
+        recent.innerHTML = html;
+      }
+    }
   }
 
   // Read the signed-in user's real plan + credits from the entitlement
@@ -1161,6 +1294,10 @@
         setText("acctHello", "Welcome back, " + name + ".");
         setText("acctEmail", user.email || "");
         wireProfile(user);
+        // Owner-only Marketing tab: reveal + load analytics when the signed-in
+        // user is the Modulus admin. (Server re-checks; a forced-visible tab on
+        // any other account still 403s.)
+        if (user.id === OWNER_UID) initMarketing();
         if (justSubscribed) {
           // Post-checkout: reveal immediately with the Activating state; the
           // poll holds it until the webhook's paid plan actually arrives.

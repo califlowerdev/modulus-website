@@ -178,6 +178,13 @@
       var ajs = document.createElement("script"); ajs.src = "/assistant.js"; ajs.defer = true; document.body.appendChild(ajs);
     }
 
+    // First-party analytics beacon. Cookieless: the Worker hashes the visitor at
+    // the edge, so nothing identifying is stored and no consent banner is needed.
+    // Honors Global Privacy Control / Do-Not-Track here too (defense in depth; the
+    // Worker re-checks). Fires ONE beacon per pageview on hide, so we never block
+    // paint and a prerendered tab the user never views is never counted.
+    analyticsBeacon();
+
     var toggle = document.querySelector(".nav-toggle");
     var drawer = document.getElementById("navDrawer");
     if (toggle && drawer) toggle.addEventListener("click", function () {
@@ -216,6 +223,58 @@
         }
       } catch (e) { /* invalid selector in hash — ignore */ }
     }
+  }
+
+  // ---- First-party analytics beacon --------------------------------------
+  // Sends a single anonymized pageview to the Cloudflare ingest Worker when the
+  // page is hidden (tab switch / navigation away). No cookies, no localStorage,
+  // no identifiers from the browser; the Worker derives a rotating daily hash at
+  // the edge. Inert until collect.modulustech.ai is live — sendBeacon to a
+  // missing host just no-ops, so shipping this early is safe.
+  var ANALYTICS_ENDPOINT = "https://collect.modulustech.ai";
+  function analyticsBeacon() {
+    try {
+      // Honor privacy signals — do not even build a payload.
+      if (navigator.globalPrivacyControl === true) return;
+      if (navigator.doNotTrack === "1" || window.doNotTrack === "1") return;
+      if (!navigator.sendBeacon) return;
+
+      var sent = false;
+      var everVisible = false;
+      var send = function () {
+        if (sent) return;
+        // Don't count a tab that was prerendered and never actually viewed.
+        if (document.visibilityState === "hidden" && !everVisible) return;
+        sent = true;
+        var p = new URLSearchParams(location.search);
+        var payload = {
+          domain: location.hostname,
+          path: location.pathname.slice(0, 2048),
+          referrer: document.referrer || "",
+          screen: (window.screen ? window.screen.width + "x" + window.screen.height : ""),
+          utm_source: p.get("utm_source") || "",
+          utm_medium: p.get("utm_medium") || "",
+          utm_campaign: p.get("utm_campaign") || "",
+          utm_term: p.get("utm_term") || "",
+          utm_content: p.get("utm_content") || ""
+        };
+        // Drop empty keys so the Worker's strict allowlist stays happy.
+        Object.keys(payload).forEach(function (k) { if (!payload[k]) delete payload[k]; });
+        try {
+          var blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+          navigator.sendBeacon(ANALYTICS_ENDPOINT, blob);
+        } catch (e) { /* ignore — analytics must never break the page */ }
+      };
+
+      // Track whether the page was ever actually visible (prerender guard).
+      if (document.visibilityState === "visible") everVisible = true;
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState === "visible") { everVisible = true; }
+        else { send(); }
+      });
+      // pagehide is the reliable "leaving" signal on mobile Safari / bfcache.
+      window.addEventListener("pagehide", send, { capture: true });
+    } catch (e) { /* analytics is best-effort; never throw into boot */ }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

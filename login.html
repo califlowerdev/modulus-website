@@ -43,6 +43,13 @@
             <div class="field" id="nameField"><label for="a-name">Full name</label><input id="a-name" type="text" autocomplete="name" /></div>
             <div class="field"><label for="a-email">Email</label><input id="a-email" type="email" autocomplete="email" required /></div>
             <div class="field"><label for="a-pass">Password</label><input id="a-pass" type="password" autocomplete="current-password" required minlength="8" /></div>
+            <!-- Marketing opt-in: create-account only, UNCHECKED by default (real
+                 consent, not pre-ticked). Transactional account email is separate
+                 and always sent; this gate is only for product news + tips. -->
+            <label class="optin" id="marketingOptin" style="display:none">
+              <input id="a-marketing" type="checkbox" />
+              <span>Send me product updates and occasional tips. No spam, unsubscribe anytime.</span>
+            </label>
             <div class="forgot"><a href="#" data-auth="forgot">Forgot password?</a></div>
             <button class="s-btn gold full" type="submit" id="authSubmit">Sign in</button>
             <p id="agreeLine" style="display:none;margin-top:10px;font-size:12px;color:rgba(234,240,247,.55);text-align:center">By creating an account you agree to the <a href="/terms" style="color:#E4C77D">Terms</a> and <a href="/privacy" style="color:#E4C77D">Privacy Policy</a>.</p>
@@ -74,6 +81,8 @@
       document.getElementById("a-pass").setAttribute("autocomplete", m === "create" ? "new-password" : "current-password");
       var agree = document.getElementById("agreeLine");
       if (agree) agree.style.display = m === "create" ? "" : "none";
+      var optin = document.getElementById("marketingOptin");
+      if (optin) optin.style.display = m === "create" ? "" : "none";
     }
     /* The Google button, email sign-in, and create-account are wired by backend.js.
        Real auth runs once keys are set in backend.js; until then it shows the note. */

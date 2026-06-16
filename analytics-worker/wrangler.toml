@@ -1,0 +1,31 @@
+# Cloudflare Worker: first-party analytics ingest for modulustech.ai.
+# Deployed to collect.modulustech.ai. Hashes visitors at the edge so raw IP/UA
+# never reach Supabase logs (Antigravity finding #4). Rate limiting is enforced
+# by a Cloudflare Rate Limiting RULE on this route (NOT a KV counter, which would
+# throttle at 1 write/sec/key, Antigravity rev2 #3) - configure that in the
+# dashboard or via the [[unsafe.bindings]] ratelimit binding.
+name = "modulus-analytics-ingest"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# KV namespace holding the daily rotating salt. Create with:
+#   wrangler kv namespace create SALT_KV
+# then paste the id below.
+[[kv_namespaces]]
+binding = "SALT_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+
+# Daily salt rotation: runs at 23:00 UTC to PRE-GENERATE the next UTC day's salt
+# (1-hour head start so it propagates to all edge regions before midnight,
+# Antigravity rev2 #1), and prunes salts older than the 2-day window.
+[triggers]
+crons = ["0 23 * * *"]
+
+# Route: bind the Worker to the subdomain.
+# [[routes]]
+# pattern = "collect.modulustech.ai/*"
+# zone_name = "modulustech.ai"
+
+# Secrets (set with `wrangler secret put NAME`, never committed):
+#   SUPABASE_URL          e.g. https://deypezfcawzdcfhnckxp.supabase.co
+#   SUPABASE_SERVICE_KEY  the sb_secret_/service-role key (server-only)
