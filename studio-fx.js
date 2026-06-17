@@ -154,9 +154,22 @@
     at(20000, play);                                             // long hold so it is easy to read, then loop
   }
 
-  var running = false;
-  function start() { if (running) return; running = true; play(); }
-  function stop() { running = false; clearAll(); }
+  var running = false, stopTimer = null;
+  function start() {
+    if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+    if (running) return;
+    running = true;
+    play();
+  }
+  function stop() {
+    if (!running) return;
+    if (stopTimer) return;
+    stopTimer = setTimeout(function () {
+      running = false;
+      clearAll();
+      stopTimer = null;
+    }, 150);
+  }
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { rootMargin: "-48% 0px -48% 0px", threshold: 0 }).observe(demo);
   } else { start(); }
@@ -276,9 +289,22 @@
     at(17400, function () { expBtn.classList.remove("loading"); expBtn.classList.add("done"); if (expLab) expLab.textContent = "Posted"; });
     at(21500, play);
   }
-  var running = false;
-  function start() { if (running) return; running = true; play(); }
-  function stop() { running = false; clearAll(); }
+  var running = false, stopTimer = null;
+  function start() {
+    if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+    if (running) return;
+    running = true;
+    play();
+  }
+  function stop() {
+    if (!running) return;
+    if (stopTimer) return;
+    stopTimer = setTimeout(function () {
+      running = false;
+      clearAll();
+      stopTimer = null;
+    }, 150);
+  }
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { rootMargin: "-48% 0px -48% 0px", threshold: 0 }).observe(pe);
   } else { start(); }
@@ -350,9 +376,22 @@
     at(12000, function () { if (expBtn) { expBtn.classList.remove("loading"); expBtn.classList.add("done"); if (expLab) expLab.textContent = "Sent to extraction"; } });
     at(16500, play);
   }
-  var running = false;
-  function start() { if (running) return; running = true; play(); }
-  function stop() { running = false; clearAll(); }
+  var running = false, stopTimer = null;
+  function start() {
+    if (stopTimer) { clearTimeout(stopTimer); stopTimer = null; }
+    if (running) return;
+    running = true;
+    play();
+  }
+  function stop() {
+    if (!running) return;
+    if (stopTimer) return;
+    stopTimer = setTimeout(function () {
+      running = false;
+      clearAll();
+      stopTimer = null;
+    }, 150);
+  }
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { rootMargin: "-48% 0px -48% 0px", threshold: 0 }).observe(tr);
   } else { start(); }
