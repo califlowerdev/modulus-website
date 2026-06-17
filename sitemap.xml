@@ -4,6 +4,9 @@
   <url><loc>https://modulustech.ai/services</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://modulustech.ai/studio</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://modulustech.ai/for-churches</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://modulustech.ai/for-agencies</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://modulustech.ai/for-publishers</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://modulustech.ai/changelog</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
   <url><loc>https://modulustech.ai/products</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modulustech.ai/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://modulustech.ai/insights</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
