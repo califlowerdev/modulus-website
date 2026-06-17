@@ -242,6 +242,40 @@
       .nav-right .btn { padding: 9px 14px !important; font-size: 13px !important; }
     }
     @media (prefers-reduced-motion: reduce) { .marquee .track, .s-orb { animation: none; } .tilt { transition: none; } }
+
+    /* ===== Navy rebalance (2026-06-17): keep the dark navy James likes as
+       anchors (hero + the three-checks band + closing), with the long body
+       sections white/cream so there is plenty of white. Visible ambient on navy. ===== */
+    .s-hero { background: radial-gradient(125% 135% at 50% 0%, #15293f 0%, #0C1B2E 58%); }
+    .s-hero .s-eyebrow { color: var(--s-gold-bright); }
+    .s-hero h1 { color: #fff; }
+    .s-hero h1 .acc { color: var(--s-gold-bright); }
+    .s-hero .s-sub { color: rgba(234,240,247,.80); }
+    .s-hero .s-trust { color: rgba(234,240,247,.55); }
+    .s-hero .s-btn.ghost { color: #fff; border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.05); }
+    .s-hero .s-btn.ghost:hover { border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.1); }
+    /* visible drifting ambient on the navy hero: brighter gold + a cool blue orb, light grid */
+    .s-hero .s-orb.a { background: radial-gradient(circle, rgba(228,199,125,.42), transparent 68%); opacity: 1; }
+    .s-hero .s-orb.b { background: radial-gradient(circle, rgba(74,134,214,.34), transparent 70%); opacity: 1; }
+    .s-hero .s-grid { background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); }
+    /* a slow light sheen drifting across the hero */
+    .s-hero::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(115deg, transparent 34%, rgba(228,199,125,.05) 50%, transparent 66%); background-size: 260% 100%; animation: sSheen 12s linear infinite; }
+    @keyframes sSheen { from { background-position: 130% 0; } to { background-position: -130% 0; } }
+
+    /* The three-checks band -> navy, glass cards, light text */
+    #checks { background: radial-gradient(125% 120% at 50% 0%, #15293f, #0C1B2E 62%); }
+    #checks .s-head h2 { color: #fff; }
+    #checks .s-head p { color: rgba(234,240,247,.74); }
+    #checks .s-eyebrow { color: var(--s-gold-bright); }
+    #checks .card { background: rgba(255,255,255,.045); border-color: rgba(255,255,255,.10); box-shadow: 0 24px 60px -36px rgba(0,0,0,.7); }
+    #checks .s-card h3 { color: #fff; }
+    #checks .s-card p { color: rgba(234,240,247,.74); }
+    #checks .s-card .ic { background: linear-gradient(180deg, rgba(228,199,125,.18), rgba(228,199,125,.07)); border-color: rgba(228,199,125,.34); color: var(--s-gold-bright); }
+
+    /* FAQ open animation on the studio page (keyframe lives in redo.css) */
+    .s-faq details[open] .ans { animation: faqReveal .28s var(--ease); }
+
+    @media (prefers-reduced-motion: reduce) { .s-hero::after { animation: none; } .s-faq details[open] .ans { animation: none; } }
   </style>
 </head>
 <body data-section="studio">

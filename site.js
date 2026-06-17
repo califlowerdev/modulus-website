@@ -102,7 +102,7 @@
     return '<footer class="footer"><div class="wrap">' +
         '<div class="footer-top">' +
           '<div><a class="brand" href="/">' + MARK + '<b>Modulus</b></a>' +
-            '<p class="footer-tag">The infrastructure for unbounded ambition.</p>' +
+            '<p class="footer-tag">AI leverage, built for the rest of us.</p>' +
             '<div class="footer-social">' +
               '<a href="https://www.instagram.com/modulustech.ai/" target="_blank" rel="noopener" aria-label="Modulus on Instagram"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg></a>' +
               '<a href="https://www.tiktok.com/@modulustech.ai" target="_blank" rel="noopener" aria-label="Modulus on TikTok"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M16.6 3c.3 2 1.5 3.6 3.6 3.9v2.4c-1.3 0-2.6-.4-3.7-1.1v5.8a5.5 5.5 0 1 1-5.5-5.5c.3 0 .6 0 .9.1v2.5a3 3 0 1 0 2.1 2.9V3h2.6z"/></svg></a>' +

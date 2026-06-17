@@ -233,6 +233,10 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
 .faq summary::after { content: "+"; color: var(--gold-deep); font-size: 24px; font-weight: 300; line-height: 1; }
 .faq details[open] summary::after { content: "\2212"; }
 .faq .ans { color: var(--ink-2); font-size: 15.5px; padding: 0 0 22px; max-width: 64ch; }
+/* Smooth reveal when an FAQ item opens (covers .ans and bare <p> answers). */
+@keyframes faqReveal { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: none; } }
+.faq details[open] > *:not(summary) { animation: faqReveal .28s var(--ease); }
+@media (prefers-reduced-motion: reduce) { .faq details[open] > *:not(summary) { animation: none; } }
 
 /* simple form */
 .field label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 7px; }
@@ -292,10 +296,10 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
 .posts .post:nth-child(6) { transition-delay: .20s; }
 
 /* value / feature icon tile (purposeful, not decorative) */
-.vicon { width: 46px; height: 46px; border-radius: 13px; background: rgba(200,167,91,.13); display: grid; place-items: center; color: var(--gold-deep); margin-bottom: 18px; transition: transform .25s var(--spring), background .25s; }
+.vicon { width: 46px; height: 46px; border-radius: 13px; background: #F1E8D1; display: grid; place-items: center; color: var(--gold-deep); margin-bottom: 18px; transition: transform .25s var(--spring), background .25s; }
 .vicon svg { width: 23px; height: 23px; }
-.col:hover .vicon { transform: translateY(-3px); background: rgba(200,167,91,.2); }
-.sec-navy .vicon { color: var(--gold-bright); background: rgba(200,167,91,.16); }
+.col:hover .vicon { transform: translateY(-3px); background: #EADEBF; }
+.sec-navy .vicon { color: var(--gold-bright); background: #17283E; }
 @media (prefers-reduced-motion: reduce) { .btn-gold::after { display: none; } .appshot:hover img, .col:hover, .col:hover .vicon { transform: none; } }
 
 /* one continuous constellation background — spans hero -> founder as a single field */
