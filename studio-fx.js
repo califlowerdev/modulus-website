@@ -145,8 +145,9 @@
     at(10500, function () { steps[2] && steps[2].classList.add("done"); });
     at(11200, function () { steps[3] && steps[3].classList.add("done"); });
     at(11900, function () { demo.setAttribute("data-phase", "5"); });   // output (cursor already parked bottom-right)
-    if (qaAns[0]) at(12350, function () { typeOut(qaAns[0]); });  // stream the first answer
-    if (qaAns[1]) at(13200, function () { typeOut(qaAns[1]); });  // then the second
+    if (qaAns[0]) at(12350, function () { typeOut(qaAns[0]); });  // stream the answers in, one after another
+    if (qaAns[1]) at(13200, function () { typeOut(qaAns[1]); });
+    if (qaAns[2]) at(14050, function () { typeOut(qaAns[2]); });
     at(20000, play);                                             // long hold so it is easy to read, then loop
   }
 
