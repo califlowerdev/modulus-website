@@ -162,6 +162,90 @@
     .score .st { font-size: 13px; color: #fff; font-weight: 600; }
     .score .sd { font-size: 11.5px; color: var(--w-ink2); line-height: 1.45; margin-top: 3px; }
 
+    /* ===== Animated product demo: browse a library, pick a book, choose Q&A, generate, output ===== */
+    .card.appshot { display: block; }   /* the demo window fills the column (no shrink-wrap) */
+    .demo { position: relative; height: 422px; overflow: hidden; background: linear-gradient(180deg, #0d1a2c, #0a1422); }
+    .demo .scene { position: absolute; inset: 0; padding: 18px 20px; display: flex; flex-direction: column; opacity: 0; transform: scale(.99); transition: opacity .5s var(--ease), transform .5s var(--ease); pointer-events: none; }
+    .demo .scene.browse { opacity: 1; transform: none; }
+    .demo[data-phase="3"] .scene.browse, .demo[data-phase="4"] .scene.browse, .demo[data-phase="5"] .scene.browse { opacity: 0; transform: scale(.985); }
+    .demo[data-phase="3"] .scene.work, .demo[data-phase="4"] .scene.work, .demo[data-phase="5"] .scene.work { opacity: 1; transform: none; }
+    .demo-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+    .demo-k { font-size: 12.5px; font-weight: 700; color: #fff; }
+    .demo-hint { font-size: 11.5px; color: var(--w-ink2); }
+
+    /* library carousel */
+    .carousel { position: relative; flex: 1; display: flex; align-items: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+    .carousel-track { flex: 0 0 auto; display: flex; gap: 17px; padding-left: 8px; will-change: transform; }
+    .bk { flex: 0 0 auto; width: 126px; height: 189px; border-radius: 6px; overflow: hidden; border: 0; padding: 0; background: #16243a; box-shadow: 0 12px 24px -12px rgba(0,0,0,.65); position: relative; transition: transform .35s var(--ease), box-shadow .35s; transform-origin: center bottom; }
+    .bk img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .bk.sel { transform: translateY(-12px) scale(1.06); box-shadow: 0 22px 38px -14px rgba(0,0,0,.75); }
+    .bk.sel::after { content: ""; position: absolute; inset: 0; border-radius: 6px; box-shadow: inset 0 0 0 2.5px var(--gold); }
+
+    /* selected source chip */
+    .src-chip { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--w-line); border-radius: 12px; background: rgba(255,255,255,.03); margin-bottom: 15px; }
+    .sc-cover { flex: 0 0 auto; width: 40px; height: 58px; border-radius: 4px; overflow: hidden; box-shadow: 0 6px 14px -6px rgba(0,0,0,.7); }
+    .sc-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .sc-meta { flex: 1; min-width: 0; }
+    .sc-meta b { display: block; color: #fff; font-size: 13.5px; font-weight: 700; }
+    .sc-meta span { display: block; color: var(--w-ink2); font-size: 11px; margin-top: 2px; }
+    .sc-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 10.5px; color: #d6f3dc; background: rgba(40,200,64,.13); border: 1px solid rgba(40,200,64,.3); border-radius: 999px; padding: 3px 9px; white-space: nowrap; }
+    .sc-badge i { width: 5px; height: 5px; border-radius: 50%; background: #28c840; }
+
+    /* output-type options */
+    .opt-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .opt-lab { font-size: 11.5px; color: var(--w-ink2); margin-right: 2px; }
+    .opt { font-size: 12px; color: var(--w-ink); background: rgba(255,255,255,.05); border: 1px solid var(--w-line); border-radius: 999px; padding: 6px 13px; transition: all .25s var(--ease); }
+    .opt.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; font-weight: 700; }
+    .genbtn { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold2)); border: 0; border-radius: 10px; padding: 9px 16px; opacity: .35; transform: translateY(3px); transition: opacity .3s, transform .3s; }
+    .demo.genstart .genbtn { opacity: 1; transform: none; }
+    .genbtn svg { width: 14px; height: 14px; }
+    .demo[data-phase="4"] .opt-row, .demo[data-phase="4"] .genbtn, .demo[data-phase="5"] .opt-row, .demo[data-phase="5"] .genbtn { display: none; }
+
+    /* generating */
+    .gen { display: none; }
+    .demo[data-phase="4"] .gen { display: block; }
+    .gen-bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; margin-bottom: 18px; }
+    .gen-bar i { display: block; height: 100%; width: 4%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), #E4C77D); }
+    .demo[data-phase="4"] .gen-bar i { animation: genFill 2.1s var(--ease) forwards; }
+    @keyframes genFill { to { width: 100%; } }
+    .gen-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+    .gen-steps li { font-size: 12.5px; color: var(--w-ink2); display: flex; align-items: center; gap: 10px; opacity: .4; transition: opacity .3s, color .3s; }
+    .gen-steps li::before { content: ""; width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--w-line); flex: 0 0 auto; transition: border-color .3s, background .3s; }
+    .gen-steps li.done { opacity: 1; color: #fff; }
+    .gen-steps li.done::before { border-color: #28c840; background: #28c840; }
+
+    /* output */
+    .out { display: none; }
+    .demo[data-phase="5"] .gen { display: none; }
+    .demo[data-phase="5"] .out { display: block; }
+    .out-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--w-ink2); margin-bottom: 12px; }
+    .out-badge { display: inline-flex; align-items: center; gap: 6px; color: #d6f3dc; background: rgba(40,200,64,.13); border: 1px solid rgba(40,200,64,.3); border-radius: 999px; padding: 3px 9px; }
+    .out-badge i { width: 5px; height: 5px; border-radius: 50%; background: #28c840; }
+    .ocard { background: rgba(255,255,255,.04); border: 1px solid var(--w-line); border-left: 3px solid var(--gold); border-radius: 10px; padding: 11px 13px; margin-bottom: 9px; opacity: 0; transform: translateY(9px); }
+    .demo[data-phase="5"] .ocard { animation: ocIn .5s var(--ease) forwards; }
+    .demo[data-phase="5"] .ocard:nth-child(2) { animation-delay: .22s; }
+    .demo[data-phase="5"] .ocard:nth-child(3) { animation-delay: .6s; }
+    .demo[data-phase="5"] .ocard:nth-child(4) { animation-delay: .98s; }
+    @keyframes ocIn { to { opacity: 1; transform: none; } }
+    .ocard .oq { color: #fff; font-size: 12.5px; font-weight: 600; line-height: 1.4; }
+    .ocard .oa { color: var(--w-ink2); font-size: 11.5px; line-height: 1.5; margin-top: 5px; }
+    .ocard.quote { border-left-color: #E4C77D; color: #fff; font-size: 13px; font-style: italic; }
+    .ocard.quote span { display: block; font-style: normal; font-size: 10.5px; color: var(--w-ink2); margin-top: 6px; }
+
+    /* simulated cursor */
+    .dcursor { position: absolute; top: 0; left: 0; z-index: 40; width: 21px; height: 21px; transform: translate(64px, 80px); transition: transform .6s cubic-bezier(.6,.04,.2,1); pointer-events: none; filter: drop-shadow(0 2px 3px rgba(0,0,0,.55)); }
+    .dcursor svg { width: 100%; height: 100%; display: block; }
+    .dcursor::after { content: ""; position: absolute; left: 1px; top: 1px; width: 9px; height: 9px; border-radius: 50%; background: var(--gold); opacity: 0; }
+    .dcursor.tap::after { animation: dtap .55s var(--ease); }
+    @keyframes dtap { 0% { opacity: .55; transform: scale(.3); } 100% { opacity: 0; transform: scale(3.4); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .demo .scene, .ocard, .gen-bar i, .dcursor, .bk { transition: none !important; animation: none !important; }
+      .demo .scene.browse { opacity: 0; } .demo .scene.work { opacity: 1; }
+      .ocard { opacity: 1; transform: none; } .dcursor { display: none; } .genbtn { opacity: 1; transform: none; }
+    }
+    @media (max-width: 560px) { .demo { height: 410px; } .bk { width: 100px; height: 150px; } }
+
     /* section heads */
     .s-head { text-align: center; max-width: 720px; margin: 0 auto 46px; position: relative; z-index: 2; }
     .s-head h2 { font-family: var(--font-display); font-weight: 600; color: #fff; font-size: clamp(28px, 4vw, 46px); margin: 12px 0 0; line-height: 1.08; }
@@ -285,29 +369,59 @@
             <h2>Your source in. A faithful draft out.</h2>
             <p>Drop in a book chapter, a sermon, or a transcript and Modulus pulls articles, Q&amp;As, key quotes, and posts straight from the text. Every line is anchored to your source, and three checks run on each draft before you ever see it.</p>
           </div>
-          <div class="card tilt appshot reveal">
+          <div class="card appshot reveal">
             <div class="win">
               <div class="win-bar"><i class="win-dot1"></i><i class="win-dot2"></i><i class="win-dot3"></i><span>Modulus Studio · Content Repurposer</span></div>
-              <div class="app">
-                <div class="app-main">
-                  <div class="app-crumbs">Project <em>Romans 8 · Sunday sermon</em> <span class="pill">Key Quotes</span> <span class="pill">In the author's voice</span></div>
-                  <div class="qcard"><p>"Nothing in all creation can separate the believer from the love of God, because the love that holds him does not depend on him holding on."</p><div class="qm"><b></b>Grounded in source · paragraph 4</div></div>
-                  <div class="qcard"><p>"Suffering is not the absence of God's purpose. It is often the very ground in which that purpose grows."</p><div class="qm"><b></b>Grounded in source · paragraph 9</div></div>
-                  <div class="qcard"><p>"Hope is not wishful thinking. It is certainty about a future already secured."</p><div class="qm"><b></b>Grounded in source · paragraph 12</div></div>
+              <div class="demo" id="studioDemo" data-phase="1">
+                <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
+
+                <!-- Scene 1-2: browse the library -->
+                <div class="scene browse">
+                  <div class="demo-h"><span class="demo-k">Your library</span><span class="demo-hint">Pick a source to repurpose</span></div>
+                  <div class="carousel"><div class="carousel-track">
+                    <span class="bk"><img src="assets/cover-12-ways-phone.jpg" alt="12 Ways Your Phone Is Changing You by Tony Reinke" width="116" height="174" loading="lazy"></span>
+                    <span class="bk"><img src="assets/cover-coronavirus-christ.jpg" alt="Coronavirus and Christ by John Piper" width="116" height="174" loading="lazy"></span>
+                    <span class="bk lead"><img src="assets/cover-ask-pastor-john.jpg" alt="Ask Pastor John by Tony Reinke" width="116" height="174" loading="lazy"></span>
+                    <span class="bk"><img src="assets/cover-does-god-desire.jpg" alt="Does God Desire All to Be Saved? by John Piper" width="116" height="174" loading="lazy"></span>
+                    <span class="bk"><img src="assets/cover-good-news-joy.jpg" alt="Good News of Great Joy by John Piper" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-12-ways-phone.jpg" alt="" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-coronavirus-christ.jpg" alt="" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-does-god-desire.jpg" alt="" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-good-news-joy.jpg" alt="" width="116" height="174" loading="lazy"></span>
+                  </div></div>
                 </div>
-                <div class="app-side">
-                  <div class="sh">Quality</div>
-                  <div class="score">
-                    <div class="ring" data-score="96"><b>0</b></div>
-                    <div><div class="st">Theological Judge</div><div class="sd">Aligned with your doctrinal frame</div></div>
+
+                <!-- Scene 3-5: the working view -->
+                <div class="scene work">
+                  <div class="src-chip">
+                    <span class="sc-cover"><img src="assets/cover-ask-pastor-john.jpg" alt="" width="40" height="58"></span>
+                    <span class="sc-meta"><b>Ask Pastor John</b><span>Tony Reinke · Foreword by John Piper</span></span>
+                    <span class="sc-badge"><i></i>Source loaded</span>
                   </div>
-                  <div class="score">
-                    <div class="ring" data-score="99"><b>0</b></div>
-                    <div><div class="st">Source Check</div><div class="sd">Grounded in the source, nothing invented</div></div>
+                  <div class="opt-row">
+                    <span class="opt-lab">Make</span>
+                    <button class="opt" type="button">Articles</button>
+                    <button class="opt qa" type="button">Q&amp;A</button>
+                    <button class="opt" type="button">Key Quotes</button>
+                    <button class="opt" type="button">Social posts</button>
                   </div>
-                  <div class="score">
-                    <div class="ring" data-score="94"><b>0</b></div>
-                    <div><div class="st">AI Detection</div><div class="sd">Reads human · no em-dashes, no stock phrasing</div></div>
+                  <button class="genbtn" type="button">Generate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+
+                  <div class="gen">
+                    <div class="gen-bar"><i></i></div>
+                    <ul class="gen-steps">
+                      <li>Reading the source</li>
+                      <li>Drafting in the author's voice</li>
+                      <li>Source Check</li>
+                      <li>Theological Judge</li>
+                    </ul>
+                  </div>
+
+                  <div class="out">
+                    <div class="out-h"><span>Q&amp;A pulled from Ask Pastor John</span><span class="out-badge"><i></i>Source Check 99%</span></div>
+                    <div class="ocard"><div class="oq">How do I fight for joy when I feel spiritually dry?</div><div class="oa">Joy is fed by what you set your mind on. Preach God's promises to yourself until your heart catches up.</div></div>
+                    <div class="ocard"><div class="oq">Why would a good God let his children suffer?</div><div class="oa">Suffering is not God losing control. It is often the ground where he grows a deeper trust than comfort ever could.</div></div>
+                    <div class="ocard quote">"God is most glorified in us when we are most satisfied in him."<span>Key quote · grounded in the source</span></div>
                   </div>
                 </div>
               </div>
