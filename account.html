@@ -192,10 +192,6 @@
               <button class="dtab" type="button" role="tab" data-tab="activity" aria-selected="false">Activity</button>
               <button class="dtab" type="button" role="tab" data-tab="team" aria-selected="false">Team</button>
               <button class="dtab" type="button" role="tab" data-tab="settings" aria-selected="false">Settings</button>
-              <!-- Owner-only: backend.js reveals this when the signed-in user is the
-                   Modulus admin. The data behind it is gated server-side too, so a
-                   non-owner who forces it visible still gets a 403. -->
-              <button class="dtab" type="button" role="tab" data-tab="marketing" aria-selected="false" id="mktTab" hidden>Marketing</button>
             </div>
 
             <!-- OVERVIEW -->
@@ -367,48 +363,6 @@
                 <div class="dcard-btns">
                   <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
                 </div>
-              </div>
-            </div>
-
-            <!-- MARKETING (owner-only). All values are filled by backend.js from
-                 the admin-analytics edge function, which 403s for non-owners. -->
-            <div class="dashgrid dpanel" data-panel="marketing" role="tabpanel" aria-label="Marketing" hidden>
-              <div class="dcard glass full">
-                <div class="dcard-h">
-                  <h2>Funnel</h2>
-                  <span class="seg" id="mktRange" role="group" aria-label="Date range">
-                    <button type="button" class="segbtn on" data-days="7">7d</button>
-                    <button type="button" class="segbtn" data-days="30">30d</button>
-                    <button type="button" class="segbtn" data-days="90">90d</button>
-                  </span>
-                </div>
-                <div class="statgrid" id="mktStats">
-                  <div class="stat"><span class="statn" id="mPageviews">&hellip;</span><span class="statl">Pageviews</span></div>
-                  <div class="stat"><span class="statn" id="mVisitors">&hellip;</span><span class="statl">Unique visitors</span></div>
-                  <div class="stat"><span class="statn" id="mSignups">&hellip;</span><span class="statl">Signups</span></div>
-                  <div class="stat"><span class="statn" id="mPaid">&hellip;</span><span class="statl">Paid plans</span></div>
-                </div>
-                <div class="mktbar" aria-hidden="true"><span id="mFunnelFill"></span></div>
-                <p class="usagemeta"><span id="mConv">&hellip;</span></p>
-              </div>
-
-              <div class="dcard glass">
-                <h2>Traffic sources</h2>
-                <div class="ranklist" id="mSources"><p class="muted" style="margin:0">Loading&hellip;</p></div>
-              </div>
-
-              <div class="dcard glass">
-                <h2>Top pages</h2>
-                <div class="ranklist" id="mPages"><p class="muted" style="margin:0">Loading&hellip;</p></div>
-              </div>
-
-              <div class="dcard glass full">
-                <div class="dcard-h">
-                  <h2>Recent signups</h2>
-                  <span class="usagepct"><b id="mOptedIn">&hellip;</b> opted in to email</span>
-                </div>
-                <div class="emailtable" id="mRecent"><p class="muted" style="margin:0">Loading&hellip;</p></div>
-                <p class="hint" style="margin-top:10px">Email marketing list sync is dormant until the Resend connection is set up. Opt-in consent is captured now so the list is clean from day one.</p>
               </div>
             </div>
           </div>

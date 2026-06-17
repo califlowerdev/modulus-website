@@ -990,22 +990,36 @@
   // anyone but the owner) and paints the funnel, sources, top pages, and recent
   // signups. The email address is the ONLY PII shown, and only to the owner.
   var mktLoadedDays = null;
-  function initMarketing() {
-    var tab = document.getElementById("mktTab");
-    if (tab) tab.hidden = false;
-    // Wire the range segmented control once.
-    var seg = document.getElementById("mktRange");
-    if (seg && !seg.dataset.wired) {
-      seg.dataset.wired = "1";
-      seg.addEventListener("click", function (e) {
-        var b = e.target.closest(".segbtn"); if (!b) return;
-        var btns = seg.querySelectorAll(".segbtn");
-        for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("on", btns[i] === b);
-        loadMarketing(parseInt(b.getAttribute("data-days"), 10) || 7);
-      });
-    }
-    // Default to 7 days on first reveal.
-    loadMarketing(7);
+  // Owner-only admin portal (/portal). This is a SEPARATE page from the user
+  // account dashboard — customers never see analytics. Reveals the data for the
+  // admin UID and bounces everyone else to their own dashboard; the
+  // admin-analytics edge function 403s non-owners regardless, so the gate is
+  // defense in depth, not the only protection.
+  function wirePortal() {
+    var root = document.getElementById("portalAnalytics");
+    if (!root) return; // not the portal page
+    var checking = document.getElementById("portalChecking");
+    var so = document.getElementById("portalSignOut");
+    if (so) so.addEventListener("click", function (e) { e.preventDefault(); api.signOut(); });
+    if (!hasAuth) { window.location.assign("/login"); return; }
+    ensureClient().then(function (c) { return c.auth.getUser(); }).then(function (r) {
+      var user = r && r.data && r.data.user;
+      if (!user) { window.location.assign("/login"); return; }          // signed out
+      if (user.id !== OWNER_UID) { window.location.assign("/account"); return; } // not admin
+      if (checking) checking.style.display = "none";
+      root.hidden = false;
+      var seg = document.getElementById("mktRange");
+      if (seg && !seg.dataset.wired) {
+        seg.dataset.wired = "1";
+        seg.addEventListener("click", function (e) {
+          var b = e.target.closest(".segbtn"); if (!b) return;
+          var btns = seg.querySelectorAll(".segbtn");
+          for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("on", btns[i] === b);
+          loadMarketing(parseInt(b.getAttribute("data-days"), 10) || 7);
+        });
+      }
+      loadMarketing(7);
+    }).catch(function () { window.location.assign("/login"); });
   }
 
   function fmtNum(n) {
@@ -1294,10 +1308,6 @@
         setText("acctHello", "Welcome back, " + name + ".");
         setText("acctEmail", user.email || "");
         wireProfile(user);
-        // Owner-only Marketing tab: reveal + load analytics when the signed-in
-        // user is the Modulus admin. (Server re-checks; a forced-visible tab on
-        // any other account still 403s.)
-        if (user.id === OWNER_UID) initMarketing();
         if (justSubscribed) {
           // Post-checkout: reveal immediately with the Activating state; the
           // poll holds it until the webhook's paid plan actually arrives.
@@ -1350,7 +1360,7 @@
     });
   }
 
-  function boot() { wireLogin(); wireCheckout(); wireAccount(); wireJoin(); }
+  function boot() { wireLogin(); wireCheckout(); wireAccount(); wireJoin(); wirePortal(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();

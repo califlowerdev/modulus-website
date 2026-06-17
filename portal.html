@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modulus — Admin Portal</title>
+  <meta name="description" content="Private Modulus admin portal." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#070f1c" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+  <link rel="stylesheet" href="redo.css" />
+  <link rel="stylesheet" href="studio.css" />
+  <style>
+    /* Private admin portal. Reuses studio.css's glass/dcard/dashgrid vocabulary;
+       intentionally does NOT load site.js (no public nav, and no analytics beacon
+       so the admin's own visits never pollute the numbers). */
+    body { background: #070f1c; }
+    .portal-wrap { max-width: 1080px; margin: 0 auto; padding: 30px 20px 90px; }
+    .portal-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 26px; flex-wrap: wrap; }
+    .portal-top .sub { display: block; color: var(--s-gold); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+    .portal-top h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(24px, 3.4vw, 32px); color: #fff; margin: 0; }
+    .portal-actions { display: flex; gap: 10px; }
+    .portal-actions .s-btn { font-size: 13.5px; padding: 9px 16px; }
+    .portal-checking { color: var(--s-ink2); padding: 70px 0; text-align: center; font-size: 15px; }
+    .portal-sec-label { color: var(--s-ink3); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; margin: 0 0 12px; }
+  </style>
+</head>
+<body data-section="app">
+  <div class="portal-wrap">
+    <div class="portal-top">
+      <div>
+        <span class="sub">Modulus</span>
+        <h1>Admin Portal</h1>
+      </div>
+      <div class="portal-actions">
+        <a class="s-btn ghost" href="/account">My account</a>
+        <a class="s-btn ghost" id="portalSignOut" href="#">Sign out</a>
+      </div>
+    </div>
+
+    <!-- Shown until backend.js confirms the signed-in user is the admin. -->
+    <div class="portal-checking" id="portalChecking">Checking access&hellip;</div>
+
+    <!-- Owner-only analytics. Hidden until the admin UID is confirmed; non-owners
+         are redirected to /account, and the admin-analytics function 403s any
+         non-owner token regardless, so the data is protected server-side too. -->
+    <div id="portalAnalytics" hidden>
+      <p class="portal-sec-label">Analytics</p>
+      <div class="dashgrid">
+        <div class="dcard glass full">
+          <div class="dcard-h">
+            <h2>Funnel</h2>
+            <span class="seg" id="mktRange" role="group" aria-label="Date range">
+              <button type="button" class="segbtn on" data-days="7">7d</button>
+              <button type="button" class="segbtn" data-days="30">30d</button>
+              <button type="button" class="segbtn" data-days="90">90d</button>
+            </span>
+          </div>
+          <div class="statgrid" id="mktStats">
+            <div class="stat"><span class="statn" id="mPageviews">&hellip;</span><span class="statl">Pageviews</span></div>
+            <div class="stat"><span class="statn" id="mVisitors">&hellip;</span><span class="statl">Unique visitors</span></div>
+            <div class="stat"><span class="statn" id="mSignups">&hellip;</span><span class="statl">Signups</span></div>
+            <div class="stat"><span class="statn" id="mPaid">&hellip;</span><span class="statl">Paid plans</span></div>
+          </div>
+          <div class="mktbar" aria-hidden="true"><span id="mFunnelFill"></span></div>
+          <p class="usagemeta"><span id="mConv">&hellip;</span></p>
+        </div>
+
+        <div class="dcard glass">
+          <h2>Traffic sources</h2>
+          <div class="ranklist" id="mSources"><p class="muted" style="margin:0">Loading&hellip;</p></div>
+        </div>
+
+        <div class="dcard glass">
+          <h2>Top pages</h2>
+          <div class="ranklist" id="mPages"><p class="muted" style="margin:0">Loading&hellip;</p></div>
+        </div>
+
+        <div class="dcard glass full">
+          <div class="dcard-h">
+            <h2>Recent signups</h2>
+            <span class="usagepct"><b id="mOptedIn">&hellip;</b> opted in to email</span>
+          </div>
+          <div class="emailtable" id="mRecent"><p class="muted" style="margin:0">Loading&hellip;</p></div>
+          <p class="hint" style="margin-top:10px">Marketing email is opt-in only. Sync to a sending tool is set up separately; consent is captured now so the list is clean from day one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- backend.js handles the owner gate + data load (wirePortal). No site.js on
+       purpose: no public nav, and the analytics beacon never fires here. -->
+  <script src="/backend.js"></script>
+</body>
+</html>
