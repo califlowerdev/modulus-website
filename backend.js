@@ -108,10 +108,18 @@
   function reflectUser(user) {
     if (!user) return;
     var links = document.querySelectorAll("[data-auth-login]");
+    var ICON = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.4" r="3.6"/><path d="M5.2 20c1.1-3.5 3.9-5.2 6.8-5.2s5.7 1.7 6.8 5.2"/></svg>';
     for (var i = 0; i < links.length; i++) {
-      links[i].textContent = user.email ? user.email.split("@")[0] : "Account";
       links[i].setAttribute("href", "/account");
       links[i].title = "Your account";
+      // Header: a compact account icon in place of the name. Footer: a clear text link.
+      if (links[i].closest && links[i].closest(".nav")) {
+        links[i].innerHTML = ICON;
+        links[i].setAttribute("aria-label", "Your account");
+        links[i].classList.add("auth-ava-link");
+      } else {
+        links[i].textContent = "Your account";
+      }
     }
   }
 

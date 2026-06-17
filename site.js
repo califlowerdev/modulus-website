@@ -81,7 +81,12 @@
       return '<footer class="footer"><div class="wrap">' +
           '<div class="footer-top">' +
             '<div><a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
-              '<p class="footer-tag">Turn one talk into a month of content.</p></div>' +
+              '<p class="footer-tag">Turn one talk into a month of content.</p>' +
+              '<div class="footer-social">' +
+                '<a href="https://www.instagram.com/modulustech.ai/" target="_blank" rel="noopener" aria-label="Modulus on Instagram"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"/></svg></a>' +
+                '<a href="https://www.tiktok.com/@modulustech.ai" target="_blank" rel="noopener" aria-label="Modulus on TikTok"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M16.6 3c.3 2 1.5 3.6 3.6 3.9v2.4c-1.3 0-2.6-.4-3.7-1.1v5.8a5.5 5.5 0 1 1-5.5-5.5c.3 0 .6 0 .9.1v2.5a3 3 0 1 0 2.1 2.9V3h2.6z"/></svg></a>' +
+                '<a href="https://www.linkedin.com/in/james-denham-2b2332329" target="_blank" rel="noopener" aria-label="Modulus on LinkedIn"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM3.2 9h3.6v12H3.2zM9 9h3.5v1.6h.05c.5-.93 1.7-1.9 3.5-1.9 3.7 0 4.4 2 4.4 5.1V21h-3.7v-5.4c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg></a>' +
+              '</div></div>' +
             '<div class="footer-cols">' +
               '<div class="footer-col"><h5>Studio</h5><a href="/studio#features">Features</a><a href="/studio#tools">Tools</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a></div>' +
               '<div class="footer-col"><h5>Company</h5><a href="/">Modulus Technologies</a><a href="/about">About</a><a href="/contact">Contact</a></div>' +

@@ -38,6 +38,31 @@
     return best;
   }
 
+  // Nudge a node away from text boxes (a margin around real text). Only "avoider"
+  // nodes call this each frame, so most dots keep clear of the headlines while a
+  // minority still drift through, which keeps the field organic, not a hard wall.
+  var AVOID = 80;
+  function steerFromText(p) {
+    for (var b = 0; b < boxes.length; b++) {
+      var r = boxes[b];
+      if (p.x > r.x0 && p.x < r.x1 && p.y > r.y0 && p.y < r.y1) {
+        // inside the box: push toward the nearest edge
+        var dl = p.x - r.x0, dr = r.x1 - p.x, dt = p.y - r.y0, db = r.y1 - p.y;
+        var m = Math.min(dl, dr, dt, db);
+        if (m === dl) p.vx -= 0.07; else if (m === dr) p.vx += 0.07;
+        else if (m === dt) p.vy -= 0.07; else p.vy += 0.07;
+        continue;
+      }
+      var cx = Math.max(r.x0, Math.min(p.x, r.x1));
+      var cy = Math.max(r.y0, Math.min(p.y, r.y1));
+      var dx = p.x - cx, dy = p.y - cy, d = Math.sqrt(dx * dx + dy * dy);
+      if (d < AVOID && d > 0.001) {
+        var f = (1 - d / AVOID) * 0.05;
+        p.vx += (dx / d) * f; p.vy += (dy / d) * f;
+      }
+    }
+  }
+
   // v2 (2026-06-12): split the cheap canvas + text re-measure from the
   // expensive particle rebuild. A mobile URL bar showing or hiding fires
   // resize with only a HEIGHT change, and re-rolling every particle there made
@@ -62,9 +87,9 @@
     // runs on a battery, so the density is dialed down there (bigger divisor =
     // fewer dots, lower cap).
     var small = w < 700;
-    var divisor = small ? 20000 : 10000;
-    var capMax = small ? 90 : 280;
-    var count = Math.max(40, Math.min(capMax, Math.round((w * h) / divisor)));
+    var divisor = small ? 19000 : 9500;   // ~5% more nodes than before
+    var capMax = small ? 95 : 294;
+    var count = Math.max(42, Math.min(capMax, Math.round((w * h) / divisor)));
     particles = [];
     for (var k = 0; k < count; k++) {
       particles.push({
@@ -72,6 +97,7 @@
         vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
         r: Math.random() * 2.2 + 1.7,
         gold: Math.random() < 0.32,
+        avoid: Math.random() < 0.8,   // ~80% steer clear of text; the rest drift through
         _v: 1
       });
     }
@@ -89,9 +115,13 @@
   function step() {
     ctx.clearRect(0, 0, w, h);
 
-    // pass 1 — move each node, then compute how visible it should be here
+    // pass 1 — move each node (avoiders steer away from text), then visibility
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
+      if (p.avoid && boxes.length) steerFromText(p);
+      // gentle speed clamp so the steering never runs away
+      var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (sp > 0.5) { p.vx = p.vx / sp * 0.5; p.vy = p.vy / sp * 0.5; }
       p.x += p.vx; p.y += p.vy;
       if (p.x < 0 || p.x > w) p.vx *= -1;
       if (p.y < 0 || p.y > h) p.vy *= -1;
