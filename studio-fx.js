@@ -75,6 +75,8 @@
   var qa = demo.querySelector(".opt.qa");
   var genbtn = demo.querySelector(".genbtn");
   var steps = demo.querySelectorAll(".gen-steps li");
+  var answers = [];
+  demo.querySelectorAll(".ocard .oa").forEach(function (el) { answers.push({ el: el, text: el.textContent }); });
   if (!cursor || !track || !lead || !qa || !genbtn) return;
 
   if (rm) { // no motion: show the finished output
@@ -93,6 +95,15 @@
       "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
   }
   function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
+  function typeOut(a) {            // stream an answer in like the model is writing it
+    var el = a.el, text = a.text, i = 0;
+    el.innerHTML = '<span class="caret"></span>';
+    (function step() {
+      i = Math.min(i + 2, text.length);
+      el.innerHTML = text.slice(0, i) + (i < text.length ? '<span class="caret"></span>' : '');
+      if (i < text.length) timers.push(setTimeout(step, 22));
+    })();
+  }
 
   var timers = [];
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
@@ -104,6 +115,7 @@
     demo.classList.remove("genstart");
     lead.classList.remove("sel"); qa.classList.remove("on");
     for (var s = 0; s < steps.length; s++) steps[s].classList.remove("done");
+    for (var a = 0; a < answers.length; a++) answers[a].el.textContent = answers[a].text;
     track.style.transition = "none";
     track.style.transform = "translateX(" + (leadX() + 250) + "px)";
     cursor.style.transition = "none";
@@ -125,8 +137,10 @@
     at(7950, function () { steps[1] && steps[1].classList.add("done"); });
     at(8500, function () { steps[2] && steps[2].classList.add("done"); });
     at(9050, function () { steps[3] && steps[3].classList.add("done"); });
-    at(9550, function () { demo.setAttribute("data-phase", "5"); moveTo(carousel, 0, 70); }); // output
-    at(13800, play);                                              // hold, then loop
+    at(9550, function () { demo.setAttribute("data-phase", "5"); moveTo(carousel, 0, 90); }); // output
+    if (answers[0]) at(9950, function () { typeOut(answers[0]); });   // stream the first answer
+    if (answers[1]) at(10550, function () { typeOut(answers[1]); });  // then the second
+    at(15800, play);                                              // hold, then loop
   }
 
   var running = false;

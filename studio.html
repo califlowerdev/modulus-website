@@ -164,7 +164,8 @@
 
     /* ===== Animated product demo: browse a library, pick a book, choose Q&A, generate, output ===== */
     .card.appshot { display: block; }   /* the demo window fills the column (no shrink-wrap) */
-    .demo { position: relative; height: 422px; overflow: hidden; background: linear-gradient(180deg, #0d1a2c, #0a1422); }
+    /* It is a preview, not a control: no mouse interaction anywhere inside it. */
+    .demo { position: relative; height: 426px; overflow: hidden; pointer-events: none; background: radial-gradient(120% 80% at 50% -10%, #122845, #0b1626 60%); }
     .demo .scene { position: absolute; inset: 0; padding: 18px 20px; display: flex; flex-direction: column; opacity: 0; transform: scale(.99); transition: opacity .5s var(--ease), transform .5s var(--ease); pointer-events: none; }
     .demo .scene.browse { opacity: 1; transform: none; }
     .demo[data-phase="3"] .scene.browse, .demo[data-phase="4"] .scene.browse, .demo[data-phase="5"] .scene.browse { opacity: 0; transform: scale(.985); }
@@ -176,10 +177,10 @@
     /* library carousel */
     .carousel { position: relative; flex: 1; display: flex; align-items: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
     .carousel-track { flex: 0 0 auto; display: flex; gap: 17px; padding-left: 8px; will-change: transform; }
-    .bk { flex: 0 0 auto; width: 126px; height: 189px; border-radius: 6px; overflow: hidden; border: 0; padding: 0; background: #16243a; box-shadow: 0 12px 24px -12px rgba(0,0,0,.65); position: relative; transition: transform .35s var(--ease), box-shadow .35s; transform-origin: center bottom; }
-    .bk img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .bk.sel { transform: translateY(-12px) scale(1.06); box-shadow: 0 22px 38px -14px rgba(0,0,0,.75); }
-    .bk.sel::after { content: ""; position: absolute; inset: 0; border-radius: 6px; box-shadow: inset 0 0 0 2.5px var(--gold); }
+    .bk { flex: 0 0 auto; width: 124px; height: 186px; border-radius: 6px; border: 0; padding: 0; background: #16243a; box-shadow: 0 14px 26px -12px rgba(0,0,0,.7); position: relative; transition: transform .45s var(--spring, cubic-bezier(.34,1.3,.5,1)), box-shadow .45s, filter .45s; transform-origin: center center; filter: saturate(.92) brightness(.9); -webkit-box-reflect: below 7px linear-gradient(transparent 64%, rgba(255,255,255,.13)); }
+    .bk img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 6px; }
+    .bk.sel { transform: translateY(-7px) scale(1.06); filter: none; box-shadow: 0 26px 44px -14px rgba(0,0,0,.8), 0 0 40px -4px rgba(228,199,125,.55); z-index: 2; }
+    .bk.sel::after { content: ""; position: absolute; inset: 0; border-radius: 6px; box-shadow: inset 0 0 0 2.5px var(--gold); pointer-events: none; }
 
     /* selected source chip */
     .src-chip { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--w-line); border-radius: 12px; background: rgba(255,255,255,.03); margin-bottom: 15px; }
@@ -221,12 +222,14 @@
     .out-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--w-ink2); margin-bottom: 12px; }
     .out-badge { display: inline-flex; align-items: center; gap: 6px; color: #d6f3dc; background: rgba(40,200,64,.13); border: 1px solid rgba(40,200,64,.3); border-radius: 999px; padding: 3px 9px; }
     .out-badge i { width: 5px; height: 5px; border-radius: 50%; background: #28c840; }
-    .ocard { background: rgba(255,255,255,.04); border: 1px solid var(--w-line); border-left: 3px solid var(--gold); border-radius: 10px; padding: 11px 13px; margin-bottom: 9px; opacity: 0; transform: translateY(9px); }
-    .demo[data-phase="5"] .ocard { animation: ocIn .5s var(--ease) forwards; }
-    .demo[data-phase="5"] .ocard:nth-child(2) { animation-delay: .22s; }
-    .demo[data-phase="5"] .ocard:nth-child(3) { animation-delay: .6s; }
-    .demo[data-phase="5"] .ocard:nth-child(4) { animation-delay: .98s; }
-    @keyframes ocIn { to { opacity: 1; transform: none; } }
+    .ocard { background: rgba(255,255,255,.04); border: 1px solid var(--w-line); border-left: 3px solid var(--gold); border-radius: 10px; padding: 11px 13px; margin-bottom: 9px; opacity: 0; transform: translateY(10px); filter: blur(7px); }
+    .demo[data-phase="5"] .ocard { animation: ocIn .55s var(--ease) forwards; }
+    .demo[data-phase="5"] .ocard:nth-child(2) { animation-delay: .15s; }
+    .demo[data-phase="5"] .ocard:nth-child(3) { animation-delay: .55s; }
+    .demo[data-phase="5"] .ocard:nth-child(4) { animation-delay: 1.6s; }
+    @keyframes ocIn { to { opacity: 1; transform: none; filter: blur(0); } }
+    .oa .caret { display: inline-block; width: 2px; height: 1em; vertical-align: -2px; margin-left: 1px; background: var(--gold); animation: caretBlink .9s steps(1) infinite; }
+    @keyframes caretBlink { 50% { opacity: 0; } }
     .ocard .oq { color: #fff; font-size: 12.5px; font-weight: 600; line-height: 1.4; }
     .ocard .oa { color: var(--w-ink2); font-size: 11.5px; line-height: 1.5; margin-top: 5px; }
     .ocard.quote { border-left-color: #E4C77D; color: #fff; font-size: 13px; font-style: italic; }
@@ -400,12 +403,12 @@
                   </div>
                   <div class="opt-row">
                     <span class="opt-lab">Make</span>
-                    <button class="opt" type="button">Articles</button>
-                    <button class="opt qa" type="button">Q&amp;A</button>
-                    <button class="opt" type="button">Key Quotes</button>
-                    <button class="opt" type="button">Social posts</button>
+                    <span class="opt">Articles</span>
+                    <span class="opt qa">Q&amp;A</span>
+                    <span class="opt">Key Quotes</span>
+                    <span class="opt">Social posts</span>
                   </div>
-                  <button class="genbtn" type="button">Generate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+                  <span class="genbtn">Generate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
 
                   <div class="gen">
                     <div class="gen-bar"><i></i></div>
