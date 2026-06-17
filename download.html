@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Downloading Modulus Studio</title>
+  <meta name="description" content="Your Modulus Studio download is starting. Create a free account for 25 credits, and here is how to clear the one-time Windows install prompt." />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#070f1c" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+  <link rel="stylesheet" href="redo.css" />
+  <link rel="stylesheet" href="studio.css" />
+  <style>
+    body { background: #070f1c; }
+    .dl-wrap { max-width: 660px; margin: 0 auto; padding: 56px 22px 90px; text-align: center; }
+    .dl-top { display: flex; justify-content: center; margin-bottom: 26px; }
+    .dl-top a { color: var(--s-ink2); font-size: 13.5px; }
+    .dl-eyebrow { display: inline-block; color: var(--s-gold); letter-spacing: .2em; text-transform: uppercase; font-size: 12px; font-weight: 600; }
+    .dl-wrap h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(30px, 5vw, 44px); color: #fff; margin: 10px 0 12px; }
+    .dl-lead { color: var(--s-ink2); font-size: 16px; line-height: 1.6; }
+    .dl-lead a { color: var(--s-gold); font-weight: 600; }
+    .dl-card { text-align: left; margin: 30px 0; padding: 26px 26px 22px; border-radius: 18px; background: rgba(255,255,255,.035); border: 1px solid var(--s-line); }
+    .dl-card h2 { font-family: var(--font-display); font-weight: 600; font-size: 19px; color: #fff; margin: 0 0 8px; }
+    .dl-card p { color: var(--s-ink2); font-size: 14.5px; line-height: 1.6; margin: 0 0 14px; }
+    .dl-steps { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .dl-steps li { display: flex; align-items: center; gap: 12px; color: var(--s-ink); font-size: 15px; }
+    .dl-steps .n { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #0c1424; background: linear-gradient(180deg, #efd699, var(--s-gold2)); }
+    .dl-steps b { color: #fff; }
+    .dl-note { color: var(--s-ink3); font-size: 13px; margin-top: 14px; }
+    .dl-acct { margin-top: 34px; }
+    .dl-acct p { color: var(--s-ink2); font-size: 15px; margin-bottom: 16px; } .dl-acct p b { color: #fff; }
+    .dl-foot { color: var(--s-ink3); font-size: 13px; margin-top: 22px; }
+  </style>
+</head>
+<body data-section="app">
+  <div class="dl-wrap">
+    <div class="dl-top"><a href="/studio">&larr; Back to Modulus Studio</a></div>
+
+    <span class="dl-eyebrow">Modulus Studio · Windows 10 / 11</span>
+    <h1>Your download is starting.</h1>
+    <p class="dl-lead">If it doesn't begin in a few seconds, <a href="/download/win" id="dlLink">click here to download</a>.</p>
+
+    <div class="dl-card">
+      <h2>One-time heads up about the Windows prompt</h2>
+      <p>Because Modulus Studio is a new app from a small publisher, Windows may show a blue <b>"Windows protected your PC"</b> screen the first time you run the installer. That is expected, and it is safe to continue:</p>
+      <ol class="dl-steps">
+        <li><span class="n">1</span><span>Click <b>More info</b></span></li>
+        <li><span class="n">2</span><span>Click <b>Run anyway</b></span></li>
+      </ol>
+      <p class="dl-note">The app keeps itself updated automatically after that. (Signing the app to remove this prompt entirely is on our roadmap.)</p>
+    </div>
+
+    <div class="dl-acct">
+      <p>Modulus Studio needs a free account to run, and every new account comes with <b>25 credits</b> to try it. Set yours up while the download finishes:</p>
+      <a class="s-btn gold" href="/login?mode=create">Create your free account</a>
+    </div>
+
+    <p class="dl-foot">Questions? Email <a href="mailto:james@modulustech.ai" style="color:var(--s-gold)">james@modulustech.ai</a>.</p>
+  </div>
+
+  <script>
+    // Auto-start the download. GitHub serves the installer as an attachment, so
+    // navigating to it begins the download and leaves this page on screen.
+    setTimeout(function () { try { window.location.href = "/download/win"; } catch (e) {} }, 1500);
+  </script>
+</body>
+</html>

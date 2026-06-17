@@ -116,12 +116,18 @@
   status = 301
   force = true
 
-# The download: a stable URL the site links everywhere; points at the current
-# versioned installer asset. Update the target on each release.
+# Download flow: /download serves a short interstitial (download.html) that warns
+# about the Windows SmartScreen prompt before the file lands and auto-starts it;
+# /download/win is the actual versioned installer. Update the version each release.
 [[redirects]]
-  from = "/download"
+  from = "/download/win"
   to = "https://github.com/califlowerdev/modulus-releases/releases/download/v1.139.0/Modulus.Studio_1.139.0_x64-setup.exe"
   status = 302
+[[redirects]]
+  from = "/download.html"
+  to = "/download"
+  status = 301
+  force = true
 
 # Old Solutions page folded into Services.
 [[redirects]]
