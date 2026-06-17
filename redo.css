@@ -179,6 +179,10 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
 .footer .brand { color: #fff; }
 .footer .brand-mark { background: var(--navy-2); }
 .footer-tag { font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--gold-bright); margin-top: 16px; max-width: 28ch; }
+.footer-social { display: flex; gap: 16px; margin-top: 18px; }
+.footer-social a { color: rgba(244,237,216,.62); display: inline-flex; transition: color .18s, transform .18s; }
+.footer-social a:hover { color: var(--gold-bright); transform: translateY(-1px); }
+.footer-social a:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; border-radius: 4px; }
 .footer-cols { display: flex; gap: 60px; flex-wrap: wrap; }
 .footer-col h5 { color: rgba(244,237,216,.45); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; margin-bottom: 15px; }
 .footer-col a { display: block; color: rgba(244,237,216,.7); font-size: 14px; margin-bottom: 11px; transition: color .18s; }
