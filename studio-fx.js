@@ -112,15 +112,13 @@
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function clearAll() { for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
 
-  var loopCount = 0;
+  function parkCursor() {   // tuck the cursor into the bottom-right so it never hides the output
+    cursor.style.transform = "translate(" + (demo.clientWidth - 30) + "px," + (demo.clientHeight - 32) + "px)";
+  }
   function play() {
     clearAll();
-    var social = (loopCount % 2 === 1);          // alternate Q&A and Social each loop
-    var opt = social ? (socialOpt || qaOpt) : qaOpt;
-    var ans = social ? socialAns : qaAns;
-    demo.classList.remove("mode-qa", "mode-social");
-    demo.classList.add(social ? "mode-social" : "mode-qa");
-    if (title) title.textContent = social ? "Social posts pulled from Ask Pastor John" : "Q&A pulled from Ask Pastor John";
+    demo.classList.add("mode-qa");
+    if (title) title.textContent = "Q&A pulled from Ask Pastor John";
     demo.setAttribute("data-phase", "1");
     demo.classList.remove("genstart");
     lead.classList.remove("sel"); qaOpt.classList.remove("on"); if (socialOpt) socialOpt.classList.remove("on");
@@ -137,18 +135,19 @@
     at(3000, function () { moveTo(lead, 0, -8); });               // cursor to the book
     at(3900, function () { tap(); lead.classList.add("sel"); });  // select it
     at(4900, function () { demo.setAttribute("data-phase", "3"); }); // enter the working view
-    at(5700, function () { moveTo(opt); });                       // cursor to the chosen output type
-    at(6700, function () { tap(); opt.classList.add("on"); demo.classList.add("genstart"); });
+    at(5700, function () { moveTo(qaOpt); });                     // cursor to Q&A
+    at(6700, function () { tap(); qaOpt.classList.add("on"); demo.classList.add("genstart"); });
     at(7700, function () { moveTo(genbtn); });                    // cursor to Generate
     at(8700, function () { tap(); demo.setAttribute("data-phase", "4"); }); // generating
+    at(9050, function () { parkCursor(); });                      // move the cursor out of the way
     at(9100, function () { steps[0] && steps[0].classList.add("done"); });
     at(9800, function () { steps[1] && steps[1].classList.add("done"); });
     at(10500, function () { steps[2] && steps[2].classList.add("done"); });
     at(11200, function () { steps[3] && steps[3].classList.add("done"); });
-    at(11900, function () { demo.setAttribute("data-phase", "5"); moveTo(carousel, 0, 90); }); // output
-    if (ans[0]) at(12350, function () { typeOut(ans[0]); });      // stream the first answer
-    if (ans[1]) at(13200, function () { typeOut(ans[1]); });      // then the second
-    at(20000, function () { loopCount++; play(); });              // long hold so it is easy to read, then loop
+    at(11900, function () { demo.setAttribute("data-phase", "5"); });   // output (cursor already parked bottom-right)
+    if (qaAns[0]) at(12350, function () { typeOut(qaAns[0]); });  // stream the first answer
+    if (qaAns[1]) at(13200, function () { typeOut(qaAns[1]); });  // then the second
+    at(20000, play);                                             // long hold so it is easy to read, then loop
   }
 
   var running = false;
