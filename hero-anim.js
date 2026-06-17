@@ -62,10 +62,11 @@
     // runs on a battery, so the density is dialed down there (bigger divisor =
     // fewer dots, lower cap).
     var small = w < 700;
-    var divisor = small ? 9000 : 4800;   // a lot denser field
+    var divisor = small ? 8200 : 4300;   // a lot denser field
     // higher cap so tall fields (the homepage spans several sections) reach the
-    // same per-area density as a short hero, so the nodes actually connect.
-    var capMax = small ? 250 : 640;
+    // same per-area density as a short hero, so the nodes actually connect. The
+    // homepage is cap-bound, so this cap is the dial for "more dots on home".
+    var capMax = small ? 300 : 820;
     var count = Math.max(70, Math.min(capMax, Math.round((w * h) / divisor)));
     particles = [];
     for (var k = 0; k < count; k++) {
