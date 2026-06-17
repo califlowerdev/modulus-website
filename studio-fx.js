@@ -158,7 +158,7 @@
   function start() { if (running) return; running = true; play(); }
   function stop() { running = false; clearAll(); }
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(demo);
+    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { rootMargin: "-48% 0px -48% 0px", threshold: 0 }).observe(demo);
   } else { start(); }
 })();
 
@@ -280,7 +280,7 @@
   function start() { if (running) return; running = true; play(); }
   function stop() { running = false; clearAll(); }
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(pe);
+    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { rootMargin: "-48% 0px -48% 0px", threshold: 0 }).observe(pe);
   } else { start(); }
 })();
 
@@ -354,6 +354,6 @@
   function start() { if (running) return; running = true; play(); }
   function stop() { running = false; clearAll(); }
   if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(tr);
+    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { rootMargin: "-48% 0px -48% 0px", threshold: 0 }).observe(tr);
   } else { start(); }
 })();
