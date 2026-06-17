@@ -21,7 +21,6 @@
   };
   var LINKS = [
     ["Services", "/services"],
-    ["Studio", "/studio"],
     ["Products", "/products"],
     ["Insights", "/insights"],
     ["About", "/about"]

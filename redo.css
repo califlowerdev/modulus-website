@@ -230,25 +230,25 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
 
 /* FAQ accordion */
 .faq { max-width: 760px; margin: 0 auto; }
-.faq details { border-bottom: 1px solid var(--line); }
+.faq details, details.faq { border-bottom: 1px solid var(--line); }
 .faq summary { cursor: pointer; font-weight: 600; font-size: 17px; padding: 22px 0; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after { content: "+"; color: var(--gold-deep); font-size: 24px; font-weight: 300; line-height: 1; }
-.faq details[open] summary::after { content: "\2212"; }
+.faq details[open] summary::after, details.faq[open] summary::after { content: "\2212"; }
 .faq .ans { color: var(--ink-2); font-size: 15.5px; padding: 0 0 22px; max-width: 64ch; }
 /* Smooth slide-open for FAQ accordions (.faq sitewide + .s-faq on /studio).
    Animates the real content height via ::details-content where supported
    (Chromium). Other browsers just open instantly, with no breakage. */
 @supports (interpolate-size: allow-keywords) {
   :root { interpolate-size: allow-keywords; }
-  .faq details::details-content, .s-faq details::details-content {
+  .faq details::details-content, .s-faq details::details-content, details.faq::details-content {
     block-size: 0; opacity: 0; overflow: clip;
     transition: block-size .32s var(--ease), opacity .28s var(--ease), content-visibility .32s allow-discrete;
   }
-  .faq details[open]::details-content, .s-faq details[open]::details-content { block-size: auto; opacity: 1; }
+  .faq details[open]::details-content, .s-faq details[open]::details-content, details.faq[open]::details-content { block-size: auto; opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .faq details::details-content, .s-faq details::details-content { transition: none; }
+  .faq details::details-content, .s-faq details::details-content, details.faq::details-content { transition: none; }
 }
 
 /* simple form */

@@ -220,7 +220,7 @@
     '#mod-ask{position:fixed;right:20px;bottom:20px;z-index:2147480000;font-family:Inter,system-ui,-apple-system,sans-serif}' +
 
     /* launcher */
-    '#mod-ask-btn{display:flex;align-items:center;gap:9px;border:0;cursor:pointer;background:#0C1B2E;color:#fff;' +
+    '#mod-ask-btn{display:flex;align-items:center;gap:9px;border:1.5px solid #C8A75B;cursor:pointer;background:#0C1B2E;color:#fff;' +
       'padding:13px 18px;border-radius:999px;box-shadow:0 14px 34px -12px rgba(11,27,46,.55);font-size:14.5px;font-weight:600;' +
       'transition:transform .18s ease,box-shadow .18s ease;touch-action:manipulation}' +
     '#mod-ask-btn:hover{transform:translateY(-2px);box-shadow:0 20px 44px -14px rgba(11,27,46,.6)}' +
