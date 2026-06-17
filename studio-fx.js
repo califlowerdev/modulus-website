@@ -179,6 +179,8 @@
   var bgs = pe.querySelectorAll(".pe-bg");
   var impBtn = pe.querySelector(".pe-imp");
   var expBtn = pe.querySelector(".pe-exp");
+  var logoBtn = pe.querySelector(".pe-logobtn");
+  var logo = pe.querySelector(".pe-logo");
   if (!card || !box || !quote || !attr || !cursor || !impBtn || !expBtn || !plats.length || !bgs.length) return;
   var quoteText = quote.textContent, attrText = attr.textContent;
 
@@ -186,7 +188,7 @@
   function setBg(n) { card.setAttribute("data-bg", String(n)); for (var i = 0; i < bgs.length; i++) bgs[i].classList.toggle("on", bgs[i].getAttribute("data-bg") === String(n)); }
   function plat(f) { for (var i = 0; i < plats.length; i++) if (plats[i].getAttribute("data-fmt") === f) return plats[i]; }
 
-  if (rm) { setFmt("ig"); setBg(0); box.classList.add("shown"); quote.textContent = quoteText; attr.textContent = attrText; attr.style.opacity = "1"; return; }
+  if (rm) { setFmt("ig"); setBg(0); box.classList.add("shown"); quote.textContent = quoteText; attr.textContent = attrText; attr.style.opacity = "1"; if (logo) logo.classList.add("show"); return; }
 
   var timers = [];
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
@@ -213,30 +215,34 @@
     box.classList.remove("shown", "grab", "sel"); box.classList.add("off");
     quote.textContent = ""; attr.textContent = ""; attr.style.opacity = "0";
     impBtn.classList.remove("on"); expBtn.classList.remove("on");
+    if (logoBtn) logoBtn.classList.remove("on");
+    if (logo) logo.classList.remove("show");
     cursor.style.transition = "none"; cursor.style.transform = "translate(86px, 36px)";
     at(60, function () { cursor.style.transition = ""; });
-    // 1) Import from extraction — the quote generates in, off-center
+    // 1) Import from the Content Repurposer — the quote generates in, off-center
     at(900, function () { moveTo(impBtn); });
     at(1700, function () { tap(); impBtn.classList.add("on"); box.classList.add("shown"); typeQuote(); });
     at(2300, function () { impBtn.classList.remove("on"); });
-    // 2) the imported text is off-center — grab it and drag it to centered
+    // 2) the imported text landed off-center — grab it and drag it to centered (one smooth transform-glide, cursor synced)
     at(4300, function () { moveTo(box, 0, -6); box.classList.add("sel"); });
     at(5000, function () { box.classList.add("grab"); });
-    at(5300, function () { box.classList.remove("off"); });   // slide to center
-    at(5550, function () { moveTo(box, 0, -6); });
-    at(5850, function () { moveTo(box, 0, -6); });
-    at(6050, function () { box.classList.remove("grab"); });
-    at(6700, function () { box.classList.remove("sel"); });
-    // 3) pick a platform — the canvas reframes to Story
-    at(7600, function () { moveTo(plat("story")); });
-    at(8300, function () { tap(); setFmt("story"); });
-    // 4) swap the background photo
-    at(9500, function () { moveTo(bgs[1]); });
-    at(10200, function () { tap(); setBg(1); });
-    // 5) export to post
-    at(11500, function () { moveTo(expBtn); });
-    at(12300, function () { tap(); expBtn.classList.add("on"); pe.classList.add("posted"); });
-    at(16800, play);
+    at(5350, function () { box.classList.remove("off"); cursor.style.transition = "transform .5s cubic-bezier(.22,.61,.36,1)"; moveTo(card, 0, -2); });
+    at(6150, function () { box.classList.remove("grab"); cursor.style.transition = ""; });
+    at(6750, function () { box.classList.remove("sel"); });
+    // 3) insert the logo — it drops into the bottom-left
+    at(7600, function () { moveTo(logoBtn); });
+    at(8300, function () { tap(); if (logoBtn) logoBtn.classList.add("on"); if (logo) logo.classList.add("show"); });
+    at(8700, function () { if (logoBtn) logoBtn.classList.remove("on"); });
+    // 4) pick a platform — the canvas reframes to Story
+    at(9600, function () { moveTo(plat("story")); });
+    at(10300, function () { tap(); setFmt("story"); });
+    // 5) swap the background to the foggy forest
+    at(11500, function () { moveTo(bgs[1]); });
+    at(12200, function () { tap(); setBg(1); });
+    // 6) export to post
+    at(13500, function () { moveTo(expBtn); });
+    at(14300, function () { tap(); expBtn.classList.add("on"); pe.classList.add("posted"); });
+    at(19000, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }

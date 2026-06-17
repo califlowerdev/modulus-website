@@ -284,10 +284,10 @@
     .pe[data-fmt="fb"] .pe-card { width: 230px; height: 288px; }
     .pe[data-fmt="x"] .pe-card { width: 320px; height: 180px; }
     .pe-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,14,26,.30) 0%, rgba(7,14,26,.10) 40%, rgba(7,14,26,.68) 100%); }
-    .pe-textbox { position: absolute; left: 50%; top: 50%; width: 78%; text-align: center; padding: 4px 6px; transform: translate(-50%, -50%); opacity: 0; transition: left .55s var(--ease), top .55s var(--ease), transform .22s var(--ease), opacity .3s var(--ease); }
+    .pe-textbox { position: absolute; left: 50%; top: 50%; width: 78%; text-align: center; padding: 4px 6px; transform: translate(-50%, -50%) translate(var(--pdx, 0px), var(--pdy, 0px)) scale(var(--psc, 1)); opacity: 0; transition: transform .5s cubic-bezier(.22,.61,.36,1), opacity .3s var(--ease); will-change: transform; backface-visibility: hidden; }
     .pe-textbox.shown { opacity: 1; }
-    .pe-textbox.off { left: 37%; top: 27%; }
-    .pe-textbox.grab { transform: translate(-50%, -50%) scale(1.03); }
+    .pe-textbox.off { --pdx: -26px; --pdy: -52px; }
+    .pe-textbox.grab { --psc: 1.03; }
     .pe-caret { display: inline-block; width: 2px; height: .92em; background: var(--gold); margin-left: 1px; vertical-align: -1px; animation: peBlink 1s steps(1) infinite; }
     @keyframes peBlink { 50% { opacity: 0; } }
     .pe-textbox::before { content: ""; position: absolute; inset: -3px; border: 1px dashed rgba(228,199,125,0); border-radius: 4px; transition: border-color .2s; }
@@ -298,13 +298,16 @@
     .pe-textbox.sel .pe-h, .pe-textbox.grab .pe-h { opacity: 1; }
     .pe-h.pe-tl { left: -4px; top: -6px; } .pe-h.pe-tr { right: -4px; top: -6px; } .pe-h.pe-bl { left: -4px; bottom: -6px; } .pe-h.pe-br { right: -4px; bottom: -6px; }
     .pe-side { padding: 14px 13px; background: rgba(0,0,0,.27); border-left: 1px solid var(--w-line); overflow: hidden; display: flex; flex-direction: column; }
-    .pe-imp, .pe-exp { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-size: 10.5px; font-weight: 600; padding: 8px 6px; border-radius: 8px; border: 1px solid var(--w-line); color: var(--w-ink); background: rgba(255,255,255,.03); transition: all .22s var(--ease); line-height: 1.15; }
-    .pe-imp svg, .pe-exp svg { width: 14px; height: 14px; flex: 0 0 auto; }
-    .pe-imp { margin-bottom: 13px; }
-    .pe-imp.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
+    .pe-imp, .pe-exp, .pe-logobtn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-size: 10.5px; font-weight: 600; padding: 8px 6px; border-radius: 8px; border: 1px solid var(--w-line); color: var(--w-ink); background: rgba(255,255,255,.03); transition: all .22s var(--ease); line-height: 1.15; }
+    .pe-imp svg, .pe-exp svg, .pe-logobtn svg { width: 14px; height: 14px; flex: 0 0 auto; }
+    .pe-imp { margin-bottom: 9px; }
+    .pe-imp.on, .pe-logobtn.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
+    .pe-logobtn { margin-bottom: 13px; }
+    .pe-logo { position: absolute; left: 12px; bottom: 11px; width: 70px; max-height: 28px; height: auto; object-fit: contain; object-position: left bottom; opacity: 0; transform: translateY(5px); transition: opacity .4s var(--ease), transform .4s var(--ease); filter: drop-shadow(0 1px 5px rgba(0,0,0,.65)); pointer-events: none; z-index: 2; }
+    .pe-logo.show { opacity: .94; transform: translateY(0); }
     .pe-exp { margin-top: auto; }
-    .pe-exp.on { color: #0f2a16; background: linear-gradient(180deg, #86e89a, #34c759); border-color: transparent; }
-    .pe-toast { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%) translateY(8px); display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #0f2a16; background: linear-gradient(180deg, #9be8a8, #34c759); padding: 5px 12px; border-radius: 999px; opacity: 0; transition: opacity .35s var(--ease), transform .35s var(--ease); white-space: nowrap; box-shadow: 0 10px 22px -8px rgba(0,0,0,.55); pointer-events: none; }
+    .pe-exp.on { color: #eef8f3; background: linear-gradient(180deg, #3c9676, #22624a); border-color: transparent; }
+    .pe-toast { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%) translateY(8px); display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #eef8f3; background: linear-gradient(180deg, #3c9676, #22624a); padding: 5px 12px; border-radius: 999px; opacity: 0; transition: opacity .35s var(--ease), transform .35s var(--ease); white-space: nowrap; box-shadow: 0 10px 22px -8px rgba(0,0,0,.55); pointer-events: none; }
     .pe-toast svg { width: 12px; height: 12px; }
     .pe.posted .pe-toast { opacity: 1; transform: translateX(-50%) translateY(0); }
     .pe-side .sh { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--w-ink2); margin: 0 0 9px; }
@@ -350,7 +353,7 @@
     .tr-export { align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--w-ink); background: rgba(228,199,125,.1); border: 1px solid rgba(228,199,125,.42); border-radius: 9px; padding: 8px 13px; opacity: 0; transform: translateY(6px); transition: opacity .4s var(--ease), transform .4s var(--ease), color .25s, background .25s, border-color .25s; }
     .tr[data-st="done"] .tr-export { opacity: 1; transform: translateY(0); }
     .tr-export svg { width: 15px; height: 15px; flex: 0 0 auto; }
-    .tr-export.sent { color: #0f2a16; background: linear-gradient(180deg, #86e89a, #34c759); border-color: transparent; }
+    .tr-export.sent { color: #eef8f3; background: linear-gradient(180deg, #3c9676, #22624a); border-color: transparent; }
 
     @media (max-width: 560px) {
       .pe { grid-template-columns: 1fr 132px; }
@@ -575,6 +578,7 @@
                   <div class="pe-canvas">
                     <div class="pe-card" data-bg="0">
                       <div class="pe-scrim"></div>
+                      <img class="pe-logo" src="assets/dg-logo.svg" alt="" width="70" height="28" loading="lazy">
                       <div class="pe-textbox">
                         <span class="pe-h pe-tl"></span><span class="pe-h pe-tr"></span><span class="pe-h pe-bl"></span><span class="pe-h pe-br"></span>
                         <div class="pe-quote">"God is most glorified in us when we are most satisfied in him."</div>
@@ -585,7 +589,8 @@
                   </div>
                 </div>
                 <div class="pe-side">
-                  <button class="pe-imp" data-act="import" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M8 12l4 4 4-4M5 20h14"/></svg>Import from extraction</button>
+                  <button class="pe-imp" data-act="import" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Import from the Content Repurposer</button>
+                  <button class="pe-logobtn" data-act="logo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-4-8 7"/></svg>Insert logo</button>
                   <div class="sh">Platform</div>
                   <div class="pe-plats">
                     <button class="pe-plat on" data-fmt="ig" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</button>
