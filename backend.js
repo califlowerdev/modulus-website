@@ -1019,7 +1019,58 @@
         });
       }
       loadMarketing(7);
+      var ex = document.getElementById("exportContactsBtn");
+      if (ex && !ex.dataset.wired) {
+        ex.dataset.wired = "1";
+        ex.addEventListener("click", function () { exportContacts(ex); });
+      }
     }).catch(function () { window.location.assign("/login"); });
+  }
+
+  // Owner-only: pull opted-in contacts from the admin-contacts function and hand
+  // the admin a CSV to import into their email tool (Kit). Everything is gated
+  // server-side; this just formats and downloads.
+  function exportContacts(btn) {
+    var note = document.getElementById("exportNote");
+    var label = btn.textContent;
+    btn.disabled = true; btn.textContent = "Preparing…";
+    if (note) note.textContent = "";
+    accessToken().then(function (token) {
+      if (!token) { window.location.assign("/login"); return; }
+      return fetch(fnUrl("admin-contacts"), { method: "GET", headers: { "Authorization": "Bearer " + token } })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (res) {
+          btn.disabled = false; btn.textContent = label;
+          if (!res || !res.ok) { if (note) note.textContent = "Couldn't load contacts just now. Try again in a moment."; return; }
+          var rows = res.contacts || [];
+          if (!rows.length) { if (note) note.textContent = "No opted-in contacts yet. They'll appear here as people tick the box at signup."; return; }
+          downloadCsv(contactsToCsv(rows), "modulus-opted-in-contacts.csv");
+          if (note) note.textContent = "Exported " + rows.length + " contact" + (rows.length === 1 ? "" : "s") + ". Import this file into Kit to send your campaign.";
+        });
+    }).catch(function () { btn.disabled = false; btn.textContent = label; if (note) note.textContent = "Network hiccup. Try again."; });
+  }
+  function contactsToCsv(rows) {
+    // Quote every field and double internal quotes (RFC 4180). Prefix any value
+    // that starts with a formula character so a spreadsheet can't execute it
+    // (CSV-injection guard), without mangling normal names/emails.
+    var cell = function (v) {
+      v = (v == null ? "" : String(v));
+      if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
+      return '"' + v.replace(/"/g, '""') + '"';
+    };
+    var lines = ["email,name,opted_in_at,plan"];
+    for (var i = 0; i < rows.length; i++) {
+      lines.push([cell(rows[i].email), cell(rows[i].name), cell(rows[i].opted_in_at), cell(rows[i].plan)].join(","));
+    }
+    return lines.join("\r\n");
+  }
+  function downloadCsv(text, filename) {
+    var blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   }
 
   function fmtNum(n) {
