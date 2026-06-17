@@ -284,9 +284,12 @@
     .pe[data-fmt="fb"] .pe-card { width: 230px; height: 288px; }
     .pe[data-fmt="x"] .pe-card { width: 320px; height: 180px; }
     .pe-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,14,26,.30) 0%, rgba(7,14,26,.10) 40%, rgba(7,14,26,.68) 100%); }
-    .pe-textbox { position: absolute; left: 18px; width: calc(100% - 36px); top: 36%; padding: 4px 6px; transition: top .55s var(--ease), transform .22s var(--ease); }
-    .pe-textbox.moved { top: 60%; }
-    .pe-textbox.grab { transform: scale(1.03); }
+    .pe-textbox { position: absolute; left: 50%; top: 50%; width: 78%; text-align: center; padding: 4px 6px; transform: translate(-50%, -50%); opacity: 0; transition: left .55s var(--ease), top .55s var(--ease), transform .22s var(--ease), opacity .3s var(--ease); }
+    .pe-textbox.shown { opacity: 1; }
+    .pe-textbox.off { left: 37%; top: 27%; }
+    .pe-textbox.grab { transform: translate(-50%, -50%) scale(1.03); }
+    .pe-caret { display: inline-block; width: 2px; height: .92em; background: var(--gold); margin-left: 1px; vertical-align: -1px; animation: peBlink 1s steps(1) infinite; }
+    @keyframes peBlink { 50% { opacity: 0; } }
     .pe-textbox::before { content: ""; position: absolute; inset: -3px; border: 1px dashed rgba(228,199,125,0); border-radius: 4px; transition: border-color .2s; }
     .pe-textbox.sel::before, .pe-textbox.grab::before { border-color: rgba(228,199,125,.9); }
     .pe-quote { position: relative; font-family: var(--font-display); font-weight: 600; font-size: 15px; line-height: 1.32; color: #fff; text-shadow: 0 1px 10px rgba(0,0,0,.55); }
@@ -294,7 +297,16 @@
     .pe-h { position: absolute; width: 6px; height: 6px; background: #fff; border: 1px solid var(--gold); border-radius: 1px; opacity: 0; transition: opacity .2s; }
     .pe-textbox.sel .pe-h, .pe-textbox.grab .pe-h { opacity: 1; }
     .pe-h.pe-tl { left: -4px; top: -6px; } .pe-h.pe-tr { right: -4px; top: -6px; } .pe-h.pe-bl { left: -4px; bottom: -6px; } .pe-h.pe-br { right: -4px; bottom: -6px; }
-    .pe-side { padding: 16px 13px; background: rgba(0,0,0,.27); border-left: 1px solid var(--w-line); overflow: hidden; }
+    .pe-side { padding: 14px 13px; background: rgba(0,0,0,.27); border-left: 1px solid var(--w-line); overflow: hidden; display: flex; flex-direction: column; }
+    .pe-imp, .pe-exp { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-size: 10.5px; font-weight: 600; padding: 8px 6px; border-radius: 8px; border: 1px solid var(--w-line); color: var(--w-ink); background: rgba(255,255,255,.03); transition: all .22s var(--ease); line-height: 1.15; }
+    .pe-imp svg, .pe-exp svg { width: 14px; height: 14px; flex: 0 0 auto; }
+    .pe-imp { margin-bottom: 13px; }
+    .pe-imp.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
+    .pe-exp { margin-top: auto; }
+    .pe-exp.on { color: #0f2a16; background: linear-gradient(180deg, #86e89a, #34c759); border-color: transparent; }
+    .pe-toast { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%) translateY(8px); display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #0f2a16; background: linear-gradient(180deg, #9be8a8, #34c759); padding: 5px 12px; border-radius: 999px; opacity: 0; transition: opacity .35s var(--ease), transform .35s var(--ease); white-space: nowrap; box-shadow: 0 10px 22px -8px rgba(0,0,0,.55); pointer-events: none; }
+    .pe-toast svg { width: 12px; height: 12px; }
+    .pe.posted .pe-toast { opacity: 1; transform: translateX(-50%) translateY(0); }
     .pe-side .sh { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--w-ink2); margin: 0 0 9px; }
     .pe-plats { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 15px; }
     .pe-plat { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 4px 7px; border: 1px solid var(--w-line); border-radius: 9px; font-size: 9.5px; color: var(--w-ink2); background: rgba(255,255,255,.02); transition: all .22s var(--ease); }
@@ -329,12 +341,16 @@
     .tr[data-st="working"] .tr-status { display: flex; }
     .tr-status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: trPulse 1.1s var(--ease) infinite; }
     @keyframes trPulse { 50% { opacity: .35; } }
-    .tr-script { margin-top: 14px; overflow: hidden; flex: 1; }
+    .tr-script { margin-top: 14px; overflow: hidden; }
     .tr-line { display: grid; grid-template-columns: 46px 1fr; gap: 10px; margin-bottom: 12px; opacity: 0; transform: translateY(8px); }
     .tr-line.show { animation: ocIn .5s var(--ease) forwards; }
     .tr-line .ts { font-size: 11px; color: var(--gold); font-variant-numeric: tabular-nums; padding-top: 1px; }
     .tr-line .tx { font-size: 12.5px; line-height: 1.5; color: var(--w-ink); }
     .tr-line .tx b { color: #fff; font-weight: 700; }
+    .tr-export { align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--w-ink); background: rgba(228,199,125,.1); border: 1px solid rgba(228,199,125,.42); border-radius: 9px; padding: 8px 13px; opacity: 0; transform: translateY(6px); transition: opacity .4s var(--ease), transform .4s var(--ease), color .25s, background .25s, border-color .25s; }
+    .tr[data-st="done"] .tr-export { opacity: 1; transform: translateY(0); }
+    .tr-export svg { width: 15px; height: 15px; flex: 0 0 auto; }
+    .tr-export.sent { color: #0f2a16; background: linear-gradient(180deg, #86e89a, #34c759); border-color: transparent; }
 
     @media (max-width: 560px) {
       .pe { grid-template-columns: 1fr 132px; }
@@ -565,9 +581,11 @@
                         <div class="pe-attr">Ask Pastor John · John Piper</div>
                       </div>
                     </div>
+                    <div class="pe-toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Posted</div>
                   </div>
                 </div>
                 <div class="pe-side">
+                  <button class="pe-imp" data-act="import" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M8 12l4 4 4-4M5 20h14"/></svg>Import from extraction</button>
                   <div class="sh">Platform</div>
                   <div class="pe-plats">
                     <button class="pe-plat on" data-fmt="ig" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</button>
@@ -581,6 +599,7 @@
                     <button class="pe-bg" data-bg="1" type="button" aria-label="Warm light background"></button>
                     <button class="pe-bg" data-bg="2" type="button" aria-label="Sunrise background"></button>
                   </div>
+                  <button class="pe-exp" data-act="export" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V8M8 12l4-4 4 4M5 4h14"/></svg>Export &middot; Post</button>
                 </div>
                 <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
               </div>
@@ -611,6 +630,7 @@
                   <div class="tr-line"><span class="ts">00:24</span><span class="tx"><b>John Piper:</b> The deepest and most enduring happiness is found not from God, but in God himself.</span></div>
                   <div class="tr-line"><span class="ts">00:46</span><span class="tx"><b>John Piper:</b> Conversion is the creation of new desires, not just the suppression of old ones.</span></div>
                 </div>
+                <button class="tr-export" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M8 7l4-4 4 4"/></svg><span class="trx-label">Export to extraction</span></button>
                 <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
               </div>
             </div>

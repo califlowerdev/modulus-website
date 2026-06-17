@@ -162,25 +162,31 @@
   } else { start(); }
 })();
 
-/* 4) Photo Editor demo: actually operating the editor — pick a platform (the
-   canvas reframes), swap the background photo, then grab and drag the quote
-   text box. A simulated cursor drives it; loops on-screen. */
+/* 4) Photo Editor demo: operating the editor as part of the ecosystem.
+   Import a quote from the extraction (it generates in, off-center), drag it to
+   center, pick a platform (reframe), swap the background, then export to post.
+   A simulated cursor drives it; loops on-screen. */
 (function () {
   var pe = document.getElementById("peDemo");
   if (!pe) return;
   var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var card = pe.querySelector(".pe-card");
   var box = pe.querySelector(".pe-textbox");
+  var quote = pe.querySelector(".pe-quote");
+  var attr = pe.querySelector(".pe-attr");
   var cursor = pe.querySelector(".dcursor");
   var plats = pe.querySelectorAll(".pe-plat");
   var bgs = pe.querySelectorAll(".pe-bg");
-  if (!card || !box || !cursor || !plats.length || !bgs.length) return;
+  var impBtn = pe.querySelector(".pe-imp");
+  var expBtn = pe.querySelector(".pe-exp");
+  if (!card || !box || !quote || !attr || !cursor || !impBtn || !expBtn || !plats.length || !bgs.length) return;
+  var quoteText = quote.textContent, attrText = attr.textContent;
 
   function setFmt(f) { pe.setAttribute("data-fmt", f); for (var i = 0; i < plats.length; i++) plats[i].classList.toggle("on", plats[i].getAttribute("data-fmt") === f); }
   function setBg(n) { card.setAttribute("data-bg", String(n)); for (var i = 0; i < bgs.length; i++) bgs[i].classList.toggle("on", bgs[i].getAttribute("data-bg") === String(n)); }
   function plat(f) { for (var i = 0; i < plats.length; i++) if (plats[i].getAttribute("data-fmt") === f) return plats[i]; }
 
-  if (rm) { setFmt("ig"); setBg(0); return; }
+  if (rm) { setFmt("ig"); setBg(0); box.classList.add("shown"); quote.textContent = quoteText; attr.textContent = attrText; attr.style.opacity = "1"; return; }
 
   var timers = [];
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
@@ -191,32 +197,46 @@
     cursor.style.transform = "translate(" + (r.left - d.left + r.width / 2 + (dx || 0)) + "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
   }
   function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
+  function typeQuote() {            // the imported quote streams in like it is being generated
+    var i = 0; quote.innerHTML = '<span class="pe-caret"></span>';
+    (function step() {
+      i = Math.min(i + 2, quoteText.length);
+      quote.innerHTML = quoteText.slice(0, i) + (i < quoteText.length ? '<span class="pe-caret"></span>' : '');
+      if (i < quoteText.length) timers.push(setTimeout(step, 30));
+      else timers.push(setTimeout(function () { attr.textContent = attrText; attr.style.transition = "opacity .4s"; attr.style.opacity = "1"; }, 80));
+    })();
+  }
 
   function play() {
     clearAll();
-    setFmt("ig"); setBg(0); box.classList.remove("moved", "sel", "grab");
-    cursor.style.transition = "none"; cursor.style.transform = "translate(72px, 60px)";
+    setFmt("ig"); setBg(0); pe.classList.remove("posted");
+    box.classList.remove("shown", "grab", "sel"); box.classList.add("off");
+    quote.textContent = ""; attr.textContent = ""; attr.style.opacity = "0";
+    impBtn.classList.remove("on"); expBtn.classList.remove("on");
+    cursor.style.transition = "none"; cursor.style.transform = "translate(86px, 36px)";
     at(60, function () { cursor.style.transition = ""; });
-    // 1) pick a platform — the canvas reframes to Story (9:16)
-    at(1300, function () { moveTo(plat("story")); });
-    at(2100, function () { tap(); setFmt("story"); });
-    // 2) swap the background photo
-    at(3500, function () { moveTo(bgs[1]); });
-    at(4300, function () { tap(); setBg(1); });
-    // 3) grab the quote text box and drag it down
-    at(5500, function () { moveTo(box, 0, -6); box.classList.add("sel"); });
-    at(6300, function () { box.classList.add("grab"); });
-    at(6650, function () { box.classList.add("moved"); moveTo(box, 0, -6); });
-    at(6950, function () { moveTo(box, 0, -6); });
-    at(7250, function () { moveTo(box, 0, -6); });
-    at(7450, function () { box.classList.remove("grab"); });
-    at(8100, function () { box.classList.remove("sel"); });
-    // 4) one more background, then back to the Instagram square — it is live
-    at(9300, function () { moveTo(bgs[2]); });
-    at(10000, function () { tap(); setBg(2); });
-    at(11100, function () { moveTo(plat("ig")); });
-    at(11800, function () { tap(); setFmt("ig"); });
-    at(15600, play);
+    // 1) Import from extraction — the quote generates in, off-center
+    at(900, function () { moveTo(impBtn); });
+    at(1700, function () { tap(); impBtn.classList.add("on"); box.classList.add("shown"); typeQuote(); });
+    at(2300, function () { impBtn.classList.remove("on"); });
+    // 2) the imported text is off-center — grab it and drag it to centered
+    at(4300, function () { moveTo(box, 0, -6); box.classList.add("sel"); });
+    at(5000, function () { box.classList.add("grab"); });
+    at(5300, function () { box.classList.remove("off"); });   // slide to center
+    at(5550, function () { moveTo(box, 0, -6); });
+    at(5850, function () { moveTo(box, 0, -6); });
+    at(6050, function () { box.classList.remove("grab"); });
+    at(6700, function () { box.classList.remove("sel"); });
+    // 3) pick a platform — the canvas reframes to Story
+    at(7600, function () { moveTo(plat("story")); });
+    at(8300, function () { tap(); setFmt("story"); });
+    // 4) swap the background photo
+    at(9500, function () { moveTo(bgs[1]); });
+    at(10200, function () { tap(); setBg(1); });
+    // 5) export to post
+    at(11500, function () { moveTo(expBtn); });
+    at(12300, function () { tap(); expBtn.classList.add("on"); pe.classList.add("posted"); });
+    at(16800, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }
@@ -235,6 +255,9 @@
   var go = tr.querySelector(".tr-go");
   var cursor = tr.querySelector(".dcursor");
   var lines = tr.querySelectorAll(".tr-line");
+  var expBtn = tr.querySelector(".tr-export");
+  var expLab = expBtn && expBtn.querySelector(".trx-label");
+  var expDefault = expLab ? expLab.textContent : "";
   if (!go || !cursor) return;
 
   if (rm) {
@@ -256,6 +279,7 @@
     clearAll();
     tr.setAttribute("data-st", "idle"); tr.classList.remove("dropping");
     for (var c = 0; c < lines.length; c++) lines[c].classList.remove("show");
+    if (expBtn) { expBtn.classList.remove("sent"); if (expLab) expLab.textContent = expDefault; }
     cursor.style.transition = "none"; cursor.style.transform = "translate(60px, 150px)";
     at(60, function () { cursor.style.transition = ""; });
     at(1000, function () { moveTo(go); });
@@ -266,7 +290,10 @@
     at(5200, function () { lines[0] && lines[0].classList.add("show"); });
     at(5950, function () { lines[1] && lines[1].classList.add("show"); });
     at(6700, function () { lines[2] && lines[2].classList.add("show"); });
-    at(11500, play);
+    // hand the finished transcript to the Repurposer — the ecosystem link
+    at(7900, function () { if (expBtn) moveTo(expBtn, -4); });
+    at(8700, function () { if (expBtn) { tap(); expBtn.classList.add("sent"); if (expLab) expLab.textContent = "Sent to extraction"; } });
+    at(13500, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }
