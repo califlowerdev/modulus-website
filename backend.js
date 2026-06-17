@@ -221,6 +221,9 @@
       hide(document.querySelector(".divider"));
       hide(gbtn);
       hide(document.querySelector(".authnote"));
+      // The recovery (set-new-password) submit is an authenticated updateUser call
+      // that never uses a captcha, so hide the widget on this card.
+      hide(document.querySelector(".cf-turnstile"));
       var t = document.getElementById("authTitle"); if (t) t.textContent = "Choose a new password.";
       var l = document.getElementById("authLead"); if (l) l.textContent = "Your reset link signed you in. Now set the new password for your account.";
       var s = document.getElementById("authSubmit"); if (s) s.textContent = "Update password";
@@ -275,6 +278,13 @@
       foundation.style.display = "block";
       if (msg) foundation.textContent = msg;
     }
+    // Turn a raw GoTrue captcha error into copy a human can act on. Once Supabase
+    // enforces Turnstile, a not-yet-ready or already-used token returns a captcha
+    // error; point the user at the visible check instead of echoing the raw string.
+    function friendlyAuthError(msg) {
+      if (msg && /captcha/i.test(msg)) return "Please complete the “verify you are human” check above, then try again.";
+      return msg;
+    }
     if (gbtn) {
       gbtn.addEventListener("click", function () {
         if (!hasAuth) return note();
@@ -289,7 +299,7 @@
         var email = (document.getElementById("a-email") || {}).value;
         if (!email) return note("Enter your email above first, then click “Forgot password?”");
         api.resetPassword(email).then(function (r) {
-          note(r && r.error ? r.error.message : "Password reset link sent. Check your email.");
+          note(r && r.error ? friendlyAuthError(r.error.message) : "Password reset link sent. Check your email.");
         }).catch(function (err) { note(String(err)); }).then(captchaReset);
       });
     }
@@ -315,7 +325,7 @@
         var marketing = !!(optinEl && optinEl.checked);
         var creating = document.body.getAttribute("data-mode") === "create";
         (creating ? api.signUp(email, pw, name, marketing) : api.signInEmail(email, pw)).then(function (r) {
-          if (r && r.error) return note(r.error.message);
+          if (r && r.error) return note(friendlyAuthError(r.error.message));
           if (creating) {
             // With email confirmation on, signUp for an ALREADY-registered
             // address returns an obfuscated success (identities: []) and no
