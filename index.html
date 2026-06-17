@@ -39,6 +39,9 @@
     .comp-kicker { text-align: center; max-width: 700px; margin: 30px auto 0; font-size: 17px; line-height: 1.62; color: rgba(244,237,216,.84); }
     .usecases { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 48px); }
     .home-faq { max-width: 760px; margin: 0 auto; }
+    /* Card backgrounds so the constellation dots never compete with the text. */
+    .bg-field .cols-3 .col, .bg-field .usecases .col { background: var(--paper-2); border: 1px solid var(--line); border-radius: 18px; padding: clamp(24px, 2.6vw, 32px); box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 22px 48px -34px rgba(11,11,15,.3); }
+    .bg-field .sec-navy .cols-3 .col, .bg-field .sec-navy .usecases .col { background: #112338; border-color: var(--line-on-navy); box-shadow: 0 18px 44px -28px rgba(0,0,0,.5); }
     @media (max-width: 680px) { .compare { grid-template-columns: 1fr; } .comp-col + .comp-col { border-left: 0; border-top: 1px solid rgba(200,167,91,.38); } }
     @media (max-width: 760px) { .usecases { grid-template-columns: 1fr; } }
   </style>
