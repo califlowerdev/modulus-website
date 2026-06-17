@@ -72,6 +72,7 @@
     .actrow .a-feat { color: var(--s-ink); font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .actrow .a-when { color: var(--s-ink3); font-size: 12.5px; flex: none; width: 76px; text-align: right; }
     .actrow .a-cost { color: var(--s-ink2); font-variant-numeric: tabular-nums; white-space: nowrap; flex: none; width: 96px; text-align: right; }
+    .actrow .a-cost.added { color: #4FD1A5; font-weight: 600; }
     .act-empty { color: var(--s-ink3); font-size: 14px; padding: 6px 0; }
     /* Profile form */
     .pfield { margin-bottom: 12px; }
@@ -371,8 +372,8 @@
                 <h2 style="color:#E2606B">Delete account</h2>
                 <p class="muted" style="margin-top:6px">Permanently deletes your account, your data, and your remaining credits. If you have an active subscription, we cancel it. This cannot be undone.</p>
                 <div id="deleteConfirm" style="display:none;margin-top:14px">
-                  <label for="deleteType" class="muted" style="display:block;margin-bottom:8px">Type <b style="color:var(--s-ink)">DELETE</b> to confirm.</label>
-                  <input id="deleteType" type="text" autocomplete="off" placeholder="DELETE" style="width:100%;max-width:240px;box-sizing:border-box;padding:9px 12px;border-radius:10px;border:1px solid var(--s-line);background:rgba(255,255,255,.04);color:var(--s-ink);font:inherit" />
+                  <label for="deleteType" class="muted" style="display:block;margin-bottom:8px">Type your <b style="color:var(--s-ink)">account email</b> to confirm.</label>
+                  <input id="deleteType" type="email" autocomplete="off" placeholder="you@email.com" style="width:100%;max-width:300px;box-sizing:border-box;padding:9px 12px;border-radius:10px;border:1px solid var(--s-line);background:rgba(255,255,255,.04);color:var(--s-ink);font:inherit" />
                 </div>
                 <div class="dcard-btns" style="margin-top:14px">
                   <button class="s-btn ghost danger" id="deleteAcctBtn" type="button">Delete my account</button>

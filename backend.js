@@ -807,9 +807,9 @@
     if (seats <= 1 && !members.length && !invites.length) {
       if (note) note.textContent = "";
       body.innerHTML =
-        '<p class="muted" style="margin:0 0 6px">Bring your team.</p>' +
-        '<p class="hint" style="margin:0 0 14px">Pro includes 3 seats and Studio includes 5. Teammates sign in with their own account and share one pool of credits, so a whole ministry or content team runs on one plan.</p>' +
-        '<button class="s-btn gold sm" type="button" data-goto-tab="plan">See plans</button>';
+        '<p class="muted" style="margin:0 0 6px">Your plan doesn\'t include team seats.</p>' +
+        '<p class="hint" style="margin:0 0 14px">Team seats come with Pro (3 seats) and Studio (5 seats). Upgrade to invite your team, and everyone signs in with their own account and shares one pool of credits, so a whole ministry or content team runs on one plan.</p>' +
+        '<button class="s-btn gold sm" type="button" data-goto-tab="plan">Upgrade your plan</button>';
       return;
     }
     // Over capacity (e.g. the plan was downgraded below the roster size): keep
@@ -1000,13 +1000,15 @@
     for (var i = 0; i < recent.length; i++) {
       var e = recent[i];
       var c = typeof e.credits === "number" ? e.credits : 0;
-      var cost = c >= 1 ? (Math.round(c * 10) / 10).toLocaleString() + " credits"
-        : c > 0 ? "<1 credit" : "free";
+      // + when credits were added (a grant or refund, i.e. negative cost), - when spent.
+      var added = c < 0, amt = Math.abs(c);
+      var cost = c === 0 ? "free" : (added ? "+" : "−") + (Math.round(amt * 10) / 10).toLocaleString();
+      var costCls = c === 0 ? "" : (added ? " added" : " used");
       // v9: on a team, each charge names who spent it ("You" or their email).
       var by = e.by ? ' <i class="a-by">&middot; ' + esc(e.by) + "</i>" : "";
       html += '<div class="actrow"><span class="a-feat">' + esc(e.feature || "Activity") + by +
         '</span><span class="a-when">' + esc(relTime(e.at)) + '</span>' +
-        '<span class="a-cost">' + cost + '</span></div>';
+        '<span class="a-cost' + costCls + '">' + cost + '</span></div>';
     }
     list.innerHTML = html;
   }
@@ -1281,8 +1283,19 @@
         var typed = document.getElementById("deleteType");
         var note = document.getElementById("deleteNote");
         function err(m) { if (note) { note.textContent = m; note.className = "pnote err"; } }
-        if (!delArmed) { delArmed = true; if (box) box.style.display = "block"; delBtn.textContent = "Confirm permanent deletion"; if (typed) typed.focus(); return; }
-        if ((((typed && typed.value) || "").trim().toUpperCase()) !== "DELETE") { err("Type DELETE to confirm."); return; }
+        if (!delArmed) {
+          delArmed = true;
+          if (box) box.style.display = "block";
+          var em0 = ((document.getElementById("acctEmail") || {}).textContent || "").trim();
+          if (typed && em0.indexOf("@") !== -1) typed.placeholder = em0;
+          delBtn.textContent = "Confirm permanent deletion";
+          if (typed) typed.focus();
+          return;
+        }
+        var acctEmail = ((document.getElementById("acctEmail") || {}).textContent || "").trim().toLowerCase();
+        if (acctEmail.indexOf("@") === -1) acctEmail = "";
+        var typedVal = (((typed && typed.value) || "").trim().toLowerCase());
+        if (acctEmail ? (typedVal !== acctEmail) : (typedVal !== "delete")) { err(acctEmail ? "Type your account email exactly to confirm." : "Type DELETE to confirm."); return; }
         if (delBtn.getAttribute("data-busy")) return;
         delBtn.setAttribute("data-busy", "1"); delBtn.textContent = "Deleting…"; if (note) note.textContent = "";
         accessToken().then(function (token) {

@@ -62,9 +62,9 @@
     // runs on a battery, so the density is dialed down there (bigger divisor =
     // fewer dots, lower cap).
     var small = w < 700;
-    var divisor = small ? 14000 : 7000;   // a fuller field of nodes
-    var capMax = small ? 120 : 340;
-    var count = Math.max(50, Math.min(capMax, Math.round((w * h) / divisor)));
+    var divisor = small ? 9000 : 4800;   // a lot denser field
+    var capMax = small ? 170 : 480;
+    var count = Math.max(70, Math.min(capMax, Math.round((w * h) / divisor)));
     particles = [];
     for (var k = 0; k < count; k++) {
       particles.push({
