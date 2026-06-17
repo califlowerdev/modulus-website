@@ -39,11 +39,11 @@
 
     // Studio pages get their own header (own tabs + a clear link back to the main site)
     if (document.body.getAttribute("data-section") === "studio") {
-      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a><a class="login" data-auth-login href="/login">Sign in</a><a href="/">⌂ Home · Modulus Technologies</a>';
+      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#tools">Tools</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a><a class="login" data-auth-login href="/login">Sign in</a><a href="/">⌂ Home · Modulus Technologies</a>';
       return '<header class="nav"><div class="wrap nav-inner">' +
           '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
           '<nav class="nav-links" aria-label="Modulus Studio">' +
-            '<a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/studio#pricing">Pricing</a>' +
+            '<a href="/studio#features">Features</a><a href="/studio#tools">Tools</a><a href="/studio#pricing">Pricing</a>' +
           '</nav>' +
           '<div class="nav-right">' +
             '<a class="s-home" href="/" aria-label="Modulus Technologies home" title="Home | Modulus Technologies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg></a>' +
@@ -59,7 +59,7 @@
       return '<header class="nav app-nav"><div class="wrap nav-inner">' +
           '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
           '<div class="nav-right">' +
-            '<a class="login" href="/">&larr; Modulus Technologies</a>' +
+            '<a class="login" href="/" aria-label="Back to Modulus Technologies home" style="display:inline-flex;align-items:center;gap:7px"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.6 12 3l9 7.6"/><path d="M5.5 9.4V20a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V9.4"/><path d="M9.8 21v-6h4.4v6"/></svg> Modulus Technologies</a>' +
           '</div>' +
         '</div></header>';
     }
@@ -83,7 +83,7 @@
             '<div><a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
               '<p class="footer-tag">Turn one talk into a month of content.</p></div>' +
             '<div class="footer-cols">' +
-              '<div class="footer-col"><h5>Studio</h5><a href="/studio#features">Features</a><a href="/studio#how">How it works</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a></div>' +
+              '<div class="footer-col"><h5>Studio</h5><a href="/studio#features">Features</a><a href="/studio#tools">Tools</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a></div>' +
               '<div class="footer-col"><h5>Company</h5><a href="/">Modulus Technologies</a><a href="/about">About</a><a href="/contact">Contact</a></div>' +
               '<div class="footer-col"><h5>Account</h5><a class="login" data-auth-login href="/login">Sign in</a></div>' +
             '</div>' +
