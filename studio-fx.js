@@ -161,3 +161,104 @@
     new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(demo);
   } else { start(); }
 })();
+
+/* 4) Photo Editor demo: a key quote composed on a background, then re-rendered
+   into each social aspect ratio as a simulated cursor clicks through formats. */
+(function () {
+  var pe = document.getElementById("peDemo");
+  if (!pe) return;
+  var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var card = pe.querySelector(".pe-card");
+  var fmts = pe.querySelectorAll(".pe-fmt");
+  var cursor = pe.querySelector(".dcursor");
+  var exportPill = pe.querySelector(".pe-export");
+  if (!card || !cursor || fmts.length < 3) return;
+  var ratios = ["", "r-portrait", "r-story"];
+
+  function setFmt(i) {
+    for (var k = 0; k < fmts.length; k++) fmts[k].classList.toggle("on", k === i);
+    card.classList.remove("r-portrait", "r-story");
+    if (ratios[i]) card.classList.add(ratios[i]);
+  }
+  if (rm) { setFmt(1); pe.classList.add("exported"); return; }
+
+  var timers = [];
+  function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function clearAll() { for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
+  function moveTo(el, dy) {
+    var d = pe.getBoundingClientRect(), r = el.getBoundingClientRect();
+    cursor.style.transform = "translate(" + (r.left - d.left + r.width / 2) + "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
+  }
+  function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
+
+  function play() {
+    clearAll();
+    pe.classList.remove("exported"); setFmt(0);
+    cursor.style.transition = "none"; cursor.style.transform = "translate(60px, 210px)";
+    at(60, function () { cursor.style.transition = ""; });
+    at(1500, function () { moveTo(fmts[1]); });
+    at(2300, function () { tap(); setFmt(1); });
+    at(4000, function () { moveTo(fmts[2]); });
+    at(4800, function () { tap(); setFmt(2); });
+    at(6500, function () { moveTo(fmts[0]); });
+    at(7300, function () { tap(); setFmt(0); });
+    at(8400, function () { if (exportPill) moveTo(exportPill, 0); tap(); pe.classList.add("exported"); });
+    at(12500, play);
+  }
+  var running = false;
+  function start() { if (running) return; running = true; play(); }
+  function stop() { running = false; clearAll(); }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(pe);
+  } else { start(); }
+})();
+
+/* 5) Transcription demo: a sermon file dropped in, a short processing beat,
+   then the transcript streams out line by line with speaker labels. */
+(function () {
+  var tr = document.getElementById("trDemo");
+  if (!tr) return;
+  var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var go = tr.querySelector(".tr-go");
+  var cursor = tr.querySelector(".dcursor");
+  var lines = tr.querySelectorAll(".tr-line");
+  if (!go || !cursor) return;
+
+  if (rm) {
+    tr.setAttribute("data-st", "done");
+    for (var i = 0; i < lines.length; i++) lines[i].classList.add("show");
+    return;
+  }
+
+  var timers = [];
+  function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
+  function clearAll() { for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
+  function moveTo(el, dy) {
+    var d = tr.getBoundingClientRect(), r = el.getBoundingClientRect();
+    cursor.style.transform = "translate(" + (r.left - d.left + r.width / 2) + "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
+  }
+  function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
+
+  function play() {
+    clearAll();
+    tr.setAttribute("data-st", "idle"); tr.classList.remove("dropping");
+    for (var c = 0; c < lines.length; c++) lines[c].classList.remove("show");
+    cursor.style.transition = "none"; cursor.style.transform = "translate(60px, 150px)";
+    at(60, function () { cursor.style.transition = ""; });
+    at(1000, function () { moveTo(go); });
+    at(1700, function () { tr.classList.add("dropping"); });
+    at(2100, function () { tap(); tr.classList.remove("dropping"); tr.setAttribute("data-st", "working"); });
+    at(2450, function () { cursor.style.transform = "translate(" + (tr.clientWidth - 28) + "px," + (tr.clientHeight - 28) + "px)"; });
+    at(4900, function () { tr.setAttribute("data-st", "done"); });
+    at(5200, function () { lines[0] && lines[0].classList.add("show"); });
+    at(5950, function () { lines[1] && lines[1].classList.add("show"); });
+    at(6700, function () { lines[2] && lines[2].classList.add("show"); });
+    at(11500, play);
+  }
+  var running = false;
+  function start() { if (running) return; running = true; play(); }
+  function stop() { running = false; clearAll(); }
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }, { threshold: 0.3 }).observe(tr);
+  } else { start(); }
+})();
