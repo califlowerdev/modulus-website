@@ -80,7 +80,7 @@ img { max-width: 100%; display: block; }
 .btn-dark:hover { transform: translateY(-2px); box-shadow: 0 16px 34px -16px rgba(11,11,15,.5); }
 .btn-ghost { background: #fff; color: var(--ink); border-color: var(--line); }
 .btn-ghost:hover { border-color: rgba(11,11,15,.32); transform: translateY(-2px); }
-.on-navy .btn-ghost { color: var(--cream); border-color: var(--line-on-navy); }
+.on-navy .btn-ghost { color: var(--cream); border-color: var(--line-on-navy); background: transparent; }
 .on-navy .btn-ghost:hover { border-color: var(--gold); color: var(--gold-bright); }
 /* signed-in account icon in the header (replaces the username text) */
 .auth-ava-link { display: inline-flex; align-items: center; justify-content: center; }
