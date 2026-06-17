@@ -297,7 +297,7 @@
     .pe-h { position: absolute; width: 6px; height: 6px; background: #fff; border: 1px solid var(--gold); border-radius: 1px; opacity: 0; transition: opacity .2s; }
     .pe-textbox.sel .pe-h, .pe-textbox.grab .pe-h { opacity: 1; }
     .pe-h.pe-tl { left: -4px; top: -6px; } .pe-h.pe-tr { right: -4px; top: -6px; } .pe-h.pe-bl { left: -4px; bottom: -6px; } .pe-h.pe-br { right: -4px; bottom: -6px; }
-    .pe-side { padding: 14px 13px; background: rgba(0,0,0,.27); border-left: 1px solid var(--w-line); overflow: hidden; display: flex; flex-direction: column; }
+    .pe-side { padding: 14px 13px; background: rgba(0,0,0,.27); border-left: 1px solid var(--w-line); display: flex; flex-direction: column; }
     .pe-imp, .pe-exp, .pe-logobtn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; font-size: 10.5px; font-weight: 600; padding: 8px 6px; border-radius: 8px; border: 1px solid var(--w-line); color: var(--w-ink); background: rgba(255,255,255,.03); transition: all .22s var(--ease); line-height: 1.15; }
     .pe-imp svg, .pe-exp svg, .pe-logobtn svg { width: 14px; height: 14px; flex: 0 0 auto; }
     .pe-imp { margin-bottom: 9px; }
@@ -306,11 +306,20 @@
     .pe-card .pe-logo { position: absolute; left: 11px; bottom: 10px; width: 24px; height: 24px; border-radius: 0; box-shadow: none; object-fit: contain; opacity: 0; transform: translateY(4px); transition: opacity .4s var(--ease), transform .4s var(--ease); filter: drop-shadow(0 1px 4px rgba(0,0,0,.7)); pointer-events: none; z-index: 2; }
     .pe-card .pe-logo.show { opacity: .95; transform: translateY(0); }
     .pe-exp { margin-top: 2px; }
-    .pe-exp.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
+    .ex-up, .ex-check, .ex-spin { flex: 0 0 auto; }
+    .pe-exp .ex-spin, .pe-exp .ex-check, .tr-export .ex-spin, .tr-export .ex-check { display: none; }
+    .pe-exp.loading .ex-up, .tr-export.loading .ex-up { display: none; }
+    .pe-exp.loading .ex-spin, .tr-export.loading .ex-spin { display: inline-block; }
+    .pe-exp.done .ex-up, .pe-exp.done .ex-spin, .tr-export.done .ex-up, .tr-export.done .ex-spin { display: none; }
+    .pe-exp.done .ex-check, .tr-export.done .ex-check { display: inline-block; }
+    .pe-exp.done, .tr-export.done { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
+    .ex-spin { width: 13px; height: 13px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; opacity: .8; animation: exspin .6s linear infinite; }
+    @keyframes exspin { to { transform: rotate(360deg); } }
     .pe-side .sh, .pe-flabel { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--w-ink2); margin: 0 0 7px; }
     .pe-flabel { display: block; }
     .pe-field { margin-bottom: 11px; }
     .pe-select { position: relative; }
+    .pe-select.open { z-index: 30; }
     .pe-seltrigger { display: flex; align-items: center; gap: 7px; width: 100%; padding: 8px 10px; border: 1px solid var(--w-line); border-radius: 8px; background: rgba(255,255,255,.04); color: var(--w-ink); font-size: 11px; font-weight: 600; transition: border-color .2s; }
     .pe-seltrigger .picon { width: 15px; height: 15px; flex: 0 0 auto; }
     .pe-seltrigger .chev { margin-left: auto; width: 12px; height: 12px; flex: 0 0 auto; opacity: .75; transition: transform .2s var(--ease); }
@@ -318,7 +327,7 @@
     .pe-select.open .chev { transform: rotate(180deg); }
     .pe-selmenu { position: absolute; left: 0; right: 0; top: calc(100% + 5px); background: #0e2236; border: 1px solid var(--w-line); border-radius: 8px; padding: 5px; box-shadow: 0 14px 30px -10px rgba(0,0,0,.65); opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity .18s var(--ease), transform .18s var(--ease); z-index: 6; }
     .pe-select.open .pe-selmenu { opacity: 1; transform: translateY(0); }
-    .pe-selopt { display: flex; align-items: center; gap: 7px; width: 100%; padding: 7px 8px; border-radius: 6px; font-size: 11px; color: var(--w-ink); white-space: nowrap; }
+    .pe-selopt { display: flex; align-items: center; gap: 7px; width: 100%; padding: 7px 8px; border-radius: 6px; font-size: 11px; color: var(--w-ink); white-space: nowrap; background: transparent; border: 0; text-align: left; }
     .pe-selopt .picon { width: 14px; height: 14px; flex: 0 0 auto; }
     .pe-selopt.hot { background: rgba(228,199,125,.16); }
     .pe-selopt.sel { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); font-weight: 700; }
@@ -360,7 +369,7 @@
     .tr-export { align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--w-ink); background: rgba(228,199,125,.1); border: 1px solid rgba(228,199,125,.42); border-radius: 9px; padding: 8px 13px; opacity: 0; transform: translateY(6px); transition: opacity .4s var(--ease), transform .4s var(--ease), color .25s, background .25s, border-color .25s; }
     .tr[data-st="done"] .tr-export { opacity: 1; transform: translateY(0); }
     .tr-export svg { width: 15px; height: 15px; flex: 0 0 auto; }
-    .tr-export.sent { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
+    .tr-export.done { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
 
     @media (max-width: 560px) {
       .pe { grid-template-columns: 1fr 142px; }
@@ -627,7 +636,7 @@
                     <button class="pe-bg" data-bg="2" type="button" aria-label="Sunrise background"></button>
                   </div>
                   <button class="pe-logobtn" data-act="logo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-4-8 7"/></svg>Insert logo</button>
-                  <button class="pe-exp" data-act="export" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V8M8 12l4-4 4 4M5 4h14"/></svg>Export &middot; Post</button>
+                  <button class="pe-exp" data-act="export" type="button"><svg class="ex-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V8M8 12l4-4 4 4M5 4h14"/></svg><span class="ex-spin"></span><svg class="ex-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="ex-label">Export &middot; Post</span></button>
                 </div>
                 <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
               </div>
@@ -658,7 +667,7 @@
                   <div class="tr-line"><span class="ts">00:24</span><span class="tx"><b>John Piper:</b> The deepest and most enduring happiness is found not from God, but in God himself.</span></div>
                   <div class="tr-line"><span class="ts">00:46</span><span class="tx"><b>John Piper:</b> Conversion is the creation of new desires, not just the suppression of old ones.</span></div>
                 </div>
-                <button class="tr-export" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M8 7l4-4 4 4"/></svg><span class="trx-label">Export to extraction</span></button>
+                <button class="tr-export" type="button"><svg class="ex-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M8 7l4-4 4 4"/></svg><span class="ex-spin"></span><svg class="ex-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="trx-label">Export to extraction</span></button>
                 <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
               </div>
             </div>

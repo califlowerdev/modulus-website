@@ -178,6 +178,8 @@
   var bgs = pe.querySelectorAll(".pe-bg");
   var impBtn = pe.querySelector(".pe-imp");
   var expBtn = pe.querySelector(".pe-exp");
+  var expLab = expBtn && expBtn.querySelector(".ex-label");
+  var expDefault = expLab ? expLab.textContent : "";
   var logoBtn = pe.querySelector(".pe-logobtn");
   var logo = pe.querySelector(".pe-logo");
   var platSel = pe.querySelector('.pe-select[data-sel="platform"]');
@@ -235,7 +237,8 @@
     platSel.classList.remove("open"); fmtSel.classList.remove("open");
     box.classList.remove("shown", "grab", "sel"); box.classList.add("off");
     quote.textContent = ""; attr.textContent = ""; attr.style.opacity = "0";
-    impBtn.classList.remove("on"); expBtn.classList.remove("on");
+    impBtn.classList.remove("on"); expBtn.classList.remove("loading", "done");
+    if (expLab) expLab.textContent = expDefault;
     if (logoBtn) logoBtn.classList.remove("on");
     if (logo) logo.classList.remove("show");
     cursor.style.transition = "none"; cursor.style.transform = "translate(88px, 34px)";
@@ -267,10 +270,11 @@
     at(13500, function () { moveTo(logoBtn); });
     at(14100, function () { tap(); if (logoBtn) logoBtn.classList.add("on"); if (logo) logo.classList.add("show"); });
     at(14500, function () { if (logoBtn) logoBtn.classList.remove("on"); });
-    // 7) export
+    // 7) export — a loading beat, then the checkmark
     at(15400, function () { moveTo(expBtn); });
-    at(16100, function () { tap(); expBtn.classList.add("on"); });
-    at(20500, play);
+    at(16100, function () { tap(); expBtn.classList.add("loading"); if (expLab) expLab.textContent = "Exporting…"; });
+    at(17400, function () { expBtn.classList.remove("loading"); expBtn.classList.add("done"); if (expLab) expLab.textContent = "Posted"; });
+    at(21500, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }
@@ -313,7 +317,7 @@
     clearAll();
     tr.setAttribute("data-st", "idle"); tr.classList.remove("dropping");
     for (var c = 0; c < lines.length; c++) lines[c].classList.remove("show");
-    if (expBtn) { expBtn.classList.remove("sent"); if (expLab) expLab.textContent = expDefault; }
+    if (expBtn) { expBtn.classList.remove("loading", "done"); if (expLab) expLab.textContent = expDefault; }
     cursor.style.transition = "none"; cursor.style.transform = "translate(60px, 150px)";
     at(60, function () { cursor.style.transition = ""; });
     at(1000, function () { moveTo(go); });
@@ -326,8 +330,9 @@
     at(6700, function () { lines[2] && lines[2].classList.add("show"); });
     // hand the finished transcript to the Repurposer — the ecosystem link
     at(7900, function () { if (expBtn) moveTo(expBtn, -4); });
-    at(8700, function () { if (expBtn) { tap(); expBtn.classList.add("sent"); if (expLab) expLab.textContent = "Sent to extraction"; } });
-    at(13500, play);
+    at(8700, function () { if (expBtn) { tap(); expBtn.classList.add("loading"); if (expLab) expLab.textContent = "Exporting…"; } });
+    at(9900, function () { if (expBtn) { expBtn.classList.remove("loading"); expBtn.classList.add("done"); if (expLab) expLab.textContent = "Sent to extraction"; } });
+    at(14500, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }
