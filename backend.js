@@ -1269,6 +1269,37 @@
       });
     }
 
+    // Delete account: a two-step danger action. The first click arms it and
+    // reveals a "type DELETE" confirm; the second click (with DELETE typed)
+    // calls the delete-account function, which cancels any Stripe subscription
+    // and erases the account, then signs out and goes home.
+    var delBtn = document.getElementById("deleteAcctBtn");
+    if (delBtn) {
+      var delArmed = false;
+      delBtn.addEventListener("click", function () {
+        var box = document.getElementById("deleteConfirm");
+        var typed = document.getElementById("deleteType");
+        var note = document.getElementById("deleteNote");
+        function err(m) { if (note) { note.textContent = m; note.className = "pnote err"; } }
+        if (!delArmed) { delArmed = true; if (box) box.style.display = "block"; delBtn.textContent = "Confirm permanent deletion"; if (typed) typed.focus(); return; }
+        if ((((typed && typed.value) || "").trim().toUpperCase()) !== "DELETE") { err("Type DELETE to confirm."); return; }
+        if (delBtn.getAttribute("data-busy")) return;
+        delBtn.setAttribute("data-busy", "1"); delBtn.textContent = "Deleting…"; if (note) note.textContent = "";
+        accessToken().then(function (token) {
+          if (!token) { window.location.assign("/login"); return; }
+          return fetch(fnUrl("delete-account"), {
+            method: "POST",
+            headers: { "content-type": "application/json", "Authorization": "Bearer " + token }
+          }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+            .then(function (res) {
+              if (!res.ok) { delBtn.removeAttribute("data-busy"); delBtn.textContent = "Confirm permanent deletion"; err((res.d && res.d.error) || "Could not delete the account. Try again in a moment."); return; }
+              return ensureClient().then(function (c) { return c.auth.signOut(); })
+                .then(function () { try { localStorage.clear(); } catch (e) {} window.location.assign("/?deleted=1"); });
+            });
+        }).catch(function () { delBtn.removeAttribute("data-busy"); delBtn.textContent = "Confirm permanent deletion"; err("Could not delete the account. Try again in a moment."); });
+      });
+    }
+
     // Profile: populate the name, show the right credential control (password
     // for email accounts, a "signed in with Google" chip for OAuth), and save.
     function wireProfile(user) {

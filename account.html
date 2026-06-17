@@ -117,6 +117,8 @@
     .trow .t-act { display: flex; gap: 8px; flex-wrap: wrap; }
     .t-link { background: none; border: 0; padding: 0; font: inherit; font-size: 13px; font-weight: 600; color: var(--s-gold); cursor: pointer; }
     .t-link.danger { color: #E2606B; }
+    .s-btn.danger { color: #E2606B; border-color: rgba(226,96,107,.4); }
+    .s-btn.danger:hover { color: #fff; border-color: #E2606B; background: rgba(226,96,107,.14); }
     .t-pill { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--s-ink3); border: 1px solid var(--s-line); border-radius: var(--pill); padding: 3px 9px; }
     .seatdots { display: flex; gap: 5px; margin: 4px 0 14px; }
     .seatdots i { width: 26px; height: 7px; border-radius: 4px; background: rgba(255,255,255,.08); }
@@ -359,10 +361,23 @@
               <div class="dcard glass">
                 <h2>Account</h2>
                 <p class="muted" style="margin-top:6px">Signing out never touches your plan or credits; they live on your account, not this device.</p>
-                <p class="hint">To delete your account, email <a href="mailto:james@modulustech.ai?subject=Delete%20my%20Modulus%20account" style="color:var(--s-gold)">james@modulustech.ai</a> and we'll remove it within 30 days.</p>
                 <div class="dcard-btns">
                   <a class="s-btn ghost" id="signOutBtn" href="#">Sign out</a>
                 </div>
+              </div>
+
+              <!-- danger zone: delete account -->
+              <div class="dcard glass" style="border-color:rgba(226,96,107,.4)">
+                <h2 style="color:#E2606B">Delete account</h2>
+                <p class="muted" style="margin-top:6px">Permanently deletes your account, your data, and your remaining credits. If you have an active subscription, we cancel it. This cannot be undone.</p>
+                <div id="deleteConfirm" style="display:none;margin-top:14px">
+                  <label for="deleteType" class="muted" style="display:block;margin-bottom:8px">Type <b style="color:var(--s-ink)">DELETE</b> to confirm.</label>
+                  <input id="deleteType" type="text" autocomplete="off" placeholder="DELETE" style="width:100%;max-width:240px;box-sizing:border-box;padding:9px 12px;border-radius:10px;border:1px solid var(--s-line);background:rgba(255,255,255,.04);color:var(--s-ink);font:inherit" />
+                </div>
+                <div class="dcard-btns" style="margin-top:14px">
+                  <button class="s-btn ghost danger" id="deleteAcctBtn" type="button">Delete my account</button>
+                </div>
+                <p class="pnote" id="deleteNote"></p>
               </div>
             </div>
           </div>
