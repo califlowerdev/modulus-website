@@ -1078,7 +1078,9 @@
     // (CSV-injection guard), without mangling normal names/emails.
     var cell = function (v) {
       v = (v == null ? "" : String(v));
-      if (/^[=+\-@\t\r]/.test(v)) v = "'" + v;
+      // Match a formula char even behind leading whitespace / control characters a
+      // spreadsheet might trim (e.g. "\n=cmd"), not just at the literal first byte.
+      if (/^\s*[=+\-@]/.test(v)) v = "'" + v;
       return '"' + v.replace(/"/g, '""') + '"';
     };
     var lines = ["email,name,opted_in_at,plan"];
