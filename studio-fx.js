@@ -293,6 +293,8 @@
   var go = tr.querySelector(".tr-go");
   var cursor = tr.querySelector(".dcursor");
   var lines = tr.querySelectorAll(".tr-line");
+  var trLines = tr.querySelector(".tr-lines");
+  var trScript = tr.querySelector(".tr-script");
   var expBtn = tr.querySelector(".tr-export");
   var expLab = expBtn && expBtn.querySelector(".trx-label");
   var expDefault = expLab ? expLab.textContent : "";
@@ -312,11 +314,20 @@
     cursor.style.transform = "translate(" + (r.left - d.left + r.width / 2) + "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
   }
   function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
+  function showLine(i) {            // reveal a line, then auto-scroll so the newest stays in view
+    if (!lines[i]) return;
+    lines[i].classList.add("show");
+    if (trLines && trScript) {
+      var off = Math.max(0, lines[i].offsetTop + lines[i].offsetHeight - trScript.clientHeight + 4);
+      trLines.style.transform = "translateY(-" + off + "px)";
+    }
+  }
 
   function play() {
     clearAll();
     tr.setAttribute("data-st", "idle"); tr.classList.remove("dropping");
     for (var c = 0; c < lines.length; c++) lines[c].classList.remove("show");
+    if (trLines) trLines.style.transform = "translateY(0)";
     if (expBtn) { expBtn.classList.remove("loading", "done"); if (expLab) expLab.textContent = expDefault; }
     cursor.style.transition = "none"; cursor.style.transform = "translate(60px, 150px)";
     at(60, function () { cursor.style.transition = ""; });
@@ -325,14 +336,19 @@
     at(2100, function () { tap(); tr.classList.remove("dropping"); tr.setAttribute("data-st", "working"); });
     at(2450, function () { cursor.style.transform = "translate(" + (tr.clientWidth - 28) + "px," + (tr.clientHeight - 28) + "px)"; });
     at(4900, function () { tr.setAttribute("data-st", "done"); });
-    at(5200, function () { lines[0] && lines[0].classList.add("show"); });
-    at(5950, function () { lines[1] && lines[1].classList.add("show"); });
-    at(6700, function () { lines[2] && lines[2].classList.add("show"); });
+    // the transcript streams out, auto-scrolling to follow the newest line
+    at(5200, function () { showLine(0); });
+    at(5800, function () { showLine(1); });
+    at(6400, function () { showLine(2); });
+    at(7000, function () { showLine(3); });
+    at(7600, function () { showLine(4); });
+    at(8200, function () { showLine(5); });
+    at(8800, function () { showLine(6); });
     // hand the finished transcript to the Repurposer — the ecosystem link
-    at(7900, function () { if (expBtn) moveTo(expBtn, -4); });
-    at(8700, function () { if (expBtn) { tap(); expBtn.classList.add("loading"); if (expLab) expLab.textContent = "Exporting…"; } });
-    at(9900, function () { if (expBtn) { expBtn.classList.remove("loading"); expBtn.classList.add("done"); if (expLab) expLab.textContent = "Sent to extraction"; } });
-    at(14500, play);
+    at(10100, function () { if (expBtn) moveTo(expBtn, -4); });
+    at(10800, function () { if (expBtn) { tap(); expBtn.classList.add("loading"); if (expLab) expLab.textContent = "Exporting…"; } });
+    at(12000, function () { if (expBtn) { expBtn.classList.remove("loading"); expBtn.classList.add("done"); if (expLab) expLab.textContent = "Sent to extraction"; } });
+    at(16500, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }
