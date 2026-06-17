@@ -22,7 +22,7 @@
   // Readability easing: a node's visibility eases down a little as it drifts over
   // real text and recovers as it leaves. Gentle (high floor) — calmer dots behind
   // text, lively everywhere else. Tune via MASK_FLOOR / MASK_MARGIN.
-  var MASK_FLOOR = 0.12, MASK_MARGIN = 120;
+  var MASK_FLOOR = 0.12, MASK_MARGIN = 80;
   function vis(x, y) {
     var best = 1;
     for (var b = 0; b < boxes.length; b++) {
@@ -47,7 +47,7 @@
   function measureBoxes(r) {
     // calm only behind real text: the hero block, section headings, founder quote
     boxes = [];
-    var texts = field.querySelectorAll(".hero .wrap, h2, .founder .quote");
+    var texts = field.querySelectorAll(".hero .eyebrow, .hero h1, .hero .sub, .hero .trustline, h2, .founder .quote");
     for (var i = 0; i < texts.length; i++) {
       var tr = texts[i].getBoundingClientRect();
       if (tr.width === 0 && tr.height === 0) continue;

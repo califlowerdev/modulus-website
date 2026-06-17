@@ -328,11 +328,11 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
    fade out so they never fight with reading. Feathered with a mask so there is
    no hard edge. Only on the constellation pages. */
 .bg-field .hero > .wrap::before {
-  content: ""; position: absolute; inset: -26px -40px; z-index: -1; pointer-events: none;
-  background: radial-gradient(78% 74% at 50% 48%, rgba(251,250,247,.72), rgba(251,250,247,0) 80%);
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  -webkit-mask: radial-gradient(78% 74% at 50% 48%, #000 44%, transparent 82%);
-  mask: radial-gradient(78% 74% at 50% 48%, #000 44%, transparent 82%);
+  content: ""; position: absolute; inset: -14px -10px; z-index: -1; pointer-events: none;
+  background: radial-gradient(52% 64% at 50% 47%, rgba(251,250,247,.74), rgba(251,250,247,0) 78%);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  -webkit-mask: radial-gradient(52% 64% at 50% 47%, #000 66%, transparent 90%);
+  mask: radial-gradient(52% 64% at 50% 47%, #000 66%, transparent 90%);
 }
 @media (prefers-reduced-motion: reduce) { .bg-field .hero > .wrap::before { -webkit-backdrop-filter: none; backdrop-filter: none; } }
 @media (prefers-reduced-motion: reduce) { .field-canvas { display: none; } }
