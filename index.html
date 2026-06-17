@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Modulus Technologies | The AI leverage agency for small business</title>
-  <meta name="description" content="Modulus is the AI leverage agency for small and medium businesses. Get the output of a bigger team for a fraction of the cost of hiring. We find where AI helps, build the agents and automations, and keep them running." />
+  <title>Modulus Technologies | AI leverage for small business</title>
+  <meta name="description" content="You are the bottleneck in your own business, and hiring is slow and costly. Modulus finds where AI does the most work, builds it, and keeps it running, so you get the output without the headcount. Founder-led, built in the open." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
@@ -13,18 +13,36 @@
   <meta name="theme-color" content="#0C1B2E" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Modulus Technologies" />
-  <meta property="og:title" content="Modulus Technologies | The AI leverage agency for small business" />
-  <meta property="og:description" content="Get the output of a bigger team for a fraction of the cost of hiring. We find where AI helps your business, build the agents and automations, and keep them running." />
+  <meta property="og:title" content="Modulus Technologies | AI leverage for small business" />
+  <meta property="og:description" content="You are the bottleneck. Hiring is slow and costly. We find where AI does the most work in your business, build it, and keep it running, so you get the output without the headcount." />
   <meta property="og:url" content="https://modulustech.ai/" />
   <meta property="og:image" content="https://modulustech.ai/assets/modulus-mark.png" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Modulus Technologies" />
-  <meta name="twitter:description" content="The AI leverage agency for small business. The output of a bigger team, without the payroll." />
+  <meta name="twitter:description" content="AI leverage, built for the rest of us. Get the output without the headcount." />
   <meta name="twitter:image" content="https://modulustech.ai/assets/modulus-mark.png" />
   <link rel="icon" type="image/png" href="/assets/favicon-32.png" />
   <link rel="stylesheet" href="redo.css" />
   <style>
-    /* Home-only layout helpers. */
+    /* ===== Home pitch layout helpers (page-scoped) ===== */
+    .sec-head .subhead { font-size: clamp(17px, 1.9vw, 21px); color: var(--ink-2); margin-top: 16px; }
+    .sec-head.center .subhead { margin-left: auto; margin-right: auto; max-width: 52ch; }
+    .sec-navy .sec-head .subhead { color: rgba(244,237,216,.8); }
+
+    /* 2. Cost of inaction (amplify) */
+    .cost { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(30px, 5vw, 72px); align-items: start; max-width: 980px; margin: 56px auto 0; }
+    .tasklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 15px; }
+    .tasklist li { position: relative; padding-left: 30px; font-size: 17px; line-height: 1.5; color: var(--ink); }
+    .tasklist li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 13px; height: 2px; border-radius: 2px; background: var(--gold-deep); opacity: .55; }
+    .escal { display: grid; }
+    .escal .e { padding: 18px 0; border-top: 1px solid var(--line); }
+    .escal .e:first-child { padding-top: 0; border-top: 0; }
+    .escal .when { font-family: var(--font-display); font-size: 19px; color: var(--gold-deep); margin-bottom: 5px; }
+    .escal p { color: var(--ink-2); font-size: 15.5px; line-height: 1.55; margin: 0; }
+    .cost-close { text-align: center; max-width: 44ch; margin: 44px auto 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(20px, 2.4vw, 27px); line-height: 1.36; color: var(--ink); letter-spacing: -.01em; }
+    .cost-close .acc { color: var(--gold-deep); font-style: italic; }
+
+    /* 3. The turn (reuses .compare/.comp-col, styled for navy) */
     .compare { display: grid; grid-template-columns: 1fr 1fr; max-width: 940px; margin: 8px auto 0; border: 1px solid rgba(255,255,255,.12); border-radius: 22px; overflow: hidden; background: rgba(255,255,255,.02); }
     .comp-col { padding: clamp(24px, 3vw, 38px); }
     .comp-col.win { background: rgba(200,167,91,.06); }
@@ -36,14 +54,67 @@
     .comp-col li::before { content: ""; position: absolute; left: 2px; top: 9px; width: 11px; height: 2px; border-radius: 2px; background: rgba(244,237,216,.3); }
     .comp-col.win li { color: rgba(244,237,216,.94); }
     .comp-col.win li::before { left: 3px; top: 4px; width: 12px; height: 7px; border-radius: 0; border-left: 2px solid var(--gold-bright); border-bottom: 2px solid var(--gold-bright); background: none; transform: rotate(-45deg); }
-    .comp-kicker { text-align: center; max-width: 700px; margin: 30px auto 0; font-size: 17px; line-height: 1.62; color: rgba(244,237,216,.84); }
-    .usecases { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(24px, 3vw, 48px); }
+    .comp-kicker { text-align: center; max-width: 660px; margin: 30px auto 0; font-size: 17px; line-height: 1.62; color: rgba(244,237,216,.84); }
+
+    /* 4. The plan (reuses .cols-3/.col/.vicon + card bubble) */
+    .stepn { font-family: var(--font-display); font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 4px; }
+    .plan .col.key { border-color: rgba(200,167,91,.5); box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 22px 50px -30px rgba(200,167,91,.42); }
+    .plan .col.key .runtag { display: inline-block; margin-top: 14px; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-deep); }
+    .plan-close { text-align: center; max-width: 50ch; margin: 48px auto 0; font-size: 18px; line-height: 1.6; color: var(--ink-2); }
+    .plan-close b { color: var(--ink); }
+
+    /* 5. Founder note */
+    .founder .fnote { font-size: clamp(16.5px, 1.7vw, 19px); line-height: 1.62; color: var(--ink-2); }
+    .founder .fnote p { margin: 0 0 16px; }
+    .founder .fnote p:first-child { color: var(--ink); font-family: var(--font-display); font-size: clamp(20px, 2.2vw, 25px); line-height: 1.36; letter-spacing: -.01em; margin-bottom: 20px; }
+
+    /* 6. Before / after (navy) */
+    .ba { display: grid; grid-template-columns: 1fr 1fr; max-width: 940px; margin: 48px auto 0; border: 1px solid var(--line-on-navy); border-radius: 22px; overflow: hidden; }
+    .ba-col { padding: clamp(26px, 3.2vw, 42px); }
+    .ba-col + .ba-col { border-left: 1px solid var(--line-on-navy); }
+    .ba-col.after { background: rgba(200,167,91,.06); }
+    .ba-h { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 16px; color: rgba(244,237,216,.55); }
+    .ba-col.after .ba-h { color: var(--gold-bright); }
+    .ba-col p { font-size: 16px; line-height: 1.62; color: rgba(244,237,216,.82); margin: 0; }
+    .ba-bridge { text-align: center; max-width: 44ch; margin: 32px auto 0; font-family: var(--font-display); font-weight: 500; font-size: clamp(19px, 2.1vw, 24px); line-height: 1.4; color: var(--cream); }
+    .ba-bridge .acc { color: var(--gold-bright); font-style: italic; }
+
+    /* 7. Honest take + who-this-is-not-for */
+    .beliefs { display: grid; gap: 26px; max-width: 60ch; margin: 50px auto 0; }
+    .belief { position: relative; padding-left: 26px; }
+    .belief::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px; border-radius: 3px; background: var(--gold-deep); opacity: .5; }
+    .belief b { display: block; font-family: var(--font-display); font-size: clamp(19px, 2vw, 22px); font-weight: 600; line-height: 1.3; color: var(--ink); margin-bottom: 7px; letter-spacing: -.01em; }
+    .belief p { color: var(--ink-2); font-size: 16px; line-height: 1.6; margin: 0; }
+    .notfor { max-width: 60ch; margin: 42px auto 0; border: 1px solid var(--line); border-radius: 18px; padding: clamp(24px, 3vw, 34px); background: var(--paper-2); }
+    .notfor .k { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 12px; }
+    .notfor p { color: var(--ink-2); font-size: 16px; line-height: 1.62; margin: 0; }
+    .honest-close { text-align: center; max-width: 50ch; margin: 38px auto 0; font-style: italic; font-size: 17px; color: var(--ink-2); }
+
+    /* 8. Risk reversal offer card + FAQ on navy */
+    .offercard { max-width: 760px; margin: 0 auto 46px; border: 1px solid rgba(200,167,91,.4); border-radius: 22px; padding: clamp(28px, 3.6vw, 44px); background: rgba(200,167,91,.06); }
+    .offercard .lead2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(20px, 2.2vw, 26px); line-height: 1.38; color: var(--cream); letter-spacing: -.01em; margin: 0 0 16px; }
+    .offercard p { color: rgba(244,237,216,.84); font-size: 16.5px; line-height: 1.62; margin: 0; }
     .home-faq { max-width: 760px; margin: 0 auto; }
+    .sec-navy .faq details, .sec-navy details.faq { border-color: var(--line-on-navy); }
+    .sec-navy .faq summary { color: var(--cream); }
+    .sec-navy .faq summary::after { color: var(--gold-bright); }
+    .sec-navy .faq .ans { color: rgba(244,237,216,.76); }
+    .offer-cta { text-align: center; margin-top: 42px; }
+    .offer-reassure { text-align: center; color: rgba(244,237,216,.7); font-size: 14px; margin-top: 16px; }
+
+    /* Closing reassurance line */
+    .closing .reassure { color: rgba(244,237,216,.68); font-size: 14px; margin-top: 22px; }
+
     /* Card backgrounds so the constellation dots never compete with the text. */
-    .bg-field .cols-3 .col, .bg-field .usecases .col { background: var(--paper-2); border: 1px solid var(--line); border-radius: 18px; padding: clamp(24px, 2.6vw, 32px); box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 22px 48px -34px rgba(11,11,15,.3); }
-    .bg-field .sec-navy .cols-3 .col, .bg-field .sec-navy .usecases .col { background: #112338; border-color: var(--line-on-navy); box-shadow: 0 18px 44px -28px rgba(0,0,0,.5); }
-    @media (max-width: 680px) { .compare { grid-template-columns: 1fr; } .comp-col + .comp-col { border-left: 0; border-top: 1px solid rgba(200,167,91,.38); } }
-    @media (max-width: 760px) { .usecases { grid-template-columns: 1fr; } }
+    .bg-field .cols-3 .col { background: var(--paper-2); border: 1px solid var(--line); border-radius: 18px; padding: clamp(24px, 2.6vw, 32px); box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 22px 48px -34px rgba(11,11,15,.3); }
+
+    @media (max-width: 900px) {
+      .cost { grid-template-columns: 1fr; gap: 36px; }
+      .compare { grid-template-columns: 1fr; }
+      .comp-col + .comp-col { border-left: 0; border-top: 1px solid rgba(200,167,91,.38); }
+      .ba { grid-template-columns: 1fr; }
+      .ba-col + .ba-col { border-left: 0; border-top: 1px solid var(--line-on-navy); }
+    }
   </style>
   <script type="application/ld+json">
   {
@@ -64,12 +135,11 @@
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": [
-      { "@type": "Question", "name": "Isn't this expensive?", "acceptedAnswer": { "@type": "Answer", "text": "It is built to cost less than the hire it replaces. We scope to the actual work, not a headcount, so you pay for leverage on a specific job instead of a salary that runs whether the work is there or not. We will be honest on the first call about whether it pays for itself." } },
-      { "@type": "Question", "name": "Do I need a technical team?", "acceptedAnswer": { "@type": "Answer", "text": "No. This is built for operators, not engineers. You do not need anyone on staff who can write prompts or maintain code. We build it to fit how you already work and keep it running for you." } },
-      { "@type": "Question", "name": "Is this just a chatbot?", "acceptedAnswer": { "@type": "Answer", "text": "No. A chatbot answers questions. We build agents and automations that take a whole job off your plate end to end and hand you the finished result. Different thing entirely." } },
-      { "@type": "Question", "name": "What if automation is the wrong answer?", "acceptedAnswer": { "@type": "Answer", "text": "We tell you, before any build. Some work is not worth automating, and some problems are cheaper to fix another way. A clear no is worth more than a polite yes." } },
-      { "@type": "Question", "name": "Who owns what you build?", "acceptedAnswer": { "@type": "Answer", "text": "You do. It runs inside your business and serves your goals. We are not locking you into a tool you can never leave." } },
-      { "@type": "Question", "name": "How do we start?", "acceptedAnswer": { "@type": "Answer", "text": "Book a short call. We will look at where the leverage actually is in your business and come back with one concrete idea, not a sales pitch." } }
+      { "@type": "Question", "name": "What does this cost?", "acceptedAnswer": { "@type": "Answer", "text": "Far less than a hire, and the free leverage map comes first, so you see the value before you spend anything." } },
+      { "@type": "Question", "name": "Am I locked in?", "acceptedAnswer": { "@type": "Answer", "text": "No. No long contracts. We earn the next step by making the last one work, and you can stop any time." } },
+      { "@type": "Question", "name": "Will this actually work for my business?", "acceptedAnswer": { "@type": "Answer", "text": "That is exactly what the leverage map is for. We find where it will help, and we tell you where it will not." } },
+      { "@type": "Question", "name": "Do I have to learn or manage anything?", "acceptedAnswer": { "@type": "Answer", "text": "No. We build it and we run it. That is the offer." } },
+      { "@type": "Question", "name": "What about my data?", "acceptedAnswer": { "@type": "Answer", "text": "We work inside the tools you already use and keep the process traceable and reviewable. No black box." } }
     ]
   }
   </script>
@@ -81,116 +151,123 @@
     <div class="bg-field">
       <canvas class="field-canvas" aria-hidden="true"></canvas>
 
-    <!-- HERO -->
+    <!-- 1. HERO -->
     <section class="hero sec-paper">
       <div class="wrap">
-        <span class="eyebrow fade-up">The AI leverage agency for small business</span>
-        <h1 class="fade-up d1">Get the output of a bigger team, <span class="acc">without the payroll</span>.</h1>
-        <p class="sub fade-up d2">Hiring is slow, expensive, and hard to undo. Modulus is the other option. We find where AI gives your business the most leverage, build the agents and automations that do the work, and keep them running. You amplify yourself and the team you already have, for a fraction of what the next hire would cost.</p>
+        <span class="eyebrow fade-up">AI leverage, built for the rest of us</span>
+        <h1 class="fade-up d1">Your business only grows <span class="acc">as fast as you can work</span>.</h1>
+        <p class="sub fade-up d2">You are the bottleneck, and you know it. Every quote, every follow-up, every report still waits on you. Hiring is the fix everyone names, but it is slow, costly, and hard to undo. We do the other thing: we find the work a machine should be doing in your business, build it, and keep it running. You get the output without the headcount.</p>
         <div class="hero-cta fade-up d3">
-          <a class="btn btn-gold" href="/contact">Book a call</a>
-          <a class="textlink" href="#how">See how we work <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn-gold" href="/contact">Book a 20-minute call</a>
+          <a class="textlink" href="#how">See how it works <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <p class="trustline fade-up d3"><b>Consult, build, run.</b> Founder-led, built in the open.</p>
+        <p class="trustline fade-up d3"><b>Founder-led by James Denham.</b> Built in the open. No deck, no pressure, no lock-in.</p>
       </div>
     </section>
 
-    <!-- ECONOMICS (navy band) -->
-    <section class="sec-navy on-navy">
-      <div class="wrap">
-        <div class="sec-head center reveal">
-          <span class="eyebrow">The economics</span>
-          <h2>The next hire is not your only option.</h2>
-          <p class="lead">A full-time person costs tens of thousands a year, weeks to find, longer to train, and a hard conversation if it does not work out. Most of what is burying you is not work that needs another salary. It is repeatable work a well-built agent can carry.</p>
-        </div>
-        <div class="compare reveal">
-          <div class="comp-col">
-            <div class="comp-h">Hiring another person</div>
-            <ul>
-              <li>A salary every month, whether the work is there or not</li>
-              <li>Weeks to hire, longer to train</li>
-              <li>One person, one set of hours</li>
-              <li>Hard to scale back when things change</li>
-            </ul>
-          </div>
-          <div class="comp-col win">
-            <div class="comp-h">Leveraging AI with Modulus</div>
-            <ul>
-              <li>A fraction of a salary, scoped to the actual work</li>
-              <li>Live in weeks, not quarters</li>
-              <li>Runs at every hour, never forgets a step</li>
-              <li>Scales up or back as you do</li>
-            </ul>
-          </div>
-        </div>
-        <p class="comp-kicker reveal">This is not about replacing your people. It is about giving them, and you, the leverage a much bigger company takes for granted. We <span class="acc">amplify</span> the team you already have.</p>
-      </div>
-    </section>
-
-    <!-- HOW WE WORK -->
-    <section class="sec-paper" id="how">
-      <div class="wrap">
-        <div class="sec-head center reveal">
-          <span class="eyebrow">How we work</span>
-          <h2>We do the work. You get the leverage.</h2>
-          <p class="lead">You get the work done, not a slide deck of recommendations you have to implement yourself. We find the highest-value job in your business, build the agents and automations to handle it, and keep them running as you grow. No technical team, no six-month project, nothing new to learn.</p>
-        </div>
-        <div class="cols-3">
-          <div class="col reveal"><div class="vicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div><h3>Consult</h3><p>Show us a normal week. We find where AI actually creates leverage in your business, and where it does not. If automation is the wrong answer, we tell you before a line of code. You leave with a clear plan, not a pitch.</p></div>
-          <div class="col reveal"><div class="vicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></div><h3>Build</h3><p>We build the agents and automations that take real work off your plate. The invoice chasing, the re-typing, the same ten questions, the content nobody has time to make. Built around how you already operate, so nothing gets ripped out.</p></div>
-          <div class="col reveal"><div class="vicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div><h3>Run</h3><p>Automation drifts if no one owns it. We watch it, keep it sharp, and expand it as you grow, so the hours you got back stay yours and the leverage compounds instead of fading.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- WHERE IT LANDS -->
+    <!-- 2. COST OF INACTION (amplify) -->
     <section class="sec-paper">
       <div class="wrap">
         <div class="sec-head center reveal">
-          <span class="eyebrow">Where it helps</span>
-          <h2>Point the leverage where it hurts most.</h2>
-          <p class="lead">The same approach, aimed at the part of your business that is slowing you down right now.</p>
+          <span class="eyebrow">The hidden bill</span>
+          <h2>The most expensive person in your company is doing the cheapest work.</h2>
+          <p class="subhead">Not the salary. Your hours. That is the bill nobody puts on an invoice.</p>
         </div>
-        <div class="usecases">
-          <div class="col reveal"><div class="k">Growth</div><h3>Show up everywhere, without the team</h3><p>Turn one idea into a steady stream of on-brand content, outreach, and follow-up. The marketing output of a much bigger company, run by you.</p></div>
-          <div class="col reveal"><div class="k">Operations</div><h3>Reclaim the hours nobody is paid for</h3><p>Hand the repetitive back-office work to agents. Intake, scheduling, data entry, reporting. The work that quietly eats your week, gone.</p></div>
-          <div class="col reveal"><div class="k">Sales and support</div><h3>Faster replies, fewer dropped balls</h3><p>Answer the common questions instantly and route the rest to a person with full context. Nobody waits, and nothing slips through.</p></div>
-          <div class="col reveal"><div class="k">Content</div><h3>One source, every format</h3><p>Repurpose your long-form into everything you need to publish, in your voice and true to the source. This one we productized: it runs on Modulus Studio.</p></div>
+        <div class="cost">
+          <ul class="tasklist reveal">
+            <li>Chasing an invoice that is late again</li>
+            <li>Clearing an inbox that refills before you finish</li>
+            <li>Rewriting last month's proposal with three words changed</li>
+            <li>Rebuilding the Monday report by hand</li>
+            <li>Answering the same handful of questions you answered yesterday</li>
+          </ul>
+          <div class="escal reveal">
+            <div class="e"><div class="when">This week</div><p>That work got done because you stayed late to do it yourself.</p></div>
+            <div class="e"><div class="when">This month</div><p>The things only you can do, the growth, the bigger bets, the calls you keep meaning to make, slid again because there was no room for them.</p></div>
+            <div class="e"><div class="when">This year</div><p>The business stayed exactly as big as one stretched person can carry.</p></div>
+          </div>
         </div>
+        <p class="cost-close reveal">Doing nothing is not the safe choice here. It is the quiet, <span class="acc">expensive</span> one, and the bill grows every week you leave it.</p>
       </div>
     </section>
 
-    <!-- STUDIO PROOF (navy band, the only product mention) -->
+    <!-- 3. THE TURN (navy) -->
     <section class="sec-navy on-navy">
       <div class="wrap">
-        <div class="feature">
-          <div class="copy reveal">
-            <span class="eyebrow">One example of what we build · Live today</span>
-            <h2>Modulus Studio</h2>
-            <p>Studio is what happens when we take one of these problems all the way to a finished product. It turns a single talk, sermon, or recording into a month of content: articles, Q&amp;As, key quotes, social posts, and clean transcripts. In your voice, faithful to the source, never fabricated. Proof that this works, in your hands today, and a preview of what we can build aimed at your business.</p>
-            <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:28px;">
-              <a class="btn btn-gold" href="/studio">Explore Modulus Studio</a>
-              <a class="textlink" href="/studio#pricing">See pricing <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-            </div>
+        <div class="sec-head center reveal">
+          <span class="eyebrow">The third move</span>
+          <h2>You think you have two options. You have three.</h2>
+          <p class="subhead">Stay stuck, or hire. There is a third move most owners are never shown.</p>
+        </div>
+        <div class="compare reveal">
+          <div class="comp-col">
+            <div class="comp-h">The hire you are weighing</div>
+            <ul>
+              <li>Real money out before anyone does a day of work</li>
+              <li>Weeks of your own hours writing the role, screening, and interviewing</li>
+              <li>Payroll, benefits, equipment, and a slow ramp to productive</li>
+              <li>The wrong hire is not something you can quietly undo</li>
+            </ul>
           </div>
-          <div class="vis reveal">
-            <div class="appshot">
-              <img src="assets/modulus-mark.png" alt="Modulus Studio app icon" width="168" height="168" />
-              <div class="cap">Modulus Studio · Windows</div>
-            </div>
+          <div class="comp-col win">
+            <div class="comp-h">The third move: AI leverage</div>
+            <ul>
+              <li>Live in weeks, not a hiring cycle</li>
+              <li>A fraction of the cost of a hire</li>
+              <li>We find the highest-leverage work and build it to do itself</li>
+              <li>Change it or switch it off any time</li>
+            </ul>
           </div>
         </div>
+        <p class="comp-kicker reveal">Hiring is not the only way to grow. For a lot of what is on your plate, it is just the slow and expensive one.</p>
       </div>
     </section>
 
-    <!-- FOUNDER -->
+    <!-- 4. THE PLAN (Consult, Build, Run) -->
+    <section class="sec-paper" id="how">
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">How it works</span>
+          <h2>Consult, Build, Run.</h2>
+          <p class="subhead">No black box. Here is exactly what each step is, and what you walk away with.</p>
+        </div>
+        <div class="cols-3 plan">
+          <div class="col reveal">
+            <div class="vicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div>
+            <div class="stepn">Step 1</div>
+            <h3>Consult</h3>
+            <p>We sit with how your business actually runs and find where AI gives you the most leverage. Not a hundred ideas. The two or three that move your numbers. You leave with a clear map of what is worth automating first, whether or not you take it further with us.</p>
+          </div>
+          <div class="col reveal">
+            <div class="vicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg></div>
+            <div class="stepn">Step 2</div>
+            <h3>Build</h3>
+            <p>We build the agents and automations that do that work, wired into the tools you already use. You do not learn a new system or change how you work. You watch the work start doing itself.</p>
+          </div>
+          <div class="col key reveal">
+            <div class="vicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></div>
+            <div class="stepn">Step 3</div>
+            <h3>Run</h3>
+            <p>This is the part most AI projects skip, and it is why most of them quietly die. We keep what we built running, watch it, fix it, and improve it as your business changes. You do not babysit it. That is the whole point.</p>
+            <span class="runtag">Where most projects fail. Where we stay.</span>
+          </div>
+        </div>
+        <p class="plan-close reveal">You stay the owner. <b>We are the team that builds and runs the work</b>, so you get the output without the headcount.</p>
+      </div>
+    </section>
+
+    <!-- 5. FOUNDER -->
     <section class="sec-paper">
       <div class="wrap">
         <div class="founder">
           <div class="portrait reveal"><img src="/assets/james-denham.jpg" alt="James Denham, founder of Modulus Technologies" width="300" height="300" /></div>
           <div class="ftext reveal">
-            <span class="eyebrow">Why I'm building this</span>
-            <p class="quote">"I kept watching small businesses do work a machine should be doing, and pay to hire for it because no one had built them a better option. The leverage big companies take for granted was never built for the rest of us. So I'm building it, <span class="acc">in the open</span>, for the people everyone else overlooks."</p>
+            <span class="eyebrow">Why I started Modulus</span>
+            <div class="fnote">
+              <p>I keep meeting small business owners who are quietly the most capable person in the room and still stuck, because the whole thing only moves as fast as they personally can.</p>
+              <p>The advice they get is always the same word: hire. Sometimes that is right. Often it is just the only tool anyone ever hands them. AI changed what is possible here, but most of it gets sold as software you are left to figure out alone, and a tool nobody owns after launch quietly stops working.</p>
+              <p>So I built Modulus to do the unglamorous version. Find the real leverage, build it, and stay on to run it. I build in the open and I put my name on the work, because when a firm is new and has no logos to point at, the honest answer is that you should be able to see exactly how I think and hold me to it.</p>
+            </div>
             <div class="sig"><b>James Denham</b>Founder, Modulus Technologies</div>
             <a class="textlink" href="/about">Read the full story <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
@@ -198,28 +275,113 @@
       </div>
     </section>
 
-    <!-- OBJECTIONS / FAQ -->
-    <section class="sec-paper">
-      <div class="wrap home-faq reveal">
-        <div class="sec-head" style="text-align:left;margin-bottom:22px">
-          <span class="eyebrow">Before you reach out</span>
-          <h2>Straight answers.</h2>
+    <!-- 6. TRANSFORMATION (before / after, navy) -->
+    <section class="sec-navy on-navy">
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">What changes</span>
+          <h2>When the work stops waiting on you.</h2>
+          <p class="subhead">Same business. Same you. The day just stops being a queue with your name on it.</p>
         </div>
-        <details class="faq"><summary>Isn't this expensive?</summary><p class="ans">It is built to cost less than the hire it replaces. We scope to the actual work, not a headcount, so you pay for leverage on a specific job instead of a salary that runs whether the work is there or not. We will be honest on the first call about whether it pays for itself.</p></details>
-        <details class="faq"><summary>Do I need a technical team?</summary><p class="ans">No. This is built for operators, not engineers. You do not need anyone on staff who can write prompts or maintain code. We build it to fit how you already work and keep it running for you.</p></details>
-        <details class="faq"><summary>Is this just a chatbot?</summary><p class="ans">No. A chatbot answers questions. We build agents and automations that take a whole job off your plate end to end and hand you the finished result. Different thing entirely.</p></details>
-        <details class="faq"><summary>What if automation is the wrong answer?</summary><p class="ans">We tell you, before any build. Some work is not worth automating, and some problems are cheaper to fix another way. A clear no is worth more than a polite yes.</p></details>
-        <details class="faq"><summary>Who owns what you build?</summary><p class="ans">You do. It runs inside your business and serves your goals. We are not locking you into a tool you can never leave.</p></details>
-        <details class="faq"><summary>How do we start?</summary><p class="ans">Book a short call. We will look at where the leverage actually is in your business and come back with one concrete idea, not a sales pitch.</p></details>
+        <div class="ba reveal">
+          <div class="ba-col">
+            <div class="ba-h">Today</div>
+            <p>You start the day already behind. The good lead cooled because the follow-up sat in your drafts. Monday morning disappears into the report. The work only you can do keeps getting pushed, because the day fills up with work anyone, or anything, could have done.</p>
+          </div>
+          <div class="ba-col after">
+            <div class="ba-h">With the work running</div>
+            <p>The lead gets a fast, consistent follow-up the moment it comes in, without you touching it. The report is built and in your inbox before Monday starts. Your hours go back to the few things that genuinely need you: the judgment calls, the relationships, the next bet. You are running the business again instead of being run by it.</p>
+          </div>
+        </div>
+        <p class="ba-bridge reveal">The bridge between the two is not a bigger team. It is <span class="acc">Consult, Build, Run.</span></p>
       </div>
     </section>
 
-    <!-- CLOSING (navy band) -->
+    <!-- 7. HONEST TAKE + BOUNDARIES -->
+    <section class="sec-paper">
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">Where we stand</span>
+          <h2>What we actually believe about AI.</h2>
+          <p class="subhead">A clear position is worth more than a logo wall we do not have yet.</p>
+        </div>
+        <div class="beliefs reveal">
+          <div class="belief">
+            <b>Most AI projects fail for one boring reason.</b>
+            <p>Nobody owns them after launch. We run what we build, so it keeps working long past the demo.</p>
+          </div>
+          <div class="belief">
+            <b>AI is leverage, not magic.</b>
+            <p>The real work is mapping how your business runs and codifying it, not writing a clever prompt.</p>
+          </div>
+          <div class="belief">
+            <b>We will tell you where it will not help.</b>
+            <p>If a job needs human judgment, or your volume is too low for automation to pay off, or the process underneath is broken, then automating it just makes the mess happen faster. We will say so to your face.</p>
+          </div>
+        </div>
+        <div class="notfor reveal">
+          <div class="k">Who this is not for</div>
+          <p>We are not your firm if you want a pile of disconnected automations to manage yourself, if you want big claims and hype, or if you are shopping for the cheapest possible tool instead of the right leverage. Saying that plainly is how the owners we are right for know they are in the right place.</p>
+        </div>
+        <p class="honest-close reveal">When a firm has no track record to wave around yet, saying the quiet part out loud is the track record.</p>
+      </div>
+    </section>
+
+    <!-- 8. RISK REVERSAL + FAQ (navy) -->
+    <section class="sec-navy on-navy">
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">Your risk, our side of the table</span>
+          <h2>We take the risk off you.</h2>
+          <p class="subhead">Start with a free leverage map. The findings are yours to keep whether or not we ever work together.</p>
+        </div>
+        <div class="offercard reveal">
+          <p class="lead2">Book a 20-minute call and we will point to the one or two workflows in your business worth automating first, and tell you straight if AI is not the right lever for you yet.</p>
+          <p>That map is yours to keep, no obligation either way. If it makes sense to go further, the first engagement is small and scoped, with a clear start and finish, so your first yes is a small, reversible step and not a leap.</p>
+        </div>
+        <div class="home-faq reveal">
+          <details class="faq"><summary>What does this cost?</summary><p class="ans">Far less than a hire, and the free leverage map comes first, so you see the value before you spend anything.</p></details>
+          <details class="faq"><summary>Am I locked in?</summary><p class="ans">No. No long contracts. We earn the next step by making the last one work, and you can stop any time.</p></details>
+          <details class="faq"><summary>Will this actually work for my business?</summary><p class="ans">That is exactly what the leverage map is for. We find where it will help, and we tell you where it will not.</p></details>
+          <details class="faq"><summary>Do I have to learn or manage anything?</summary><p class="ans">No. We build it and we run it. That is the offer.</p></details>
+          <details class="faq"><summary>What about my data?</summary><p class="ans">We work inside the tools you already use and keep the process traceable and reviewable. No black box.</p></details>
+        </div>
+        <div class="offer-cta reveal">
+          <a class="btn btn-gold" href="/contact">Book a 20-minute call</a>
+          <p class="offer-reassure">No deck, no pressure. You will leave the call with one concrete idea even if we never work together.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. STUDIO (secondary proof) -->
+    <section class="sec-paper">
+      <div class="wrap">
+        <div class="feature">
+          <div class="copy reveal">
+            <span class="eyebrow">Proof we build, not just advise</span>
+            <h2>We build and ship, not just advise.</h2>
+            <p>Modulus Studio is a product we built and keep running ourselves, the same Consult, Build, Run discipline we bring to your business, turned on us. It is proof we are builders, not slideware. It sits down here on purpose. What we do for you is find your leverage, build it, and run it.</p>
+            <div class="cta">
+              <a class="btn btn-ghost" href="/studio">See Modulus Studio</a>
+            </div>
+          </div>
+          <div class="vis reveal">
+            <div class="appshot">
+              <img src="/assets/modulus-mark.png" alt="Modulus Studio app icon" width="168" height="168" />
+              <div class="cap">Modulus Studio · Windows</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. FINAL CTA (navy) -->
     <section class="sec-navy on-navy closing">
       <div class="wrap reveal">
-        <h2>Start with a conversation, not a contract.</h2>
-        <p>Book a short call. We will map one workflow worth automating in your business and show you what it would take to run it, and what it would cost compared to hiring for it. No pitch, just a concrete first move. You leave with a clear read on what is worth doing, whether or not you work with us.</p>
-        <div class="row"><a class="btn btn-gold" href="/contact">Book a call</a><a class="btn btn-ghost" href="/services">Explore services</a></div>
+        <h2>Find the work a machine should be doing.</h2>
+        <p>The first step is small, free, and yours either way. Twenty minutes, one concrete idea, and no obligation to do anything with it. If we are the right fit, you will know. If we are not, you will still walk away with a clearer picture of your business than you came in with.</p>
+        <div class="row"><a class="btn btn-gold" href="/contact">Book a 20-minute call</a><a class="btn btn-ghost" href="/services">Explore services</a></div>
+        <p class="reassure">Founder-led. Built in the open. No deck, no pressure, no lock-in.</p>
       </div>
     </section>
     </div><!-- /.bg-field -->
