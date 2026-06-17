@@ -19,6 +19,9 @@
   <meta property="og:image" content="https://modulustech.ai/assets/og-card.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="redo.css" />
+  <!-- Cloudflare Turnstile (spam/bot protection on the newsletter form). Same
+       sitekey + CSP allowance the auth + contact pages use. -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
     .posts { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; max-width: 760px; margin: 0 auto; }
     .post { display: block; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--paper); box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 18px 44px -30px rgba(11,11,15,.22); transition: transform .25s var(--ease), box-shadow .25s; }
@@ -61,11 +64,14 @@
         <span class="eyebrow">Newsletter</span>
         <h2 style="font-size:clamp(28px,4vw,42px);margin-top:14px">The occasional, useful note.</h2>
         <p style="color:var(--ink-2);margin-top:14px">Practical takes on agentic AI for small businesses. No spam, unsubscribe anytime.</p>
-        <form class="nrow" id="newsletterForm" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <form id="newsletterForm" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="newsletter" />
           <p hidden><label>Leave this empty: <input name="bot-field" /></label></p>
-          <input type="email" name="email" required placeholder="you@company.com" aria-label="Email" />
-          <button class="btn btn-gold" type="submit">Subscribe</button>
+          <div class="nrow">
+            <input type="email" name="email" required placeholder="you@company.com" aria-label="Email" />
+            <button class="btn btn-gold" type="submit">Subscribe</button>
+          </div>
+          <div style="display:flex;justify-content:center;margin-top:14px"><div class="cf-turnstile" data-sitekey="0x4AAAAAADmHKCDp14Mg6tPK" data-refresh-expired="auto"></div></div>
         </form>
       </div>
     </section>
@@ -76,6 +82,13 @@
     document.getElementById('newsletterForm').addEventListener('submit', function (e) {
       e.preventDefault();
       var form = this;
+      // Require a solved Turnstile token before sending (parity with contact.html).
+      var tokenEl = form.querySelector('[name="cf-turnstile-response"]');
+      if (!tokenEl || !tokenEl.value) {
+        var b0 = form.querySelector('button[type="submit"]');
+        if (b0) { var t = b0.textContent; b0.textContent = 'Complete the check first'; setTimeout(function () { b0.textContent = t; }, 2600); }
+        return;
+      }
       var body = new URLSearchParams(new FormData(form)).toString();
       fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body })
         .then(function (r) {
