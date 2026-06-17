@@ -14,7 +14,7 @@
   var ctx = canvas.getContext("2d");
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
   var field = canvas.parentElement;
-  var w = 0, h = 0, particles = [], boxes = [], raf = null, running = true;
+  var w = 0, h = 0, particles = [], boxes = [], grid = [], raf = null, running = true;
   var mouse = { x: -9999, y: -9999 };
   var NAVY = "12,27,46", GOLD = "200,167,91";
   var LINK = 158, NEAR = 175;
@@ -62,11 +62,13 @@
     // runs on a battery, so the density is dialed down there (bigger divisor =
     // fewer dots, lower cap).
     var small = w < 700;
-    var divisor = small ? 8200 : 4300;   // a lot denser field
-    // higher cap so tall fields (the homepage spans several sections) reach the
-    // same per-area density as a short hero, so the nodes actually connect. The
-    // homepage is cap-bound, so this cap is the dial for "more dots on home".
-    var capMax = small ? 300 : 820;
+    var divisor = small ? 7000 : 3600;   // a lot denser field
+    // The homepage field is very tall (it spans every section), so it is bound
+    // by this cap, not the divisor. The cap is therefore the real dial for
+    // "more dots on home". Neighbor links use a spatial grid (see step), so a
+    // high node count stays cheap. Short sub-page heroes are divisor-bound and
+    // barely move when the cap changes.
+    var capMax = small ? 420 : 1100;
     var count = Math.max(70, Math.min(capMax, Math.round((w * h) / divisor)));
     particles = [];
     for (var k = 0; k < count; k++) {
@@ -74,7 +76,7 @@
         x: Math.random() * w, y: Math.random() * h,
         // slow, calm drift (about half the old speed) so nothing darts around
         vx: (Math.random() - 0.5) * 0.11, vy: (Math.random() - 0.5) * 0.11,
-        r: Math.random() * 2.2 + 1.7,
+        r: Math.random() * 2.6 + 2.1,
         gold: Math.random() < 0.32,
         _v: 1
       });
@@ -102,19 +104,43 @@
       p._v = vis(p.x, p.y);
     }
 
-    // pass 2 — draw neighbor links, the cursor link, then the nodes on top
+    // Bucket the nodes into a spatial grid (cell = LINK) so each node only tests
+    // its own cell and the eight around it for links. Keeps the field cheap even
+    // at a high node count, which is what lets the homepage run dense.
+    var cols = Math.max(1, Math.ceil(w / LINK));
+    var rows = Math.max(1, Math.ceil(h / LINK));
+    var cells = cols * rows;
+    for (var c = 0; c < cells; c++) { if (grid[c]) grid[c].length = 0; else grid[c] = []; }
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      var cx = p.x <= 0 ? 0 : (p.x >= w ? cols - 1 : (p.x / LINK) | 0);
+      var cy = p.y <= 0 ? 0 : (p.y >= h ? rows - 1 : (p.y / LINK) | 0);
+      p._cx = cx; p._cy = cy;
+      grid[cy * cols + cx].push(i);
+    }
+
+    // pass 2 — draw neighbor links (via the grid), the cursor link, then nodes
     for (var i = 0; i < particles.length; i++) {
       var p = particles[i];
       var dxm = p.x - mouse.x, dym = p.y - mouse.y, dm = Math.sqrt(dxm * dxm + dym * dym);
       var near = dm < NEAR;
 
-      for (var j = i + 1; j < particles.length; j++) {
-        var q = particles[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
-        if (d < LINK) {
-          var lv = p._v < q._v ? p._v : q._v; // fade the link by its calmer endpoint
-          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = "rgba(" + NAVY + "," + (0.17 * (1 - d / LINK) * lv).toFixed(3) + ")";
-          ctx.lineWidth = 1; ctx.stroke();
+      for (var oy = -1; oy <= 1; oy++) {
+        var ny = p._cy + oy; if (ny < 0 || ny >= rows) continue;
+        for (var ox = -1; ox <= 1; ox++) {
+          var nx = p._cx + ox; if (nx < 0 || nx >= cols) continue;
+          var bucket = grid[ny * cols + nx];
+          for (var bi = 0; bi < bucket.length; bi++) {
+            var j = bucket[bi];
+            if (j <= i) continue; // count each pair once
+            var q = particles[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+            if (d < LINK) {
+              var lv = p._v < q._v ? p._v : q._v; // fade the link by its calmer endpoint
+              ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+              ctx.strokeStyle = "rgba(" + NAVY + "," + (0.2 * (1 - d / LINK) * lv).toFixed(3) + ")";
+              ctx.lineWidth = 1; ctx.stroke();
+            }
+          }
         }
       }
 
@@ -125,7 +151,7 @@
       }
 
       var col = near ? GOLD : (p.gold ? GOLD : NAVY);
-      var a = near ? (0.62 * (1 - dm / NEAR) + 0.3) : (p.gold ? 0.38 : 0.34);
+      var a = near ? (0.62 * (1 - dm / NEAR) + 0.3) : (p.gold ? 0.5 : 0.44);
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(" + col + "," + (a * p._v).toFixed(3) + ")";
