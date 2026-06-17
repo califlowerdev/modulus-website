@@ -73,12 +73,12 @@
   var carousel = demo.querySelector(".carousel");
   var lead = demo.querySelector(".bk.lead");
   var qaOpt = demo.querySelector(".opt.qa");
-  var socialOpt = demo.querySelector(".opt.social");
   var genbtn = demo.querySelector(".genbtn");
   var steps = demo.querySelectorAll(".gen-steps li");
   var title = demo.querySelector(".out-title");
+  var ocards = demo.querySelectorAll(".ocard");
   function grab(sel) { return [].map.call(demo.querySelectorAll(sel), function (el) { return { el: el, text: el.textContent }; }); }
-  var qaAns = grab(".qa-content .oa"), socialAns = grab(".social-content .oa"), allAns = qaAns.concat(socialAns);
+  var qaAns = grab(".qa-content .oa"), allAns = qaAns;
   if (!cursor || !track || !lead || !qaOpt || !genbtn) return;
 
   if (rm) { // no motion: show the finished Q&A output
@@ -98,9 +98,11 @@
     cursor.style.transform = "translate(" + x + "px," + y + "px)";
   }
   function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
-  function typeOut(a) {            // stream an answer in like the model is writing it
+  function typeOut(a) {            // reveal the card and stream its answer in together, like the model is writing it
     var el = a.el, text = a.text, i = 0;
     el.innerHTML = '<span class="caret"></span>';
+    var card = el.parentNode;
+    if (card && card.classList && card.classList.contains("ocard")) card.classList.add("show");
     (function step() {
       i = Math.min(i + 2, text.length);
       el.innerHTML = text.slice(0, i) + (i < text.length ? '<span class="caret"></span>' : '');
@@ -121,8 +123,9 @@
     if (title) title.textContent = "Q&A pulled from Ask Pastor John";
     demo.setAttribute("data-phase", "1");
     demo.classList.remove("genstart");
-    lead.classList.remove("sel"); qaOpt.classList.remove("on"); if (socialOpt) socialOpt.classList.remove("on");
+    lead.classList.remove("sel"); qaOpt.classList.remove("on");
     for (var s = 0; s < steps.length; s++) steps[s].classList.remove("done");
+    for (var c = 0; c < ocards.length; c++) ocards[c].classList.remove("show");
     for (var a = 0; a < allAns.length; a++) allAns[a].el.textContent = allAns[a].text;
     track.style.transition = "none"; track.style.transform = "translateX(" + (leadX() + 250) + "px)";
     cursor.style.transition = "none"; cursor.style.transform = "translate(72px, 104px)";
@@ -144,10 +147,10 @@
     at(9800, function () { steps[1] && steps[1].classList.add("done"); });
     at(10500, function () { steps[2] && steps[2].classList.add("done"); });
     at(11200, function () { steps[3] && steps[3].classList.add("done"); });
-    at(11900, function () { demo.setAttribute("data-phase", "5"); });   // output (cursor already parked bottom-right)
-    if (qaAns[0]) at(12350, function () { typeOut(qaAns[0]); });  // stream the answers in, one after another
-    if (qaAns[1]) at(13200, function () { typeOut(qaAns[1]); });
-    if (qaAns[2]) at(14050, function () { typeOut(qaAns[2]); });
+    at(11900, function () { demo.setAttribute("data-phase", "5"); }); // output frame; each card stays hidden until it types in
+    if (qaAns[0]) at(12300, function () { typeOut(qaAns[0]); });  // stream the answers in, one after another
+    if (qaAns[1]) at(13050, function () { typeOut(qaAns[1]); });
+    if (qaAns[2]) at(13800, function () { typeOut(qaAns[2]); });
     at(20000, play);                                             // long hold so it is easy to read, then loop
   }
 

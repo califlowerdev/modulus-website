@@ -222,10 +222,7 @@
     .out-badge { display: inline-flex; align-items: center; gap: 6px; color: #d6f3dc; background: rgba(40,200,64,.13); border: 1px solid rgba(40,200,64,.3); border-radius: 999px; padding: 3px 9px; }
     .out-badge i { width: 5px; height: 5px; border-radius: 50%; background: #28c840; }
     .ocard { background: rgba(255,255,255,.04); border: 1px solid var(--w-line); border-left: 3px solid var(--gold); border-radius: 10px; padding: 11px 13px; margin-bottom: 9px; opacity: 0; transform: translateY(10px); filter: blur(7px); }
-    .demo[data-phase="5"] .ocard { animation: ocIn .55s var(--ease) forwards; }
-    .demo[data-phase="5"] .ocard:nth-child(2) { animation-delay: .15s; }
-    .demo[data-phase="5"] .ocard:nth-child(3) { animation-delay: .55s; }
-    .demo[data-phase="5"] .ocard:nth-child(4) { animation-delay: 1.6s; }
+    .ocard.show { animation: ocIn .5s var(--ease) forwards; }   /* each card is revealed by JS the moment it starts typing */
     @keyframes ocIn { to { opacity: 1; transform: none; filter: blur(0); } }
     .oa .caret { display: inline-block; width: 2px; height: 1em; vertical-align: -2px; margin-left: 1px; background: var(--gold); animation: caretBlink .9s steps(1) infinite; }
     @keyframes caretBlink { 50% { opacity: 0; } }
@@ -246,9 +243,9 @@
       .demo .scene.browse { opacity: 0; } .demo .scene.work { opacity: 1; }
       .ocard { opacity: 1; transform: none; } .dcursor { display: none; } .genbtn { opacity: 1; transform: none; }
     }
-    /* output mode cycling: alternate Q&A and Social posts each loop */
+    /* output: the Q&A example */
     .out-content { display: none; }
-    .demo.mode-qa .qa-content, .demo.mode-social .social-content { display: block; }
+    .demo.mode-qa .qa-content { display: block; }
 
     /* tactile press on the cursor itself (scale the glyph, not its position) */
     .dcursor.tap svg { animation: dpress .42s var(--ease); }
@@ -399,22 +396,22 @@
                 <div class="scene browse">
                   <div class="demo-h"><span class="demo-k">Your library</span><span class="demo-hint">Pick a source to repurpose</span></div>
                   <div class="carousel"><div class="carousel-track">
-                    <span class="bk"><img src="assets/cover-12-ways-phone.jpg" alt="12 Ways Your Phone Is Changing You by Tony Reinke" width="116" height="174" loading="lazy"></span>
-                    <span class="bk"><img src="assets/cover-coronavirus-christ.jpg" alt="Coronavirus and Christ by John Piper" width="116" height="174" loading="lazy"></span>
-                    <span class="bk lead"><img src="assets/cover-ask-pastor-john.jpg" alt="Ask Pastor John by Tony Reinke" width="116" height="174" loading="lazy"></span>
-                    <span class="bk"><img src="assets/cover-does-god-desire.jpg" alt="Does God Desire All to Be Saved? by John Piper" width="116" height="174" loading="lazy"></span>
-                    <span class="bk"><img src="assets/cover-good-news-joy.jpg" alt="Good News of Great Joy by John Piper" width="116" height="174" loading="lazy"></span>
-                    <span class="bk" aria-hidden="true"><img src="assets/cover-12-ways-phone.jpg" alt="" width="116" height="174" loading="lazy"></span>
-                    <span class="bk" aria-hidden="true"><img src="assets/cover-coronavirus-christ.jpg" alt="" width="116" height="174" loading="lazy"></span>
-                    <span class="bk" aria-hidden="true"><img src="assets/cover-does-god-desire.jpg" alt="" width="116" height="174" loading="lazy"></span>
-                    <span class="bk" aria-hidden="true"><img src="assets/cover-good-news-joy.jpg" alt="" width="116" height="174" loading="lazy"></span>
+                    <span class="bk"><img src="assets/cover-12-ways-phone.jpg?v=2" alt="12 Ways Your Phone Is Changing You by Tony Reinke" width="116" height="174" loading="lazy"></span>
+                    <span class="bk"><img src="assets/cover-coronavirus-christ.jpg?v=2" alt="Coronavirus and Christ by John Piper" width="116" height="174" loading="lazy"></span>
+                    <span class="bk lead"><img src="assets/cover-ask-pastor-john.jpg?v=2" alt="Ask Pastor John by Tony Reinke" width="116" height="174" loading="lazy"></span>
+                    <span class="bk"><img src="assets/cover-does-god-desire.jpg?v=2" alt="Does God Desire All to Be Saved? by John Piper" width="116" height="174" loading="lazy"></span>
+                    <span class="bk"><img src="assets/cover-good-news-joy.jpg?v=2" alt="Good News of Great Joy by John Piper" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-12-ways-phone.jpg?v=2" alt="" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-coronavirus-christ.jpg?v=2" alt="" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-does-god-desire.jpg?v=2" alt="" width="116" height="174" loading="lazy"></span>
+                    <span class="bk" aria-hidden="true"><img src="assets/cover-good-news-joy.jpg?v=2" alt="" width="116" height="174" loading="lazy"></span>
                   </div></div>
                 </div>
 
                 <!-- Scene 3-5: the working view -->
                 <div class="scene work">
                   <div class="src-chip">
-                    <span class="sc-cover"><img src="assets/cover-ask-pastor-john.jpg" alt="" width="40" height="58"></span>
+                    <span class="sc-cover"><img src="assets/cover-ask-pastor-john.jpg?v=2" alt="Ask Pastor John by Tony Reinke" width="48" height="72"></span>
                     <span class="sc-meta"><b>Ask Pastor John</b><span>Tony Reinke · Foreword by John Piper</span></span>
                     <span class="sc-badge"><i></i>Source loaded</span>
                   </div>
