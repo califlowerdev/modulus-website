@@ -163,9 +163,9 @@
 })();
 
 /* 4) Photo Editor demo: operating the editor as part of the ecosystem.
-   Import a quote from the extraction (it generates in, off-center), drag it to
-   center, pick a platform (reframe), swap the background, then export to post.
-   A simulated cursor drives it; loops on-screen. */
+   Import a quote from the Content Repurposer (it generates in, off-center),
+   drag it to center, choose platform + format from dropdowns (reframe), swap
+   the background, stamp the logo, then export. A cursor drives it; loops. */
 (function () {
   var pe = document.getElementById("peDemo");
   if (!pe) return;
@@ -175,20 +175,39 @@
   var quote = pe.querySelector(".pe-quote");
   var attr = pe.querySelector(".pe-attr");
   var cursor = pe.querySelector(".dcursor");
-  var plats = pe.querySelectorAll(".pe-plat");
   var bgs = pe.querySelectorAll(".pe-bg");
   var impBtn = pe.querySelector(".pe-imp");
   var expBtn = pe.querySelector(".pe-exp");
   var logoBtn = pe.querySelector(".pe-logobtn");
   var logo = pe.querySelector(".pe-logo");
-  if (!card || !box || !quote || !attr || !cursor || !impBtn || !expBtn || !plats.length || !bgs.length) return;
+  var platSel = pe.querySelector('.pe-select[data-sel="platform"]');
+  var fmtSel = pe.querySelector('.pe-select[data-sel="format"]');
+  if (!card || !box || !quote || !attr || !cursor || !impBtn || !expBtn || !platSel || !fmtSel || !bgs.length) return;
   var quoteText = quote.textContent, attrText = attr.textContent;
+  var platDef = platSel.querySelector(".pe-selopt.sel");
+  var fmtDef = fmtSel.querySelector(".pe-selopt.sel");
 
-  function setFmt(f) { pe.setAttribute("data-fmt", f); for (var i = 0; i < plats.length; i++) plats[i].classList.toggle("on", plats[i].getAttribute("data-fmt") === f); }
+  function setFmt(f) { pe.setAttribute("data-fmt", f); }
   function setBg(n) { card.setAttribute("data-bg", String(n)); for (var i = 0; i < bgs.length; i++) bgs[i].classList.toggle("on", bgs[i].getAttribute("data-bg") === String(n)); }
-  function plat(f) { for (var i = 0; i < plats.length; i++) if (plats[i].getAttribute("data-fmt") === f) return plats[i]; }
+  function trig(sel) { return sel.querySelector(".pe-seltrigger"); }
+  function selectOpt(sel, optEl) {
+    if (!optEl) return;
+    var opts = sel.querySelectorAll(".pe-selopt");
+    for (var i = 0; i < opts.length; i++) opts[i].classList.remove("sel", "hot");
+    optEl.classList.add("sel");
+    var ic = optEl.querySelector(".picon"), tIc = sel.querySelector(".pe-seltrigger .picon");
+    if (ic && tIc) tIc.parentNode.replaceChild(ic.cloneNode(true), tIc);
+    var val = sel.querySelector(".pe-selval");
+    if (val) val.textContent = optEl.textContent.trim();
+  }
+  function hotOpt(optEl) { if (!optEl) return; var sibs = optEl.parentNode.children; for (var i = 0; i < sibs.length; i++) sibs[i].classList.remove("hot"); optEl.classList.add("hot"); }
 
-  if (rm) { setFmt("ig"); setBg(0); box.classList.add("shown"); quote.textContent = quoteText; attr.textContent = attrText; attr.style.opacity = "1"; if (logo) logo.classList.add("show"); return; }
+  if (rm) {
+    setFmt("ig"); setBg(0); box.classList.add("shown");
+    quote.textContent = quoteText; attr.textContent = attrText; attr.style.opacity = "1";
+    if (logo) logo.classList.add("show");
+    return;
+  }
 
   var timers = [];
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
@@ -211,38 +230,47 @@
 
   function play() {
     clearAll();
-    setFmt("ig"); setBg(0); pe.classList.remove("posted");
+    setFmt("ig"); setBg(0);
+    selectOpt(platSel, platDef); selectOpt(fmtSel, fmtDef);
+    platSel.classList.remove("open"); fmtSel.classList.remove("open");
     box.classList.remove("shown", "grab", "sel"); box.classList.add("off");
     quote.textContent = ""; attr.textContent = ""; attr.style.opacity = "0";
     impBtn.classList.remove("on"); expBtn.classList.remove("on");
     if (logoBtn) logoBtn.classList.remove("on");
     if (logo) logo.classList.remove("show");
-    cursor.style.transition = "none"; cursor.style.transform = "translate(86px, 36px)";
+    cursor.style.transition = "none"; cursor.style.transform = "translate(88px, 34px)";
     at(60, function () { cursor.style.transition = ""; });
     // 1) Import from the Content Repurposer — the quote generates in, off-center
-    at(900, function () { moveTo(impBtn); });
-    at(1700, function () { tap(); impBtn.classList.add("on"); box.classList.add("shown"); typeQuote(); });
-    at(2300, function () { impBtn.classList.remove("on"); });
-    // 2) the imported text landed off-center — grab it and drag it to centered (one smooth transform-glide, cursor synced)
-    at(4300, function () { moveTo(box, 0, -6); box.classList.add("sel"); });
-    at(5000, function () { box.classList.add("grab"); });
-    at(5350, function () { box.classList.remove("off"); cursor.style.transition = "transform .5s cubic-bezier(.22,.61,.36,1)"; moveTo(card, 0, -2); });
-    at(6150, function () { box.classList.remove("grab"); cursor.style.transition = ""; });
-    at(6750, function () { box.classList.remove("sel"); });
-    // 3) insert the logo — it drops into the bottom-left
-    at(7600, function () { moveTo(logoBtn); });
-    at(8300, function () { tap(); if (logoBtn) logoBtn.classList.add("on"); if (logo) logo.classList.add("show"); });
-    at(8700, function () { if (logoBtn) logoBtn.classList.remove("on"); });
-    // 4) pick a platform — the canvas reframes to Story
-    at(9600, function () { moveTo(plat("story")); });
-    at(10300, function () { tap(); setFmt("story"); });
+    at(800, function () { moveTo(impBtn); });
+    at(1500, function () { tap(); impBtn.classList.add("on"); box.classList.add("shown"); typeQuote(); });
+    at(2100, function () { impBtn.classList.remove("on"); });
+    // 2) the imported text landed off-center — grab it and drag it to centered (smooth transform-glide, cursor synced)
+    at(3800, function () { moveTo(box, 0, -6); box.classList.add("sel"); });
+    at(4400, function () { box.classList.add("grab"); });
+    at(4700, function () { box.classList.remove("off"); cursor.style.transition = "transform .5s cubic-bezier(.22,.61,.36,1)"; moveTo(card, 0, -2); });
+    at(5500, function () { box.classList.remove("grab"); cursor.style.transition = ""; });
+    at(6100, function () { box.classList.remove("sel"); });
+    // 3) Platform dropdown — open and pick Instagram
+    at(6900, function () { moveTo(trig(platSel)); });
+    at(7400, function () { tap(); platSel.classList.add("open"); });
+    at(7950, function () { var o = platSel.querySelector('[data-plat="ig"]'); moveTo(o); hotOpt(o); });
+    at(8500, function () { tap(); selectOpt(platSel, platSel.querySelector('[data-plat="ig"]')); platSel.classList.remove("open"); });
+    // 4) Format dropdown — open and pick Story (the canvas reframes to 9:16)
+    at(9300, function () { moveTo(trig(fmtSel)); });
+    at(9800, function () { tap(); fmtSel.classList.add("open"); });
+    at(10400, function () { var o = fmtSel.querySelector('[data-key="story"]'); moveTo(o); hotOpt(o); });
+    at(11000, function () { var o = fmtSel.querySelector('[data-key="story"]'); tap(); selectOpt(fmtSel, o); setFmt(o.getAttribute("data-fmt")); fmtSel.classList.remove("open"); });
     // 5) swap the background to the foggy forest
-    at(11500, function () { moveTo(bgs[1]); });
-    at(12200, function () { tap(); setBg(1); });
-    // 6) export to post
-    at(13500, function () { moveTo(expBtn); });
-    at(14300, function () { tap(); expBtn.classList.add("on"); pe.classList.add("posted"); });
-    at(19000, play);
+    at(12000, function () { moveTo(bgs[1]); });
+    at(12600, function () { tap(); setBg(1); });
+    // 6) stamp the logo into the bottom-left
+    at(13500, function () { moveTo(logoBtn); });
+    at(14100, function () { tap(); if (logoBtn) logoBtn.classList.add("on"); if (logo) logo.classList.add("show"); });
+    at(14500, function () { if (logoBtn) logoBtn.classList.remove("on"); });
+    // 7) export
+    at(15400, function () { moveTo(expBtn); });
+    at(16100, function () { tap(); expBtn.classList.add("on"); });
+    at(20500, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }

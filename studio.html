@@ -302,19 +302,26 @@
     .pe-imp svg, .pe-exp svg, .pe-logobtn svg { width: 14px; height: 14px; flex: 0 0 auto; }
     .pe-imp { margin-bottom: 9px; }
     .pe-imp.on, .pe-logobtn.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
-    .pe-logobtn { margin-bottom: 13px; }
-    .pe-logo { position: absolute; left: 12px; bottom: 11px; width: 70px; max-height: 28px; height: auto; object-fit: contain; object-position: left bottom; opacity: 0; transform: translateY(5px); transition: opacity .4s var(--ease), transform .4s var(--ease); filter: drop-shadow(0 1px 5px rgba(0,0,0,.65)); pointer-events: none; z-index: 2; }
-    .pe-logo.show { opacity: .94; transform: translateY(0); }
-    .pe-exp { margin-top: auto; }
-    .pe-exp.on { color: #eef8f3; background: linear-gradient(180deg, #3c9676, #22624a); border-color: transparent; }
-    .pe-toast { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%) translateY(8px); display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #eef8f3; background: linear-gradient(180deg, #3c9676, #22624a); padding: 5px 12px; border-radius: 999px; opacity: 0; transition: opacity .35s var(--ease), transform .35s var(--ease); white-space: nowrap; box-shadow: 0 10px 22px -8px rgba(0,0,0,.55); pointer-events: none; }
-    .pe-toast svg { width: 12px; height: 12px; }
-    .pe.posted .pe-toast { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .pe-side .sh { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--w-ink2); margin: 0 0 9px; }
-    .pe-plats { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 15px; }
-    .pe-plat { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 4px 7px; border: 1px solid var(--w-line); border-radius: 9px; font-size: 9.5px; color: var(--w-ink2); background: rgba(255,255,255,.02); transition: all .22s var(--ease); }
-    .pe-plat svg { width: 17px; height: 17px; }
-    .pe-plat.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; font-weight: 700; }
+    .pe-logobtn { margin: 13px 0 9px; }
+    .pe-card .pe-logo { position: absolute; left: 11px; bottom: 10px; width: 24px; height: 24px; border-radius: 0; box-shadow: none; object-fit: contain; opacity: 0; transform: translateY(4px); transition: opacity .4s var(--ease), transform .4s var(--ease); filter: drop-shadow(0 1px 4px rgba(0,0,0,.7)); pointer-events: none; z-index: 2; }
+    .pe-card .pe-logo.show { opacity: .95; transform: translateY(0); }
+    .pe-exp { margin-top: 2px; }
+    .pe-exp.on { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
+    .pe-side .sh, .pe-flabel { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--w-ink2); margin: 0 0 7px; }
+    .pe-flabel { display: block; }
+    .pe-field { margin-bottom: 11px; }
+    .pe-select { position: relative; }
+    .pe-seltrigger { display: flex; align-items: center; gap: 7px; width: 100%; padding: 8px 10px; border: 1px solid var(--w-line); border-radius: 8px; background: rgba(255,255,255,.04); color: var(--w-ink); font-size: 11px; font-weight: 600; transition: border-color .2s; }
+    .pe-seltrigger .picon { width: 15px; height: 15px; flex: 0 0 auto; }
+    .pe-seltrigger .chev { margin-left: auto; width: 12px; height: 12px; flex: 0 0 auto; opacity: .75; transition: transform .2s var(--ease); }
+    .pe-select.open .pe-seltrigger { border-color: var(--gold); }
+    .pe-select.open .chev { transform: rotate(180deg); }
+    .pe-selmenu { position: absolute; left: 0; right: 0; top: calc(100% + 5px); background: #0e2236; border: 1px solid var(--w-line); border-radius: 8px; padding: 5px; box-shadow: 0 14px 30px -10px rgba(0,0,0,.65); opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity .18s var(--ease), transform .18s var(--ease); z-index: 6; }
+    .pe-select.open .pe-selmenu { opacity: 1; transform: translateY(0); }
+    .pe-selopt { display: flex; align-items: center; gap: 7px; width: 100%; padding: 7px 8px; border-radius: 6px; font-size: 11px; color: var(--w-ink); white-space: nowrap; }
+    .pe-selopt .picon { width: 14px; height: 14px; flex: 0 0 auto; }
+    .pe-selopt.hot { background: rgba(228,199,125,.16); }
+    .pe-selopt.sel { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); font-weight: 700; }
     .pe-bgs { display: flex; gap: 8px; }
     .pe-bg { width: 40px; height: 40px; border-radius: 7px; background-size: cover; background-position: center; border: 2px solid rgba(255,255,255,.16); transition: border-color .2s, transform .2s; }
     .pe-bg[data-bg="0"] { background-image: url(assets/bg-1.jpg); }
@@ -353,23 +360,25 @@
     .tr-export { align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--w-ink); background: rgba(228,199,125,.1); border: 1px solid rgba(228,199,125,.42); border-radius: 9px; padding: 8px 13px; opacity: 0; transform: translateY(6px); transition: opacity .4s var(--ease), transform .4s var(--ease), color .25s, background .25s, border-color .25s; }
     .tr[data-st="done"] .tr-export { opacity: 1; transform: translateY(0); }
     .tr-export svg { width: 15px; height: 15px; flex: 0 0 auto; }
-    .tr-export.sent { color: #eef8f3; background: linear-gradient(180deg, #3c9676, #22624a); border-color: transparent; }
+    .tr-export.sent { color: #2a2010; background: linear-gradient(180deg, #E4C77D, var(--gold)); border-color: transparent; }
 
     @media (max-width: 560px) {
-      .pe { grid-template-columns: 1fr 132px; }
+      .pe { grid-template-columns: 1fr 142px; }
       .pe-stage { padding: 14px; }
-      .pe-card { width: 150px; height: 150px; }
-      .pe[data-fmt="story"] .pe-card { width: 124px; height: 220px; }
-      .pe[data-fmt="fb"] .pe-card { width: 150px; height: 188px; }
-      .pe[data-fmt="x"] .pe-card { width: 198px; height: 111px; }
+      .pe-card { width: 148px; height: 148px; }
+      .pe[data-fmt="story"] .pe-card { width: 122px; height: 217px; }
+      .pe[data-fmt="fb"] .pe-card { width: 148px; height: 185px; }
+      .pe[data-fmt="x"] .pe-card { width: 194px; height: 109px; }
       .pe-quote { font-size: 12px; line-height: 1.28; }
       .pe-attr { font-size: 8px; margin-top: 7px; }
-      .pe-side { padding: 14px 10px; }
-      .pe-side .sh { margin-bottom: 8px; }
-      .pe-plats { gap: 5px; margin-bottom: 12px; }
-      .pe-plat { font-size: 8.5px; padding: 7px 3px 5px; gap: 3px; }
-      .pe-plat svg { width: 15px; height: 15px; }
-      .pe-bg { width: 32px; height: 32px; }
+      .pe-side { padding: 12px 9px; }
+      .pe-imp, .pe-exp, .pe-logobtn { font-size: 9.5px; padding: 7px 5px; }
+      .pe-logobtn { margin: 10px 0 8px; }
+      .pe-field { margin-bottom: 8px; }
+      .pe-flabel, .pe-side .sh { margin-bottom: 5px; font-size: 9px; }
+      .pe-seltrigger { font-size: 10px; padding: 7px 8px; }
+      .pe-selopt { font-size: 10px; padding: 6px 7px; }
+      .pe-bg { width: 34px; height: 34px; }
     }
 
     /* section heads */
@@ -578,32 +587,46 @@
                   <div class="pe-canvas">
                     <div class="pe-card" data-bg="0">
                       <div class="pe-scrim"></div>
-                      <img class="pe-logo" src="assets/dg-logo.svg" alt="" width="70" height="28" loading="lazy">
+                      <img class="pe-logo" src="assets/dg-mark.png" alt="" width="24" height="24" loading="lazy">
                       <div class="pe-textbox">
                         <span class="pe-h pe-tl"></span><span class="pe-h pe-tr"></span><span class="pe-h pe-bl"></span><span class="pe-h pe-br"></span>
                         <div class="pe-quote">"God is most glorified in us when we are most satisfied in him."</div>
                         <div class="pe-attr">Ask Pastor John · John Piper</div>
                       </div>
                     </div>
-                    <div class="pe-toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Posted</div>
                   </div>
                 </div>
                 <div class="pe-side">
                   <button class="pe-imp" data-act="import" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Import from the Content Repurposer</button>
-                  <button class="pe-logobtn" data-act="logo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-4-8 7"/></svg>Insert logo</button>
-                  <div class="sh">Platform</div>
-                  <div class="pe-plats">
-                    <button class="pe-plat on" data-fmt="ig" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</button>
-                    <button class="pe-plat" data-fmt="story" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="3"/><circle cx="12" cy="11" r="3.1"/></svg>Story</button>
-                    <button class="pe-plat" data-fmt="fb" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.4 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.45 1.55-1.45h1.65V3.65c-.8-.1-1.6-.15-2.4-.15-2.4 0-4.05 1.45-4.05 4.15v2.3H7.45V13h2.75v8z"/></svg>Facebook</button>
-                    <button class="pe-plat" data-fmt="x" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.4 3h2.9l-6.35 7.25L21.5 21h-5.55l-4.35-5.7L6.6 21H3.7l6.8-7.75L3 3h5.7l3.95 5.2z"/></svg>X</button>
+                  <div class="pe-field">
+                    <span class="pe-flabel">Platform</span>
+                    <div class="pe-select" data-sel="platform">
+                      <button class="pe-seltrigger" type="button"><svg class="picon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg><span class="pe-selval">Instagram</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+                      <div class="pe-selmenu">
+                        <button class="pe-selopt sel" data-plat="ig" type="button"><svg class="picon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram</button>
+                        <button class="pe-selopt" data-plat="fb" type="button"><svg class="picon" viewBox="0 0 24 24" fill="currentColor"><path d="M13.4 21v-8h2.7l.4-3.1h-3.1V7.9c0-.9.25-1.45 1.55-1.45h1.65V3.65c-.8-.1-1.6-.15-2.4-.15-2.4 0-4.05 1.45-4.05 4.15v2.3H7.45V13h2.75v8z"/></svg>Facebook</button>
+                        <button class="pe-selopt" data-plat="x" type="button"><svg class="picon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.4 3h2.9l-6.35 7.25L21.5 21h-5.55l-4.35-5.7L6.6 21H3.7l6.8-7.75L3 3h5.7l3.95 5.2z"/></svg>X</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pe-field">
+                    <span class="pe-flabel">Format</span>
+                    <div class="pe-select" data-sel="format">
+                      <button class="pe-seltrigger" type="button"><svg class="picon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/></svg><span class="pe-selval">Post &middot; 1:1</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+                      <div class="pe-selmenu">
+                        <button class="pe-selopt sel" data-key="post" data-fmt="ig" type="button"><svg class="picon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>Post &middot; 1:1</button>
+                        <button class="pe-selopt" data-key="story" data-fmt="story" type="button"><svg class="picon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/></svg>Story &middot; 9:16</button>
+                        <button class="pe-selopt" data-key="reel" data-fmt="story" type="button"><svg class="picon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M10.6 9.6l3.4 2.4-3.4 2.4z" fill="currentColor" stroke="none"/></svg>Reel &middot; 9:16</button>
+                      </div>
+                    </div>
                   </div>
                   <div class="sh">Background</div>
                   <div class="pe-bgs">
                     <button class="pe-bg on" data-bg="0" type="button" aria-label="Mountain background"></button>
-                    <button class="pe-bg" data-bg="1" type="button" aria-label="Warm light background"></button>
+                    <button class="pe-bg" data-bg="1" type="button" aria-label="Foggy forest background"></button>
                     <button class="pe-bg" data-bg="2" type="button" aria-label="Sunrise background"></button>
                   </div>
+                  <button class="pe-logobtn" data-act="logo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-4-8 7"/></svg>Insert logo</button>
                   <button class="pe-exp" data-act="export" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V8M8 12l4-4 4 4M5 4h14"/></svg>Export &middot; Post</button>
                 </div>
                 <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
