@@ -100,7 +100,7 @@ html[data-session] .authcard { display: none; }
 .acctcard-wrap { max-width: 880px; margin: 0 auto; }
 .signedout { max-width: 432px; margin: 0 auto; text-align: center; padding: 46px 40px; }
 .signedout .mk { width: 46px; height: 46px; border-radius: 13px; display: block; margin: 0 auto 18px; }
-.signedout h1 { font-family: var(--font-display); font-weight: 600; font-size: 27px; color: #fff; }
+.signedout h1, .signedout h2 { font-family: var(--font-display); font-weight: 600; font-size: 27px; color: #fff; }
 .signedout p { color: var(--s-ink2); margin: 10px 0 24px; font-size: 15px; }
 .dashhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 26px; flex-wrap: wrap; }
 .dashhead h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(28px,4vw,40px); color: #fff; margin-top: 8px; }

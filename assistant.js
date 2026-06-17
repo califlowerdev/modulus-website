@@ -395,9 +395,16 @@
   function fetchAI(text) {
     var ctrl = new AbortController();
     var to = setTimeout(function () { ctrl.abort(); }, 12000);
+    // Supabase's gateway requires the apikey header even for a public edge function;
+    // without it the request is rejected 401 before it ever reaches /ask.
+    var headers = { "content-type": "application/json" };
+    if (window.modulusAuth && window.modulusAuth.anonKey) {
+      headers["apikey"] = window.modulusAuth.anonKey;
+      headers["Authorization"] = "Bearer " + window.modulusAuth.anonKey;
+    }
     return fetch(AI_ENDPOINT, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: headers,
       body: JSON.stringify({ q: text, history: convo.slice(-6) }),
       signal: ctrl.signal
     }).then(function (r) { return r.ok ? r.json() : null; })

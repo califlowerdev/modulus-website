@@ -117,6 +117,7 @@
 
   var api = {
     configured: hasAuth,
+    anonKey: CONFIG.SUPABASE_ANON_KEY, // public anon key; the assistant widget reads it to authenticate its /ask call
     signInGoogle: function () {
       // Send the user to the BRANDED auth origin for Google's consent screen so it
       // reads "to continue to modulustech.ai". This is a deliberate manual redirect
