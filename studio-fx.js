@@ -69,19 +69,23 @@
   if (!demo) return;
   var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var cursor = demo.querySelector(".dcursor");
+  var trail = demo.querySelector(".dcursor-trail");
   var track = demo.querySelector(".carousel-track");
   var carousel = demo.querySelector(".carousel");
   var lead = demo.querySelector(".bk.lead");
-  var qa = demo.querySelector(".opt.qa");
+  var qaOpt = demo.querySelector(".opt.qa");
+  var socialOpt = demo.querySelector(".opt.social");
   var genbtn = demo.querySelector(".genbtn");
   var steps = demo.querySelectorAll(".gen-steps li");
-  var answers = [];
-  demo.querySelectorAll(".ocard .oa").forEach(function (el) { answers.push({ el: el, text: el.textContent }); });
-  if (!cursor || !track || !lead || !qa || !genbtn) return;
+  var title = demo.querySelector(".out-title");
+  function grab(sel) { return [].map.call(demo.querySelectorAll(sel), function (el) { return { el: el, text: el.textContent }; }); }
+  var qaAns = grab(".qa-content .oa"), socialAns = grab(".social-content .oa"), allAns = qaAns.concat(socialAns);
+  if (!cursor || !track || !lead || !qaOpt || !genbtn) return;
 
-  if (rm) { // no motion: show the finished output
+  if (rm) { // no motion: show the finished Q&A output
+    demo.classList.add("mode-qa");
     demo.setAttribute("data-phase", "5");
-    lead.classList.add("sel"); qa.classList.add("on");
+    lead.classList.add("sel"); qaOpt.classList.add("on");
     demo.classList.add("genstart");
     for (var s = 0; s < steps.length; s++) steps[s].classList.add("done");
     return;
@@ -91,8 +95,9 @@
   function moveTo(el, dx, dy) {
     if (!el) return;
     var d = demo.getBoundingClientRect(), r = el.getBoundingClientRect();
-    cursor.style.transform = "translate(" + (r.left - d.left + r.width / 2 + (dx || 0)) +
-      "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
+    var x = r.left - d.left + r.width / 2 + (dx || 0), y = r.top - d.top + r.height / 2 + (dy || 0);
+    cursor.style.transform = "translate(" + x + "px," + y + "px)";
+    if (trail) trail.style.transform = "translate(" + x + "px," + y + "px)"; // lags behind via its slower transition
   }
   function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
   function typeOut(a) {            // stream an answer in like the model is writing it
@@ -109,38 +114,44 @@
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function clearAll() { for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
 
+  var loopCount = 0;
   function play() {
     clearAll();
+    var social = (loopCount % 2 === 1);          // alternate Q&A and Social each loop
+    var opt = social ? (socialOpt || qaOpt) : qaOpt;
+    var ans = social ? socialAns : qaAns;
+    demo.classList.remove("mode-qa", "mode-social");
+    demo.classList.add(social ? "mode-social" : "mode-qa");
+    if (title) title.textContent = social ? "Social posts pulled from Ask Pastor John" : "Q&A pulled from Ask Pastor John";
     demo.setAttribute("data-phase", "1");
     demo.classList.remove("genstart");
-    lead.classList.remove("sel"); qa.classList.remove("on");
+    lead.classList.remove("sel"); qaOpt.classList.remove("on"); if (socialOpt) socialOpt.classList.remove("on");
     for (var s = 0; s < steps.length; s++) steps[s].classList.remove("done");
-    for (var a = 0; a < answers.length; a++) answers[a].el.textContent = answers[a].text;
-    track.style.transition = "none";
-    track.style.transform = "translateX(" + (leadX() + 250) + "px)";
-    cursor.style.transition = "none";
-    cursor.style.transform = "translate(72px, 104px)";
+    for (var a = 0; a < allAns.length; a++) allAns[a].el.textContent = allAns[a].text;
+    track.style.transition = "none"; track.style.transform = "translateX(" + (leadX() + 250) + "px)";
+    cursor.style.transition = "none"; cursor.style.transform = "translate(72px, 104px)";
+    if (trail) { trail.style.transition = "none"; trail.style.transform = "translate(72px, 104px)"; }
 
     at(60, function () {
-      cursor.style.transition = "";
-      track.style.transition = "transform 2.9s linear";
+      cursor.style.transition = ""; if (trail) trail.style.transition = "";
+      track.style.transition = "transform 2.7s linear";
       track.style.transform = "translateX(" + leadX() + "px)"; // drift, ending centered on the lead
     });
-    at(2400, function () { moveTo(lead, 0, -8); });               // cursor to the book
-    at(3200, function () { tap(); lead.classList.add("sel"); });  // select it
-    at(4100, function () { demo.setAttribute("data-phase", "3"); }); // enter the working view
-    at(4750, function () { moveTo(qa); });                        // cursor to Q&A
-    at(5550, function () { tap(); qa.classList.add("on"); demo.classList.add("genstart"); });
-    at(6350, function () { moveTo(genbtn); });                    // cursor to Generate
-    at(7150, function () { tap(); demo.setAttribute("data-phase", "4"); }); // generating
-    at(7450, function () { steps[0] && steps[0].classList.add("done"); });
-    at(7950, function () { steps[1] && steps[1].classList.add("done"); });
-    at(8500, function () { steps[2] && steps[2].classList.add("done"); });
-    at(9050, function () { steps[3] && steps[3].classList.add("done"); });
-    at(9550, function () { demo.setAttribute("data-phase", "5"); moveTo(carousel, 0, 90); }); // output
-    if (answers[0]) at(9950, function () { typeOut(answers[0]); });   // stream the first answer
-    if (answers[1]) at(10550, function () { typeOut(answers[1]); });  // then the second
-    at(15800, play);                                              // hold, then loop
+    at(2300, function () { moveTo(lead, 0, -8); });               // cursor to the book
+    at(3050, function () { tap(); lead.classList.add("sel"); });  // select it
+    at(3950, function () { demo.setAttribute("data-phase", "3"); }); // enter the working view
+    at(4550, function () { moveTo(opt); });                       // cursor to the chosen output type
+    at(5300, function () { tap(); opt.classList.add("on"); demo.classList.add("genstart"); });
+    at(6050, function () { moveTo(genbtn); });                    // cursor to Generate
+    at(6800, function () { tap(); demo.setAttribute("data-phase", "4"); }); // generating
+    at(7100, function () { steps[0] && steps[0].classList.add("done"); });
+    at(7550, function () { steps[1] && steps[1].classList.add("done"); });
+    at(8000, function () { steps[2] && steps[2].classList.add("done"); });
+    at(8450, function () { steps[3] && steps[3].classList.add("done"); });
+    at(8950, function () { demo.setAttribute("data-phase", "5"); moveTo(carousel, 0, 90); }); // output
+    if (ans[0]) at(9300, function () { typeOut(ans[0]); });       // stream the first answer
+    if (ans[1]) at(9900, function () { typeOut(ans[1]); });       // then the second
+    at(13600, function () { loopCount++; play(); });              // hold, then loop (alternates Q&A / Social)
   }
 
   var running = false;

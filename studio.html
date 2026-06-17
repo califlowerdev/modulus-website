@@ -163,8 +163,7 @@
     .score .sd { font-size: 11.5px; color: var(--w-ink2); line-height: 1.45; margin-top: 3px; }
 
     /* ===== Animated product demo: browse a library, pick a book, choose Q&A, generate, output ===== */
-    .card.appshot { display: block; }   /* the demo window fills the column (no shrink-wrap) */
-    /* It is a preview, not a control: no mouse interaction anywhere inside it. */
+    .card.appshot { display: block; pointer-events: none; }   /* fills the column; fully inert to the mouse (it is a preview, not a control) */
     .demo { position: relative; height: 426px; overflow: hidden; pointer-events: none; background: radial-gradient(120% 80% at 50% -10%, #122845, #0b1626 60%); }
     .demo .scene { position: absolute; inset: 0; padding: 18px 20px; display: flex; flex-direction: column; opacity: 0; transform: scale(.99); transition: opacity .5s var(--ease), transform .5s var(--ease); pointer-events: none; }
     .demo .scene.browse { opacity: 1; transform: none; }
@@ -247,6 +246,27 @@
       .demo .scene.browse { opacity: 0; } .demo .scene.work { opacity: 1; }
       .ocard { opacity: 1; transform: none; } .dcursor { display: none; } .genbtn { opacity: 1; transform: none; }
     }
+    /* output mode cycling: alternate Q&A and Social posts each loop */
+    .out-content { display: none; }
+    .demo.mode-qa .qa-content, .demo.mode-social .social-content { display: block; }
+
+    /* cursor trail: a soft gold dot that lags behind the pointer */
+    .dcursor-trail { position: absolute; top: 0; left: 0; z-index: 39; width: 14px; height: 14px; margin: 3px 0 0 3px; border-radius: 50%; background: radial-gradient(circle, rgba(228,199,125,.8), rgba(228,199,125,0) 70%); transform: translate(72px, 104px); transition: transform .95s cubic-bezier(.5,0,.22,1); pointer-events: none; }
+    /* tactile press on the cursor itself (scale the glyph, not its position) */
+    .dcursor.tap svg { animation: dpress .42s var(--ease); }
+    @keyframes dpress { 28% { transform: scale(.78); } }
+
+    /* processing: a shimmer sweep across the bar + a calm pulse on the active step */
+    .gen-bar i { position: relative; }
+    .gen-bar i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 18%, rgba(255,255,255,.5) 50%, transparent 82%); transform: translateX(-100%); }
+    .demo[data-phase="4"] .gen-bar i::after { animation: genShimmer 1.25s linear .3s infinite; }
+    @keyframes genShimmer { to { transform: translateX(130%); } }
+    .demo[data-phase="4"] .gen-steps li:not(.done) { animation: stepPulse 1.5s var(--ease) infinite; }
+    @keyframes stepPulse { 50% { opacity: .82; } }
+
+    /* bookshelf depth: unselected covers sit back a touch; the picked one steps forward */
+    .bk:not(.sel) { transform: scale(.95); }
+
     @media (max-width: 560px) { .demo { height: 410px; } .bk { width: 100px; height: 150px; } }
 
     /* section heads */
@@ -375,8 +395,9 @@
           <div class="card appshot reveal">
             <div class="win">
               <div class="win-bar"><i class="win-dot1"></i><i class="win-dot2"></i><i class="win-dot3"></i><span>Modulus Studio · Content Repurposer</span></div>
-              <div class="demo" id="studioDemo" data-phase="1">
+              <div class="demo mode-qa" id="studioDemo" data-phase="1">
                 <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
+                <span class="dcursor-trail" aria-hidden="true"></span>
 
                 <!-- Scene 1-2: browse the library -->
                 <div class="scene browse">
@@ -406,7 +427,7 @@
                     <span class="opt">Articles</span>
                     <span class="opt qa">Q&amp;A</span>
                     <span class="opt">Key Quotes</span>
-                    <span class="opt">Social posts</span>
+                    <span class="opt social">Social posts</span>
                   </div>
                   <span class="genbtn">Generate <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
 
@@ -421,10 +442,17 @@
                   </div>
 
                   <div class="out">
-                    <div class="out-h"><span>Q&amp;A pulled from Ask Pastor John</span><span class="out-badge"><i></i>Source Check 99%</span></div>
-                    <div class="ocard"><div class="oq">How do I fight for joy when I feel spiritually dry?</div><div class="oa">Joy is fed by what you set your mind on. Preach God's promises to yourself until your heart catches up.</div></div>
-                    <div class="ocard"><div class="oq">Why would a good God let his children suffer?</div><div class="oa">Suffering is not God losing control. It is often the ground where he grows a deeper trust than comfort ever could.</div></div>
-                    <div class="ocard quote">"God is most glorified in us when we are most satisfied in him."<span>Key quote · grounded in the source</span></div>
+                    <div class="out-h"><span class="out-title">Q&amp;A pulled from Ask Pastor John</span><span class="out-badge"><i></i>Source Check 99%</span></div>
+                    <div class="out-content qa-content">
+                      <div class="ocard"><div class="oq">How do I fight for joy when I feel spiritually dry?</div><div class="oa">Joy is fed by what you set your mind on. Preach God's promises to yourself until your heart catches up.</div></div>
+                      <div class="ocard"><div class="oq">Why would a good God let his children suffer?</div><div class="oa">Suffering is not God losing control. It is often the ground where he grows a deeper trust than comfort ever could.</div></div>
+                      <div class="ocard quote">"God is most glorified in us when we are most satisfied in him."<span>Key quote · grounded in the source</span></div>
+                    </div>
+                    <div class="out-content social-content">
+                      <div class="ocard"><div class="oq">Post 1 · Thread</div><div class="oa">Spiritual dryness isn't a sign of God's absence. It's a call to look away from your feelings and set your mind on His character. Joy is a fight, not a passive state. Preach His promises to yourself.</div></div>
+                      <div class="ocard"><div class="oq">Post 2 · Quote</div><div class="oa">If God is most glorified in us when we are most satisfied in him, then the fight for joy is our highest duty. Our satisfaction in God is how we show the world that He is infinitely valuable.</div></div>
+                      <div class="ocard quote">"Suffering is not God losing control."<span>Social post · grounded in the source</span></div>
+                    </div>
                   </div>
                 </div>
               </div>
