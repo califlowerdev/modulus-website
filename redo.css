@@ -363,6 +363,7 @@ section { padding: clamp(88px, 13vh, 160px) 0; }
 /* ---- Responsive ---------------------------------------------------------- */
 @media (max-width: 900px) {
   .nav-links { display: none; }
+  .nav:not(.app-nav) .nav-right .login { display: none; }  /* login lives in the hamburger drawer on mobile; keep only Book a call */
   .nav-toggle { display: inline-flex; }
   .nav-drawer.open { display: flex; flex-direction: column; padding: 10px 0 18px; border-top: 1px solid var(--line); }
   .nav-drawer.open a { padding: 12px clamp(22px,5vw,44px); color: var(--ink); font-weight: 500; }
