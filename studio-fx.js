@@ -162,48 +162,61 @@
   } else { start(); }
 })();
 
-/* 4) Photo Editor demo: a key quote composed on a background, then re-rendered
-   into each social aspect ratio as a simulated cursor clicks through formats. */
+/* 4) Photo Editor demo: actually operating the editor — pick a platform (the
+   canvas reframes), swap the background photo, then grab and drag the quote
+   text box. A simulated cursor drives it; loops on-screen. */
 (function () {
   var pe = document.getElementById("peDemo");
   if (!pe) return;
   var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var card = pe.querySelector(".pe-card");
-  var fmts = pe.querySelectorAll(".pe-fmt");
+  var box = pe.querySelector(".pe-textbox");
   var cursor = pe.querySelector(".dcursor");
-  var exportPill = pe.querySelector(".pe-export");
-  if (!card || !cursor || fmts.length < 3) return;
-  var ratios = ["", "r-portrait", "r-story"];
+  var plats = pe.querySelectorAll(".pe-plat");
+  var bgs = pe.querySelectorAll(".pe-bg");
+  if (!card || !box || !cursor || !plats.length || !bgs.length) return;
 
-  function setFmt(i) {
-    for (var k = 0; k < fmts.length; k++) fmts[k].classList.toggle("on", k === i);
-    card.classList.remove("r-portrait", "r-story");
-    if (ratios[i]) card.classList.add(ratios[i]);
-  }
-  if (rm) { setFmt(1); pe.classList.add("exported"); return; }
+  function setFmt(f) { pe.setAttribute("data-fmt", f); for (var i = 0; i < plats.length; i++) plats[i].classList.toggle("on", plats[i].getAttribute("data-fmt") === f); }
+  function setBg(n) { card.setAttribute("data-bg", String(n)); for (var i = 0; i < bgs.length; i++) bgs[i].classList.toggle("on", bgs[i].getAttribute("data-bg") === String(n)); }
+  function plat(f) { for (var i = 0; i < plats.length; i++) if (plats[i].getAttribute("data-fmt") === f) return plats[i]; }
+
+  if (rm) { setFmt("ig"); setBg(0); return; }
 
   var timers = [];
   function at(ms, fn) { timers.push(setTimeout(fn, ms)); }
   function clearAll() { for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
-  function moveTo(el, dy) {
+  function moveTo(el, dx, dy) {
+    if (!el) return;
     var d = pe.getBoundingClientRect(), r = el.getBoundingClientRect();
-    cursor.style.transform = "translate(" + (r.left - d.left + r.width / 2) + "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
+    cursor.style.transform = "translate(" + (r.left - d.left + r.width / 2 + (dx || 0)) + "px," + (r.top - d.top + r.height / 2 + (dy || 0)) + "px)";
   }
   function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
 
   function play() {
     clearAll();
-    pe.classList.remove("exported"); setFmt(0);
-    cursor.style.transition = "none"; cursor.style.transform = "translate(60px, 210px)";
+    setFmt("ig"); setBg(0); box.classList.remove("moved", "sel", "grab");
+    cursor.style.transition = "none"; cursor.style.transform = "translate(72px, 60px)";
     at(60, function () { cursor.style.transition = ""; });
-    at(1500, function () { moveTo(fmts[1]); });
-    at(2300, function () { tap(); setFmt(1); });
-    at(4000, function () { moveTo(fmts[2]); });
-    at(4800, function () { tap(); setFmt(2); });
-    at(6500, function () { moveTo(fmts[0]); });
-    at(7300, function () { tap(); setFmt(0); });
-    at(8400, function () { if (exportPill) moveTo(exportPill, 0); tap(); pe.classList.add("exported"); });
-    at(12500, play);
+    // 1) pick a platform — the canvas reframes to Story (9:16)
+    at(1300, function () { moveTo(plat("story")); });
+    at(2100, function () { tap(); setFmt("story"); });
+    // 2) swap the background photo
+    at(3500, function () { moveTo(bgs[1]); });
+    at(4300, function () { tap(); setBg(1); });
+    // 3) grab the quote text box and drag it down
+    at(5500, function () { moveTo(box, 0, -6); box.classList.add("sel"); });
+    at(6300, function () { box.classList.add("grab"); });
+    at(6650, function () { box.classList.add("moved"); moveTo(box, 0, -6); });
+    at(6950, function () { moveTo(box, 0, -6); });
+    at(7250, function () { moveTo(box, 0, -6); });
+    at(7450, function () { box.classList.remove("grab"); });
+    at(8100, function () { box.classList.remove("sel"); });
+    // 4) one more background, then back to the Instagram square — it is live
+    at(9300, function () { moveTo(bgs[2]); });
+    at(10000, function () { tap(); setBg(2); });
+    at(11100, function () { moveTo(plat("ig")); });
+    at(11800, function () { tap(); setFmt("ig"); });
+    at(15600, play);
   }
   var running = false;
   function start() { if (running) return; running = true; play(); }
