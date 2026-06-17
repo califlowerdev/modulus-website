@@ -38,11 +38,11 @@
 
     // Studio pages get their own header (own tabs + a clear link back to the main site)
     if (document.body.getAttribute("data-section") === "studio") {
-      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#tools">Tools</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a><a class="login" data-auth-login href="/login">Sign in</a><a href="/">⌂ Home · Modulus Technologies</a>';
+      var sdrawer = '<a href="/studio#features">Features</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a><a class="login" data-auth-login href="/login">Sign in</a><a href="/">⌂ Home · Modulus Technologies</a>';
       return '<header class="nav"><div class="wrap nav-inner">' +
           '<a class="brand" href="/studio" aria-label="Modulus Studio">' + MARK + '<b>Modulus</b> <span class="sub">Studio</span></a>' +
           '<nav class="nav-links" aria-label="Modulus Studio">' +
-            '<a href="/studio#features">Features</a><a href="/studio#tools">Tools</a><a href="/studio#pricing">Pricing</a>' +
+            '<a href="/studio#features">Features</a><a href="/studio#pricing">Pricing</a>' +
           '</nav>' +
           '<div class="nav-right">' +
             '<a class="s-home" href="/" aria-label="Modulus Technologies home" title="Home | Modulus Technologies"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg></a>' +
@@ -87,7 +87,7 @@
                 '<a href="https://www.linkedin.com/in/james-denham-2b2332329" target="_blank" rel="noopener" aria-label="Modulus on LinkedIn"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM3.2 9h3.6v12H3.2zM9 9h3.5v1.6h.05c.5-.93 1.7-1.9 3.5-1.9 3.7 0 4.4 2 4.4 5.1V21h-3.7v-5.4c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg></a>' +
               '</div></div>' +
             '<div class="footer-cols">' +
-              '<div class="footer-col"><h5>Studio</h5><a href="/studio#features">Features</a><a href="/studio#tools">Tools</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a></div>' +
+              '<div class="footer-col"><h5>Studio</h5><a href="/studio#features">Features</a><a href="/studio#pricing">Pricing</a><a href="/studio#download">Get access</a></div>' +
               '<div class="footer-col"><h5>Company</h5><a href="/">Modulus Technologies</a><a href="/about">About</a><a href="/contact">Contact</a></div>' +
               '<div class="footer-col"><h5>Account</h5><a class="login" data-auth-login href="/login">Sign in</a></div>' +
             '</div>' +
