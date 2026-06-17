@@ -69,7 +69,6 @@
   if (!demo) return;
   var rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var cursor = demo.querySelector(".dcursor");
-  var trail = demo.querySelector(".dcursor-trail");
   var track = demo.querySelector(".carousel-track");
   var carousel = demo.querySelector(".carousel");
   var lead = demo.querySelector(".bk.lead");
@@ -97,7 +96,6 @@
     var d = demo.getBoundingClientRect(), r = el.getBoundingClientRect();
     var x = r.left - d.left + r.width / 2 + (dx || 0), y = r.top - d.top + r.height / 2 + (dy || 0);
     cursor.style.transform = "translate(" + x + "px," + y + "px)";
-    if (trail) trail.style.transform = "translate(" + x + "px," + y + "px)"; // lags behind via its slower transition
   }
   function tap() { cursor.classList.remove("tap"); void cursor.offsetWidth; cursor.classList.add("tap"); }
   function typeOut(a) {            // stream an answer in like the model is writing it
@@ -130,28 +128,27 @@
     for (var a = 0; a < allAns.length; a++) allAns[a].el.textContent = allAns[a].text;
     track.style.transition = "none"; track.style.transform = "translateX(" + (leadX() + 250) + "px)";
     cursor.style.transition = "none"; cursor.style.transform = "translate(72px, 104px)";
-    if (trail) { trail.style.transition = "none"; trail.style.transform = "translate(72px, 104px)"; }
 
-    at(60, function () {
-      cursor.style.transition = ""; if (trail) trail.style.transition = "";
-      track.style.transition = "transform 2.7s linear";
-      track.style.transform = "translateX(" + leadX() + "px)"; // drift, ending centered on the lead
+    at(80, function () {
+      cursor.style.transition = "";
+      track.style.transition = "transform 3.4s var(--ease, ease)";
+      track.style.transform = "translateX(" + leadX() + "px)"; // slow drift through the shelf, ending on the lead
     });
-    at(2300, function () { moveTo(lead, 0, -8); });               // cursor to the book
-    at(3050, function () { tap(); lead.classList.add("sel"); });  // select it
-    at(3950, function () { demo.setAttribute("data-phase", "3"); }); // enter the working view
-    at(4550, function () { moveTo(opt); });                       // cursor to the chosen output type
-    at(5300, function () { tap(); opt.classList.add("on"); demo.classList.add("genstart"); });
-    at(6050, function () { moveTo(genbtn); });                    // cursor to Generate
-    at(6800, function () { tap(); demo.setAttribute("data-phase", "4"); }); // generating
-    at(7100, function () { steps[0] && steps[0].classList.add("done"); });
-    at(7550, function () { steps[1] && steps[1].classList.add("done"); });
-    at(8000, function () { steps[2] && steps[2].classList.add("done"); });
-    at(8450, function () { steps[3] && steps[3].classList.add("done"); });
-    at(8950, function () { demo.setAttribute("data-phase", "5"); moveTo(carousel, 0, 90); }); // output
-    if (ans[0]) at(9300, function () { typeOut(ans[0]); });       // stream the first answer
-    if (ans[1]) at(9900, function () { typeOut(ans[1]); });       // then the second
-    at(13600, function () { loopCount++; play(); });              // hold, then loop (alternates Q&A / Social)
+    at(3000, function () { moveTo(lead, 0, -8); });               // cursor to the book
+    at(3900, function () { tap(); lead.classList.add("sel"); });  // select it
+    at(4900, function () { demo.setAttribute("data-phase", "3"); }); // enter the working view
+    at(5700, function () { moveTo(opt); });                       // cursor to the chosen output type
+    at(6700, function () { tap(); opt.classList.add("on"); demo.classList.add("genstart"); });
+    at(7700, function () { moveTo(genbtn); });                    // cursor to Generate
+    at(8700, function () { tap(); demo.setAttribute("data-phase", "4"); }); // generating
+    at(9100, function () { steps[0] && steps[0].classList.add("done"); });
+    at(9800, function () { steps[1] && steps[1].classList.add("done"); });
+    at(10500, function () { steps[2] && steps[2].classList.add("done"); });
+    at(11200, function () { steps[3] && steps[3].classList.add("done"); });
+    at(11900, function () { demo.setAttribute("data-phase", "5"); moveTo(carousel, 0, 90); }); // output
+    if (ans[0]) at(12350, function () { typeOut(ans[0]); });      // stream the first answer
+    if (ans[1]) at(13200, function () { typeOut(ans[1]); });      // then the second
+    at(20000, function () { loopCount++; play(); });              // long hold so it is easy to read, then loop
   }
 
   var running = false;

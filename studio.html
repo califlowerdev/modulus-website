@@ -176,10 +176,10 @@
     /* library carousel */
     .carousel { position: relative; flex: 1; display: flex; align-items: center; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
     .carousel-track { flex: 0 0 auto; display: flex; gap: 17px; padding-left: 8px; will-change: transform; }
-    .bk { flex: 0 0 auto; width: 124px; height: 186px; border-radius: 6px; border: 0; padding: 0; background: #16243a; box-shadow: 0 14px 26px -12px rgba(0,0,0,.7); position: relative; transition: transform .45s var(--spring, cubic-bezier(.34,1.3,.5,1)), box-shadow .45s, filter .45s; transform-origin: center center; filter: saturate(.92) brightness(.9); -webkit-box-reflect: below 7px linear-gradient(transparent 64%, rgba(255,255,255,.13)); }
-    .bk img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 6px; }
-    .bk.sel { transform: translateY(-7px) scale(1.06); filter: none; box-shadow: 0 26px 44px -14px rgba(0,0,0,.8), 0 0 40px -4px rgba(228,199,125,.55); z-index: 2; }
-    .bk.sel::after { content: ""; position: absolute; inset: 0; border-radius: 6px; box-shadow: inset 0 0 0 2.5px var(--gold); pointer-events: none; }
+    .bk { flex: 0 0 auto; width: 124px; height: 186px; border-radius: 4px; border: 0; padding: 0; background: #16243a; box-shadow: 0 14px 26px -12px rgba(0,0,0,.7); position: relative; transition: transform .45s var(--spring, cubic-bezier(.34,1.3,.5,1)), box-shadow .45s, filter .45s; transform-origin: center center; filter: saturate(.92) brightness(.88); }
+    .bk img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
+    .bk.sel { transform: translateY(-8px) scale(1.05); filter: none; box-shadow: 0 28px 46px -16px rgba(0,0,0,.85); z-index: 2; }
+    .bk.sel::after { content: ""; position: absolute; inset: 0; border-radius: 4px; box-shadow: inset 0 0 0 2.5px var(--gold); pointer-events: none; }
 
     /* selected source chip */
     .src-chip { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--w-line); border-radius: 12px; background: rgba(255,255,255,.03); margin-bottom: 15px; }
@@ -206,7 +206,7 @@
     .demo[data-phase="4"] .gen { display: block; }
     .gen-bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; margin-bottom: 18px; }
     .gen-bar i { display: block; height: 100%; width: 4%; border-radius: 999px; background: linear-gradient(90deg, var(--gold), #E4C77D); }
-    .demo[data-phase="4"] .gen-bar i { animation: genFill 2.1s var(--ease) forwards; }
+    .demo[data-phase="4"] .gen-bar i { animation: genFill 2.9s var(--ease) forwards; }
     @keyframes genFill { to { width: 100%; } }
     .gen-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
     .gen-steps li { font-size: 12.5px; color: var(--w-ink2); display: flex; align-items: center; gap: 10px; opacity: .4; transition: opacity .3s, color .3s; }
@@ -250,8 +250,6 @@
     .out-content { display: none; }
     .demo.mode-qa .qa-content, .demo.mode-social .social-content { display: block; }
 
-    /* cursor trail: a soft gold dot that lags behind the pointer */
-    .dcursor-trail { position: absolute; top: 0; left: 0; z-index: 39; width: 14px; height: 14px; margin: 3px 0 0 3px; border-radius: 50%; background: radial-gradient(circle, rgba(228,199,125,.8), rgba(228,199,125,0) 70%); transform: translate(72px, 104px); transition: transform .95s cubic-bezier(.5,0,.22,1); pointer-events: none; }
     /* tactile press on the cursor itself (scale the glyph, not its position) */
     .dcursor.tap svg { animation: dpress .42s var(--ease); }
     @keyframes dpress { 28% { transform: scale(.78); } }
@@ -397,8 +395,6 @@
               <div class="win-bar"><i class="win-dot1"></i><i class="win-dot2"></i><i class="win-dot3"></i><span>Modulus Studio · Content Repurposer</span></div>
               <div class="demo mode-qa" id="studioDemo" data-phase="1">
                 <span class="dcursor" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#ffffff" stroke="#0a1422" stroke-width="1.2" stroke-linejoin="round"><path d="M4.5 2.2 L4.5 18.6 L8.6 14.7 L11.4 21 L13.9 19.9 L11.1 13.7 L16.7 13.2 Z"/></svg></span>
-                <span class="dcursor-trail" aria-hidden="true"></span>
-
                 <!-- Scene 1-2: browse the library -->
                 <div class="scene browse">
                   <div class="demo-h"><span class="demo-k">Your library</span><span class="demo-hint">Pick a source to repurpose</span></div>
@@ -444,14 +440,14 @@
                   <div class="out">
                     <div class="out-h"><span class="out-title">Q&amp;A pulled from Ask Pastor John</span><span class="out-badge"><i></i>Source Check 99%</span></div>
                     <div class="out-content qa-content">
-                      <div class="ocard"><div class="oq">How do I fight for joy when I feel spiritually dry?</div><div class="oa">Joy is fed by what you set your mind on. Preach God's promises to yourself until your heart catches up.</div></div>
-                      <div class="ocard"><div class="oq">Why would a good God let his children suffer?</div><div class="oa">Suffering is not God losing control. It is often the ground where he grows a deeper trust than comfort ever could.</div></div>
+                      <div class="ocard"><div class="oq">How do I fight for joy when I feel nothing?</div><div class="oa">The pursuit of joy in God is not optional. It is not an extra you grow into after you come to faith. It is the fight of faith itself.</div></div>
+                      <div class="ocard"><div class="oq">Why would a good God let his children suffer?</div><div class="oa">Suffering in the path of obedience, endured with joy, is the clearest display of the worth of God in our lives.</div></div>
                       <div class="ocard quote">"God is most glorified in us when we are most satisfied in him."<span>Key quote · grounded in the source</span></div>
                     </div>
                     <div class="out-content social-content">
-                      <div class="ocard"><div class="oq">Post 1 · Thread</div><div class="oa">Spiritual dryness isn't a sign of God's absence. It's a call to look away from your feelings and set your mind on His character. Joy is a fight, not a passive state. Preach His promises to yourself.</div></div>
-                      <div class="ocard"><div class="oq">Post 2 · Quote</div><div class="oa">If God is most glorified in us when we are most satisfied in him, then the fight for joy is our highest duty. Our satisfaction in God is how we show the world that He is infinitely valuable.</div></div>
-                      <div class="ocard quote">"Suffering is not God losing control."<span>Social post · grounded in the source</span></div>
+                      <div class="ocard"><div class="oq">Thread · on the fight for joy</div><div class="oa">Joy in God is not a bonus feature of the Christian life that you grow into later. It is the fight of faith itself. We were made to be most satisfied in him.</div></div>
+                      <div class="ocard"><div class="oq">Quote post · on suffering</div><div class="oa">Suffering in the path of obedience, endured with joy, is the clearest display of the worth of God in our lives.</div></div>
+                      <div class="ocard quote">"God is most glorified in us when we are most satisfied in him."<span>Social post · grounded in the source</span></div>
                     </div>
                   </div>
                 </div>
