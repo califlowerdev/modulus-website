@@ -81,9 +81,14 @@ body { color: var(--s-ink); }
 .optin { display: flex; align-items: flex-start; gap: 10px; margin: 4px 0 14px; cursor: pointer; font-size: 12.5px; color: var(--s-ink2); line-height: 1.45; }
 .optin input { width: 16px; height: 16px; margin: 1px 0 0; flex: 0 0 auto; accent-color: var(--s-gold2); cursor: pointer; }
 .foundation { display: none; margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: rgba(228,199,125,.12); color: var(--s-gold); font-size: 13px; font-weight: 600; }
-#nameField { display: none; }
-body[data-mode="create"] #nameField { display: block; }
+#nameField, #confirmField, #dobField { display: none; }
+body[data-mode="create"] #nameField,
+body[data-mode="create"] #confirmField,
+body[data-mode="create"] #dobField { display: block; }
 body[data-mode="create"] .forgot { display: none; }
+/* Native date picker: dark calendar UI + readable text on the dark card. */
+.authform .field input[type="date"] { color-scheme: dark; }
+.authform .field label .muted { color: var(--s-ink3); font-weight: 500; }
 
 /* ============================================================
    APP — session-aware first paint (no signed-out flash)

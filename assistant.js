@@ -324,7 +324,7 @@
   function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
   // escape first, then turn [label](href) into safe anchors (internal/mailto only)
   function rich(s) {
-    return esc(s).replace(/\[([^\]]+)\]\((\/[^)\s]*|mailto:[^)\s]+)\)/g, function (_m, label, href) {
+    return esc(s).replace(/\[([^\]]+)\]\((\/(?!\/)[^)\s]*|mailto:[^)\s]+)\)/g, function (_m, label, href) {
       return '<a href="' + href + '">' + label + "</a>";
     });
   }

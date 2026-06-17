@@ -13,6 +13,13 @@ Thumbs.db
 .DS_Store
 desktop.ini
 
+# Secrets / credentials — never commit
+.env
+.env.*
+*.pem
+*.key
+*.p12
+
 # Local preview tooling
 .claude/
 

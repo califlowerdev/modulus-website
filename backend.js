@@ -144,7 +144,7 @@
     signInEmail: function (email, pw) {
       return ensureClient().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw, options: { captchaToken: captchaToken() } }); });
     },
-    signUp: function (email, pw, name, marketing) {
+    signUp: function (email, pw, name, marketing, birthday) {
       // emailRedirectTo: the confirmation link should land on /account (an
       // app page that loads the SDK and consumes the session fragment), not
       // the homepage where supabase-js never loads and the token hash would
@@ -156,6 +156,9 @@
         var opts = { emailRedirectTo: location.origin + "/account" };
         var data = {};
         if (name) data.full_name = name;
+        // Optional. Stored in user_metadata only; never required to sign up.
+        // Flag it in the privacy policy as data we collect (date of birth).
+        if (birthday) data.birthday = birthday;
         // Capture marketing consent + provenance at the moment of signup. This
         // lives in user_metadata (durable, immediate — no accounts row exists
         // yet) and is copied to public.accounts.marketing_opt_in when the email
@@ -333,18 +336,22 @@
         var optinEl = document.getElementById("a-marketing");
         var marketing = !!(optinEl && optinEl.checked);
         var creating = document.body.getAttribute("data-mode") === "create";
-        (creating ? api.signUp(email, pw, name, marketing) : api.signInEmail(email, pw)).then(function (r) {
+        var dob = (document.getElementById("a-dob") || {}).value; // optional
+        if (creating) {
+          var confirm = (document.getElementById("a-confirm") || {}).value;
+          if (!pw || pw.length < 8) return note("Pick a password with at least 8 characters.");
+          if (pw !== confirm) return note("Those passwords don’t match. Try again.");
+        }
+        (creating ? api.signUp(email, pw, name, marketing, dob) : api.signInEmail(email, pw)).then(function (r) {
           if (r && r.error) return note(friendlyAuthError(r.error.message));
           if (creating) {
-            // With email confirmation on, signUp for an ALREADY-registered
-            // address returns an obfuscated success (identities: []) and no
-            // email is sent — without this check the user waits forever for
-            // a confirmation that never comes.
-            var u = r && r.data && r.data.user;
-            if (u && Object.prototype.toString.call(u.identities) === "[object Array]" && u.identities.length === 0) {
-              return note("Looks like you already have an account with this email. Sign in instead, or use Forgot password.");
-            }
-            note("Almost there. Check your email to confirm your account.");
+            // Show the SAME message whether or not the address is already
+            // registered. Supabase obfuscates an existing-account signup
+            // (identities: []) and sends no email; branching on that here
+            // would leak which emails have accounts (enumeration). The
+            // combined wording keeps an existing user from waiting on a
+            // confirmation that never comes.
+            note("Almost there. Check your email to confirm your account. If you already have an account with this address, sign in instead or use “Forgot password?”.");
           }
           else location.href = "/account";
         }).catch(function (err) { note(String(err)); }).then(captchaReset);
