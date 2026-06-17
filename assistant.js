@@ -321,10 +321,15 @@
   var input = root.querySelector("#mod-ask-input");
 
   /* ------------------------------ rendering -------------------------------- */
-  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
-  // escape first, then turn [label](href) into safe anchors (internal/mailto only)
+  // textContent->innerHTML encodes & < >, but NOT quotes — so also entity-encode
+  // " and ' here. rich() runs its link regex over this ALREADY-escaped string, so a
+  // raw quote can never survive into an href="..." attribute (no breakout into an
+  // inline event handler, even when the text is untrusted LLM output).
+  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML.replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+  // escape first, then turn [label](href) into safe anchors (internal/mailto only).
+  // href charset also excludes quotes/spaces/angle brackets as defense in depth.
   function rich(s) {
-    return esc(s).replace(/\[([^\]]+)\]\((\/(?!\/)[^)\s]*|mailto:[^)\s]+)\)/g, function (_m, label, href) {
+    return esc(s).replace(/\[([^\]]+)\]\((\/(?!\/)[^)\s"'<>]*|mailto:[^)\s"'<>]+)\)/g, function (_m, label, href) {
       return '<a href="' + href + '">' + label + "</a>";
     });
   }
