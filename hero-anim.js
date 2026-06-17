@@ -17,7 +17,7 @@
   var w = 0, h = 0, particles = [], boxes = [], raf = null, running = true;
   var mouse = { x: -9999, y: -9999 };
   var NAVY = "12,27,46", GOLD = "200,167,91";
-  var LINK = 132, NEAR = 175;
+  var LINK = 158, NEAR = 175;
 
   // Readability easing: a node's visibility eases down a little as it drifts over
   // real text and recovers as it leaves. Gentle (high floor) — calmer dots behind
@@ -63,7 +63,9 @@
     // fewer dots, lower cap).
     var small = w < 700;
     var divisor = small ? 9000 : 4800;   // a lot denser field
-    var capMax = small ? 170 : 480;
+    // higher cap so tall fields (the homepage spans several sections) reach the
+    // same per-area density as a short hero, so the nodes actually connect.
+    var capMax = small ? 250 : 640;
     var count = Math.max(70, Math.min(capMax, Math.round((w * h) / divisor)));
     particles = [];
     for (var k = 0; k < count; k++) {
