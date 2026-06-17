@@ -43,6 +43,18 @@
   // admin-analytics edge function, which 403s any token whose user id != this.
   var OWNER_UID = "0e83d99f-9140-425a-acb5-52779d1e09aa";
 
+  // Cloudflare Turnstile (bot protection on email/password auth). The widget on
+  // the login page produces a single-use token; we pass it to Supabase, which
+  // verifies it server-side. Safe to send even before captcha is enabled in
+  // Supabase (it's ignored then), so the frontend can ship ahead of the toggle.
+  function captchaToken() {
+    try { return (window.turnstile && window.turnstile.getResponse) ? (window.turnstile.getResponse() || "") : ""; }
+    catch (e) { return ""; }
+  }
+  function captchaReset() {
+    try { if (window.turnstile && window.turnstile.reset) window.turnstile.reset(); } catch (e) { /* noop */ }
+  }
+
   function loadScript(src, integrity) {
     return new Promise(function (resolve, reject) {
       var s = document.createElement("script");
@@ -121,7 +133,7 @@
       return Promise.resolve();
     },
     signInEmail: function (email, pw) {
-      return ensureClient().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw }); });
+      return ensureClient().then(function (c) { return c.auth.signInWithPassword({ email: email, password: pw, options: { captchaToken: captchaToken() } }); });
     },
     signUp: function (email, pw, name, marketing) {
       // emailRedirectTo: the confirmation link should land on /account (an
@@ -148,6 +160,7 @@
           text: "Send me product updates and occasional tips. No spam, unsubscribe anytime."
         };
         opts.data = data;
+        opts.captchaToken = captchaToken();
         return c.auth.signUp({ email: email, password: pw, options: opts });
       });
     },
@@ -155,7 +168,7 @@
       return ensureClient().then(function (c) { return c.auth.signOut(); }).then(function () { location.reload(); });
     },
     resetPassword: function (email) {
-      return ensureClient().then(function (c) { return c.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/login" }); });
+      return ensureClient().then(function (c) { return c.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/login", captchaToken: captchaToken() }); });
     }
   };
   window.modulusAuth = api;
@@ -277,7 +290,7 @@
         if (!email) return note("Enter your email above first, then click “Forgot password?”");
         api.resetPassword(email).then(function (r) {
           note(r && r.error ? r.error.message : "Password reset link sent. Check your email.");
-        }).catch(function (err) { note(String(err)); });
+        }).catch(function (err) { note(String(err)); }).then(captchaReset);
       });
     }
     if (form) {
@@ -315,7 +328,7 @@
             note("Almost there. Check your email to confirm your account.");
           }
           else location.href = "/account";
-        }).catch(function (err) { note(String(err)); });
+        }).catch(function (err) { note(String(err)); }).then(captchaReset);
       });
     }
   }

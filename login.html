@@ -13,6 +13,8 @@
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
   <link rel="stylesheet" href="redo.css" />
   <link rel="stylesheet" href="studio.css" />
+  <!-- Cloudflare Turnstile (bot protection on auth). Auto-renders the .cf-turnstile widget. -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script>
     /* Pre-paint: a stored session means we're about to bounce to /account, so
        show the loader instead of flashing the sign-in form. backend.js reveals
@@ -51,6 +53,11 @@
               <span>Send me product updates and occasional tips. No spam, unsubscribe anytime.</span>
             </label>
             <div class="forgot"><a href="#" data-auth="forgot">Forgot password?</a></div>
+            <!-- Cloudflare Turnstile bot check. interaction-only stays invisible for
+                 normal visitors and only challenges suspicious traffic; it still
+                 produces a token Supabase verifies server-side (backend.js passes
+                 captchaToken on signin / signup / password reset). -->
+            <div class="cf-turnstile" data-sitekey="0x4AAAAAADmHKCDp14Mg6tPK" data-appearance="interaction-only" data-refresh-expired="auto" style="margin:2px 0 10px"></div>
             <button class="s-btn gold full" type="submit" id="authSubmit">Sign in</button>
             <p id="agreeLine" style="display:none;margin-top:10px;font-size:12px;color:rgba(234,240,247,.55);text-align:center">By creating an account you agree to the <a href="/terms" style="color:#E4C77D">Terms</a> and <a href="/privacy" style="color:#E4C77D">Privacy Policy</a>.</p>
           </form>
