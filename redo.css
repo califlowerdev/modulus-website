@@ -61,8 +61,11 @@ img { max-width: 100%; display: block; }
 .skip { position: fixed; left: 12px; top: -56px; z-index: 200; background: var(--navy); color: #fff; padding: 11px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px -12px rgba(11,11,15,.5); transition: top .2s var(--ease); }
 .skip:focus { top: 12px; outline: 2px solid var(--gold); outline-offset: 2px; }
 /* Visible keyboard focus on every interactive element (WCAG 2.4.7). :focus-visible
-   only fires for keyboard/AT focus, so it never shows on mouse hover or click. */
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 3px; }
+   only fires for keyboard/AT focus, so it never shows on mouse hover or click.
+   --gold-deep (4.7:1) on light surfaces per the site's contrast convention; the
+   brighter --gold-bright on the dark navy sections + footer (Antigravity 1.4.11). */
+:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; border-radius: 3px; }
+.on-navy :focus-visible, .sec-navy :focus-visible, .footer :focus-visible { outline-color: var(--gold-bright); }
 
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(22px, 5vw, 44px); }
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-deep); }

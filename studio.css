@@ -15,6 +15,9 @@
 html, body { background: var(--s-bg); }
 body { color: var(--s-ink); }
 ::selection { background: rgba(228,199,125,.28); }
+/* These pages are dark (studio.css loads after redo.css), so the keyboard focus
+   ring uses the bright studio gold for contrast instead of redo.css's gold-deep. */
+:focus-visible { outline-color: var(--s-gold); }
 
 /* ---- shared chrome: nav -> dark glass ---- */
 .nav { background: rgba(7,15,28,.66) !important; backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid var(--s-line); }
