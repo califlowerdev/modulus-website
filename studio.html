@@ -62,7 +62,7 @@
       --nv:#0C1B2E; --nv2:#102339;
       --ink:#ffffff; --ink2:rgba(233,239,247,.74); --ink3:rgba(233,239,247,.52);
       --line:rgba(255,255,255,.10);
-      --gold:#E4C77D; --gold2:#C8A75B;
+      --gold:#E4C77D; --gold2:#C8A75B; --gold-ink:#846733;
     }
     html, body { background: var(--nv); }
     body { color: var(--ink2); }
@@ -88,7 +88,19 @@
     .swrap { width: min(1120px, 92vw); margin: 0 auto; }
     .s-eyebrow { display: inline-block; color: var(--gold); letter-spacing: .2em; text-transform: uppercase; font-size: 12px; font-weight: 700; }
     .s-sec { padding: clamp(58px, 9vh, 112px) 0; position: relative; overflow: hidden; }
-    .s-sec.alt { background: var(--nv2); }   /* the only variation: a slightly lighter navy band */
+    .s-sec.alt { background: var(--nv2); }   /* a slightly lighter navy band */
+    /* WHITE sections (the showcase + the toolset) — a deliberate two-tone against the navy. */
+    .s-sec.light { background: #ffffff; }
+    .s-sec.light .s-eyebrow { color: var(--gold-ink); }
+    .s-sec.light .s-head h2, .s-sec.light .s-copy h2 { color: var(--nv); }
+    .s-sec.light .s-head p, .s-sec.light .s-copy p { color: #46535f; }
+    .s-sec.light .card { background: #fff; border-color: rgba(20,38,59,.12); box-shadow: 0 22px 54px -30px rgba(20,38,59,.26); }
+    .s-sec.light .tilt:hover { box-shadow: 0 32px 70px -30px rgba(20,38,59,.32); }
+    .s-sec.light .s-card h3 { color: var(--nv); }
+    .s-sec.light .s-card p { color: #46535f; }
+    .s-sec.light .s-card .ic { background: linear-gradient(180deg,#faf2de,#f2e6c7); border-color: rgba(200,167,91,.42); color: var(--gold-ink); }
+    .s-sec.light .s-tag.soon { color: var(--gold-ink); border-color: rgba(200,167,91,.5); background: #fff; }
+    .s-sec.light .s-card.feat { border-color: rgba(200,167,91,.5); box-shadow: 0 26px 60px -32px rgba(200,167,91,.4); }
 
     /* ambient motion (calm, auto) */
     .s-fx { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
@@ -275,7 +287,7 @@
     </section>
 
     <!-- PRODUCT SHOWCASE -->
-    <section class="s-sec alt" id="features">
+    <section class="s-sec light" id="features">
       <div class="s-fx"><span class="s-orb gold" style="width:420px;height:420px;right:-160px;top:10%"></span></div>
       <div class="swrap">
         <div class="s-show">
@@ -345,7 +357,7 @@
     </section>
 
     <!-- TOOLS -->
-    <section class="s-sec alt" id="tools">
+    <section class="s-sec light" id="tools">
       <div class="swrap">
         <div class="s-head reveal">
           <span class="s-eyebrow">The toolset</span>

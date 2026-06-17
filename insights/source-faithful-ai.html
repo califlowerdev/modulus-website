@@ -48,7 +48,7 @@
     .article .pull { border-left: 3px solid var(--gold); padding: 6px 0 6px 22px; margin: 30px 0; }
     .article .pull p { font-family: var(--font-display); font-style: italic; font-size: 22px; color: var(--ink); margin: 0; line-height: 1.5; }
     .article .sig { margin-top: 40px; padding-top: 26px; border-top: 1px solid var(--line); display: flex; gap: 16px; align-items: center; }
-    .article .sig .pmark { width: 52px; height: 52px; border-radius: 14px; background: radial-gradient(120% 120% at 30% 20%, var(--navy-2), var(--navy)); display: grid; place-items: center; flex: none; }
+    .article .sig .pmark { width: 52px; height: 52px; border-radius: 14px; object-fit: cover; flex: none; }
     .article .sig .pmark span { font-family: var(--font-display); font-size: 22px; color: var(--gold-bright); }
     .article .sig b { display: block; color: var(--ink); font-size: 17px; }
     .article .sig span.role { color: var(--ink-2); font-size: 15px; }
@@ -98,7 +98,7 @@
         <p>I'm early, and I'm building this in the open. Source-faithfulness is the bar everything in Studio has to clear. It's the difference between a tool you can hand your life's work to and a tool you have to babysit.</p>
 
         <div class="sig">
-          <div class="pmark" aria-hidden="true"><span>JD</span></div>
+          <img class="pmark" src="/assets/james-denham.jpg" alt="James Denham" width="52" height="52" />
           <div>
             <b>James Denham</b>
             <span class="role">Founder, Modulus Technologies. Building agentic AI for small businesses, in the open.</span><br />
