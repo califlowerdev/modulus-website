@@ -16,11 +16,14 @@
   <meta property="og:title" content="Modulus Technologies | AI leverage for small business" />
   <meta property="og:description" content="You are the bottleneck. Hiring is slow and costly. We find where AI does the most work in your business, build it, and keep it running, so you get the output without the headcount." />
   <meta property="og:url" content="https://modulustech.ai/" />
-  <meta property="og:image" content="https://modulustech.ai/assets/modulus-mark.png" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://modulustech.ai/assets/og-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Modulus Technologies. Get the output of a bigger team, without the payroll." />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Modulus Technologies" />
   <meta name="twitter:description" content="AI leverage, built for the rest of us. Get the output without the headcount." />
-  <meta name="twitter:image" content="https://modulustech.ai/assets/modulus-mark.png" />
+  <meta name="twitter:image" content="https://modulustech.ai/assets/og-card.png" />
   <link rel="icon" type="image/png" href="/assets/favicon-32.png" />
   <link rel="stylesheet" href="redo.css" />
   <style>
@@ -106,7 +109,16 @@
     .closing .reassure { color: rgba(244,237,216,.68); font-size: 14px; margin-top: 22px; }
 
     /* Card backgrounds so the constellation dots never compete with the text. */
-    .bg-field .cols-3 .col { background: var(--paper-2); border: 1px solid var(--line); border-radius: 18px; padding: clamp(24px, 2.6vw, 32px); box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 22px 48px -34px rgba(11,11,15,.3); }
+    .bg-field .cols-3 .col,
+    .bg-field .cost,
+    .bg-field .founder .ftext,
+    .bg-field .beliefs,
+    .bg-field .feature .copy { background: var(--paper-2); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 1px 2px rgba(11,11,15,.04), 0 22px 48px -34px rgba(11,11,15,.3); }
+    .bg-field .cols-3 .col { padding: clamp(24px, 2.6vw, 32px); }
+    .bg-field .cost { padding: clamp(28px, 3.4vw, 44px); }
+    .bg-field .founder .ftext { padding: clamp(28px, 3.4vw, 42px); }
+    .bg-field .beliefs { padding: clamp(28px, 3.4vw, 40px); }
+    .bg-field .feature .copy { padding: clamp(30px, 3.6vw, 46px); }
 
     @media (max-width: 900px) {
       .cost { grid-template-columns: 1fr; gap: 36px; }
