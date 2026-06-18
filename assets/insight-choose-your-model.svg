@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Ascending bars representing model strength and cost">
+  <rect width="320" height="180" fill="#0C1B2E"/>
+  <g>
+    <rect x="44" y="120" width="34" height="26" rx="3" fill="#9FB0C4"/>
+    <rect x="92" y="98" width="34" height="48" rx="3" fill="#C9B98E"/>
+    <rect x="140" y="74" width="34" height="72" rx="3" fill="#C8A75B"/>
+    <rect x="188" y="48" width="34" height="98" rx="3" fill="#DBBE78"/>
+    <rect x="236" y="30" width="34" height="116" rx="3" fill="#F4EDD8"/>
+  </g>
+  <line x1="44" y1="146" x2="276" y2="146" stroke="#C8A75B" stroke-width="1.5" opacity="0.55"/>
+  <text x="44" y="40" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#F4EDD8">Choose your model</text>
+</svg>
