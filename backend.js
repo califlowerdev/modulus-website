@@ -1096,8 +1096,13 @@
     // (CSV-injection guard), without mangling normal names/emails.
     var cell = function (v) {
       v = (v == null ? "" : String(v));
-      // Match a formula char even behind leading whitespace / control characters a
-      // spreadsheet might trim (e.g. "\n=cmd"), not just at the literal first byte.
+      // Strip ALL non-printable control chars first (null, \x01-\x1F, \x7F). A
+      // spreadsheet can silently drop these on load, so a value like "\x00=cmd"
+      // would otherwise dodge the formula check below and then execute. Removing
+      // them also keeps stray control bytes from corrupting CSV rows.
+      v = v.replace(/[\x00-\x1F\x7F]/g, "");
+      // Prefix any value that starts with a formula char (even behind leading
+      // spaces a spreadsheet might trim) so it can't execute as a formula.
       if (/^\s*[=+\-@]/.test(v)) v = "'" + v;
       return '"' + v.replace(/"/g, '""') + '"';
     };
