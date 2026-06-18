@@ -18,6 +18,17 @@ SUPABASE_URL = "https://deypezfcawzdcfhnckxp.supabase.co"
 binding = "SALT_KV"
 id = "68eb8b6f74dd45eaa5dca39f0f8ccd2c"
 
+# Per-IP rate limit on the ingest (Cloudflare Workers Rate Limiting binding —
+# works on workers.dev, no zone needed, unlike the deferred WAF rule). Caps how
+# many analytics POSTs a single IP can drive into the service-key Supabase write,
+# closing the flood / denial-of-wallet path. Dropping an over-limit beacon is
+# harmless — analytics is best-effort. period must be 10 or 60.
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 100, period = 60 }
+
 # Daily salt rotation: runs at 23:00 UTC to PRE-GENERATE the next UTC day's salt
 # (1-hour head start so it propagates to all edge regions before midnight,
 # Antigravity rev2 #1), and prunes salts older than the 2-day window.

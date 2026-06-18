@@ -94,6 +94,16 @@ export default {
       return noContent(origin);
     }
 
+    // (1b) Per-IP rate limit (AFTER the privacy check, so GPC/DNT visitors never
+    // have their IP read). Caps the flood / denial-of-wallet path into the
+    // service-key Supabase write. Over-limit beacons are dropped silently
+    // (204, best-effort). Fails OPEN if the limiter is unavailable.
+    try {
+      const rlIp = request.headers.get("CF-Connecting-IP") || "0.0.0.0";
+      const { success } = await env.RATE_LIMITER.limit({ key: rlIp });
+      if (!success) return noContent(origin);
+    } catch (_e) { /* limiter unavailable -> keep ingesting */ }
+
     // (2) Parse + hard-cap the body.
     let body;
     try {
