@@ -9,7 +9,11 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    # `preload` makes the domain eligible for the browser HSTS preload list. SHIP this
+    # header, but do NOT submit modulustech.ai to hstspreload.org until the launch has
+    # soaked — until submitted, a git revert fully reverses this; once submitted, removal
+    # takes months (one-way door).
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://modulus-analytics-ingest.modulustech.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 
@@ -136,7 +140,7 @@
 # /download/win is the actual versioned installer. Update the version each release.
 [[redirects]]
   from = "/download/win"
-  to = "https://github.com/califlowerdev/modulus-releases/releases/download/v1.139.0/Modulus.Studio_1.139.0_x64-setup.exe"
+  to = "https://github.com/califlowerdev/modulus-releases/releases/download/v1.208.0/Modulus.Studio_1.208.0_x64-setup.exe"
   status = 302
 [[redirects]]
   from = "/download.html"

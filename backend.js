@@ -82,6 +82,11 @@
       sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
         auth: {
           persistSession: true,
+          // B1 hardening (Anti pre-launch): keep the Supabase session token in
+          // sessionStorage, NOT the default localStorage — it doesn't persist across
+          // browser restarts and has a smaller XSS exposure window. Matches the #143
+          // invite stash + the runbook B1 rule.
+          storage: window.sessionStorage,
           autoRefreshToken: true,
           // Google sign-in returns the session in the URL #fragment (implicit grant);
           // detectSessionInUrl consumes it on /account. flowType is pinned to
@@ -177,7 +182,13 @@
       });
     },
     signOut: function () {
-      return ensureClient().then(function (c) { return c.auth.signOut(); }).then(function () { location.reload(); });
+      return ensureClient().then(function (c) { return c.auth.signOut(); }).then(function () {
+        // Clear tab-scoped state on sign-out: the page reload preserves sessionStorage,
+        // so the assistant chat history ("mod-ask-v2") and any pending invite/plan stash
+        // would otherwise be visible to the NEXT user who signs in on a shared machine.
+        try { sessionStorage.clear(); } catch (e) {}
+        location.reload();
+      });
     },
     resetPassword: function (email) {
       return ensureClient().then(function (c) { return c.auth.resetPasswordForEmail(email, { redirectTo: location.origin + "/login", captchaToken: captchaToken() }); });
@@ -195,7 +206,7 @@
   var hasStoredSession = false;
   try {
     var ref = (CONFIG.SUPABASE_URL.match(/^https:\/\/([a-z0-9-]+)\.supabase\.co/) || [])[1];
-    hasStoredSession = !!(ref && localStorage.getItem("sb-" + ref + "-auth-token"));
+    hasStoredSession = !!(ref && sessionStorage.getItem("sb-" + ref + "-auth-token"));
   } catch (e) { /* storage blocked — treat as signed out */ }
   if (hasAuth && (isAppPage || hasStoredSession)) {
     ensureClient().then(function (c) {
@@ -263,7 +274,7 @@
     // in localStorage; the dashboard resumes that checkout after auth.
     try {
       var planParam = new URLSearchParams(location.search).get("plan");
-      if (planParam) localStorage.setItem("modulus-pending-plan", planParam);
+      if (planParam) sessionStorage.setItem("modulus-pending-plan", planParam);
     } catch (e) {}
 
     if (hasAuth) {
@@ -386,7 +397,7 @@
             if (!token) {
               // Carry the chosen plan through the sign-in detour so the
               // dashboard can resume checkout instead of dropping intent.
-              try { localStorage.setItem("modulus-pending-plan", tier); } catch (e2) {}
+              try { sessionStorage.setItem("modulus-pending-plan", tier); } catch (e2) {}
               window.location.assign("/login?plan=" + encodeURIComponent(tier));
               return;
             }
@@ -939,9 +950,9 @@
     function say(msg) { if (status) status.textContent = msg; }
     var m = location.search.match(/[?&]token=([0-9a-fA-F-]{16,})/);
     var token = m ? m[1] : null;
-    if (!token) { try { token = localStorage.getItem("modulus-pending-join"); } catch (e) {} }
+    if (!token) { try { token = sessionStorage.getItem("modulus-pending-join"); } catch (e) {} }
     if (!token) { say("This invite link is missing its code. Ask your team owner for a fresh one."); return; }
-    try { localStorage.setItem("modulus-pending-join", token); } catch (e) {}
+    try { sessionStorage.setItem("modulus-pending-join", token); } catch (e) {}
     if (!hasAuth) { say("Sign in, or create a free account with the invited email, to take your seat."); if (signIn) signIn.style.display = ""; return; }
     accessToken().then(function (tok) {
       if (!tok) {
@@ -956,7 +967,7 @@
         // wrong-account session (sign out, sign in right) or a network blip.
         // Terminal failures (used/expired/revoked) clear it.
         var keepStash = !res.ok && (err === "wrong_email" || err === "network");
-        if (!keepStash) { try { localStorage.removeItem("modulus-pending-join"); } catch (e) {} }
+        if (!keepStash) { try { sessionStorage.removeItem("modulus-pending-join"); } catch (e) {} }
         if (res.ok) {
           say("You're in. You now share " + ((res.d && res.d.owner_email) || "your team owner") + "'s plan and credits.");
           if (go) go.style.display = "";
@@ -1319,7 +1330,7 @@
             .then(function (res) {
               if (!res.ok) { delBtn.removeAttribute("data-busy"); delBtn.textContent = "Confirm permanent deletion"; err((res.d && res.d.error) || "Could not delete the account. Try again in a moment."); return; }
               return ensureClient().then(function (c) { return c.auth.signOut(); })
-                .then(function () { try { localStorage.clear(); } catch (e) {} window.location.assign("/?deleted=1"); });
+                .then(function () { try { localStorage.clear(); sessionStorage.clear(); } catch (e) {} window.location.assign("/?deleted=1"); });
             });
         }).catch(function () { delBtn.removeAttribute("data-busy"); delBtn.textContent = "Confirm permanent deletion"; err("Could not delete the account. Try again in a moment."); });
       });
@@ -1459,7 +1470,7 @@
           // They just bought their own plan, so any stale invite would only
           // ever fail (has_own_plan). Discard it instead of firing a confusing
           // alert on this load.
-          try { localStorage.removeItem("modulus-pending-join"); } catch (e) {}
+          try { sessionStorage.removeItem("modulus-pending-join"); } catch (e) {}
           pollEntitlement(0);
           // Clean the URL so a refresh doesn't re-trigger.
           try { history.replaceState({}, "", "/account"); } catch (e) {}
@@ -1468,11 +1479,11 @@
           // stashed invite first so the very first render shows the team. Keep
           // the stash on a network error so the next load can retry.
           var pendingJoin = null;
-          try { pendingJoin = localStorage.getItem("modulus-pending-join"); } catch (e) {}
+          try { pendingJoin = sessionStorage.getItem("modulus-pending-join"); } catch (e) {}
           var preStep = pendingJoin
             ? teamReq("accept", { token: pendingJoin }).then(function (res) {
                 var keep = !res.ok && res.d && res.d.error === "network";
-                if (!keep) { try { localStorage.removeItem("modulus-pending-join"); } catch (e) {} }
+                if (!keep) { try { sessionStorage.removeItem("modulus-pending-join"); } catch (e) {} }
                 if (res.ok) { try { window.location.hash = "#team"; } catch (e) {} }
                 else if (!keep && res.d && res.d.message) { window.alert(res.d.message); }
               })
@@ -1487,10 +1498,10 @@
             // failure; treating null as "not paid" could double-bill), they
             // are not already on a paid plan, and not on a team.
             var pending = null;
-            try { pending = localStorage.getItem("modulus-pending-plan"); } catch (e) {}
+            try { pending = sessionStorage.getItem("modulus-pending-plan"); } catch (e) {}
             if (!pending) return;
             if (!d) return; // entitlement failed to load; leave intent for next time
-            try { localStorage.removeItem("modulus-pending-plan"); } catch (e) {}
+            try { sessionStorage.removeItem("modulus-pending-plan"); } catch (e) {}
             var paid = d.plan && d.plan.key && d.plan.key !== "free" && d.subscription;
             if (paid || dashIsMember) return;
             var btn = document.querySelector('[data-checkout="' + pending + '"]');
