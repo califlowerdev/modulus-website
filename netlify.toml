@@ -140,7 +140,7 @@
 # /download/win is the actual versioned installer. Update the version each release.
 [[redirects]]
   from = "/download/win"
-  to = "https://github.com/califlowerdev/modulus-releases/releases/download/v1.208.0/Modulus.Studio_1.208.0_x64-setup.exe"
+  to = "https://github.com/califlowerdev/modulus-releases/releases/download/v1.209.0/Modulus.Studio_1.209.0_x64-setup.exe"
   status = 302
 [[redirects]]
   from = "/download.html"
