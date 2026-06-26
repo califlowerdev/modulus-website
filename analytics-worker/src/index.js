@@ -85,9 +85,12 @@ export default {
     if (request.method === "OPTIONS") return noContent(origin);
     if (request.method !== "POST") return noContent(origin);
 
-    // Size guard before reading the body.
-    const clen = Number(request.headers.get("Content-Length") || "0");
-    if (clen > MAX_BODY) return noContent(origin);
+    // Size guard before reading the body. Require a valid Content-Length within
+    // the cap (2026-06-26 audit): a missing/invalid header previously fell through
+    // to buffering an unbounded (e.g. chunked) body via request.text().
+    const clenHeader = request.headers.get("Content-Length");
+    const clen = Number(clenHeader);
+    if (!clenHeader || !Number.isFinite(clen) || clen > MAX_BODY) return noContent(origin);
 
     // (1) Honor privacy signals FIRST: never read IP/UA, never hash, never store.
     if (request.headers.get("Sec-GPC") === "1" || request.headers.get("DNT") === "1") {
@@ -97,12 +100,13 @@ export default {
     // (1b) Per-IP rate limit (AFTER the privacy check, so GPC/DNT visitors never
     // have their IP read). Caps the flood / denial-of-wallet path into the
     // service-key Supabase write. Over-limit beacons are dropped silently
-    // (204, best-effort). Fails OPEN if the limiter is unavailable.
+    // (204, best-effort). Fails CLOSED if the limiter is unavailable (2026-06-26
+    // audit): drop rather than leave the service-key write unprotected in an outage.
     try {
       const rlIp = request.headers.get("CF-Connecting-IP") || "0.0.0.0";
       const { success } = await env.RATE_LIMITER.limit({ key: rlIp });
       if (!success) return noContent(origin);
-    } catch (_e) { /* limiter unavailable -> keep ingesting */ }
+    } catch (_e) { return noContent(origin); }
 
     // (2) Parse + hard-cap the body.
     let body;

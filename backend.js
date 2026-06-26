@@ -1404,7 +1404,7 @@
       var memberDemo = /[?&]member=1/.test(location.search);
       dashIsMember = memberDemo;
       dashOwnerEmail = memberDemo ? "owner@ministry.org" : null;
-      renderPlan({ plan: "pro", display_name: "Pro", status: "active", balance: lowDemo ? 140 : 1280, limit: 1500, current_period_end: "2026-07-01" });
+      renderPlan({ plan: "pro", display_name: "Pro", status: "active", balance: lowDemo ? 280 : 2560, limit: 3000, current_period_end: "2026-07-01" });
       applyMemberBilling();
       renderActivity([
         { feature: "Source check", credits: 2.4, at: new Date(Date.now() - 6e4).toISOString() },
@@ -1500,6 +1500,13 @@
             var pending = null;
             try { pending = sessionStorage.getItem("modulus-pending-plan"); } catch (e) {}
             if (!pending) return;
+            // 2026-06-26 audit: validate the stashed plan against the known keys
+            // before using it in a selector — a crafted value could otherwise break
+            // document.querySelector and throw (client-side DoS for the session).
+            if (["starter", "pro", "studio"].indexOf(pending) === -1) {
+              try { sessionStorage.removeItem("modulus-pending-plan"); } catch (e) {}
+              return;
+            }
             if (!d) return; // entitlement failed to load; leave intent for next time
             try { sessionStorage.removeItem("modulus-pending-plan"); } catch (e) {}
             var paid = d.plan && d.plan.key && d.plan.key !== "free" && d.subscription;

@@ -50,7 +50,7 @@
     { id: "studio",
       k: ["studio", "first product", "repurpose", "repurposer", "content tool", "what product", "desktop app", "month of content"],
       boost: ["modulus studio", "what's modulus studio"],
-      a: "Modulus Studio turns one talk, sermon, or recording into a month of content: articles, Q&As, key quotes, social posts, and clean transcripts. In your voice, faithful to the source, never fabricated.\n\nIt's a premium Windows desktop app, available now. [Create your free account](/login?mode=create) and you get 25 credits to try everything.",
+      a: "Modulus Studio turns one talk, sermon, or recording into a month of content: articles, Q&As, key quotes, social posts, and clean transcripts. In your voice, faithful to the source, never fabricated.\n\nIt's a premium Windows desktop app, available now. [Create your free account](/login?mode=create) and you get 100 credits to try everything.",
       chips: ["How much does it cost?", "Is it accurate?", "Download for Windows"] },
 
     { id: "pricing",
@@ -62,13 +62,13 @@
     { id: "credits",
       k: ["credit", "credits", "what's a credit", "usage", "allowance", "run out", "top up", "refill", "limit"],
       boost: ["what's a credit", "what is a credit"],
-      a: "A credit is a unit of usage that every AI action spends. As a rough guide, a piece of content runs about 4 credits and an hour of transcription about 18, so Starter's monthly pool is roughly 150 pieces of content. Your plan refills automatically, and if you run low you can add a top-up pack or just wait. The app shows an estimate before each action, so nothing is a surprise.",
+      a: "A credit is a unit of usage that every AI action spends. As a rough guide, a piece of content runs about 4 credits and an hour of transcription about 18, so Starter's monthly pool is roughly 300 pieces of content. Your plan refills automatically, and if you run low you can add a top-up pack or just wait. The app shows an estimate before each action, so nothing is a surprise.",
       chips: ["Is there a free plan?", "How much does it cost?", "See plans"] },
 
     { id: "freeplan",
-      k: ["free plan", "free trial", "free account", "free credits", "free to start", "no card", "25 credits", "try free", "is it free", "free version"],
+      k: ["free plan", "free trial", "free account", "free credits", "free to start", "no card", "100 credits", "try free", "is it free", "free version"],
       boost: ["is there a free plan", "free plan"],
-      a: "Yes. Creating an account gives you 25 free credits, every tool unlocked, no card needed. That's enough to upload a real source and make a proper batch of content. Paid plans just add monthly credits and full-strength source checks.\n\n[Create your free account](/login?mode=create).",
+      a: "Yes. Creating an account gives you 100 free credits, every tool unlocked, no card needed. That's enough to upload a real source and make a proper batch of content. Paid plans just add monthly credits and full-strength source checks.\n\n[Create your free account](/login?mode=create).",
       chips: ["How much does it cost?", "What's a credit?", "Start free"] },
 
     { id: "accuracy",
@@ -98,7 +98,7 @@
     { id: "start",
       k: ["get started", "getting started", "begin", "start", "try", "trial", "sign up", "signup", "how do i start", "early access", "access", "waitlist", "join"],
       boost: ["how do i get started", "request early access"],
-      a: "Easy: [create your free account](/login?mode=create), and 25 credits come with it so you can genuinely try everything. Then [download Modulus Studio for Windows](/download), sign in, and you're making content in minutes. Upgrade to a monthly plan whenever the trial credits run low.\n\nWant something custom for your business instead? [Book a short call](/contact) and we'll map one workflow worth automating. No pitch, just a concrete first move.",
+      a: "Easy: [create your free account](/login?mode=create), and 100 credits come with it so you can genuinely try everything. Then [download Modulus Studio for Windows](/download), sign in, and you're making content in minutes. Upgrade to a monthly plan whenever the trial credits run low.\n\nWant something custom for your business instead? [Book a short call](/contact) and we'll map one workflow worth automating. No pitch, just a concrete first move.",
       chips: ["Download for Windows", "How much does it cost?", "See plans"] },
 
     { id: "download",

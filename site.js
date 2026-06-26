@@ -15,9 +15,9 @@
   // are a no-JS / SEO fallback that syncPlanCards() overwrites from this
   // object on load. Exposed on window so the injected backend.js can read it.
   window.MODULUS_PLANS = {
-    starter: { name: "Starter", price: "$19", period: "/ month", credits: "600",   limit: 600,  seats: 1 },
-    pro:     { name: "Pro",     price: "$39", period: "/ month", credits: "1,500", limit: 1500, seats: 3 },
-    studio:  { name: "Studio",  price: "$99", period: "/ month", credits: "4,000", limit: 4000, seats: 5 }
+    starter: { name: "Starter", price: "$19", period: "/ month", credits: "1,200", limit: 1200,  seats: 1 },
+    pro:     { name: "Pro",     price: "$39", period: "/ month", credits: "3,000", limit: 3000, seats: 3 },
+    studio:  { name: "Studio",  price: "$99", period: "/ month", credits: "8,000", limit: 8000, seats: 5 }
   };
   var LINKS = [
     ["Services", "/services"],
@@ -259,7 +259,9 @@
         var payload = {
           domain: location.hostname,
           path: location.pathname.slice(0, 2048),
-          referrer: document.referrer || "",
+          // 2026-06-26 audit: send only the referrer HOSTNAME, never the full URL
+          // (a same-origin referrer can carry path/query like invite/checkout tokens).
+          referrer: (function () { try { return document.referrer ? new URL(document.referrer).hostname : ""; } catch (e) { return ""; } })(),
           screen: (window.screen ? window.screen.width + "x" + window.screen.height : ""),
           utm_source: p.get("utm_source") || "",
           utm_medium: p.get("utm_medium") || "",
