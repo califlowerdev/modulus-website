@@ -212,6 +212,14 @@
                   <span>Generations, source checks, and transcription all spend from this balance.</span>
                   <span id="usageRefillRow"></span>
                 </div>
+                <div id="topupRow" style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)">
+                  <span class="hint" style="display:block;margin-bottom:10px">Need more credits this month? Add a one-time top-up:</span>
+                  <div class="dcard-btns" style="flex-wrap:wrap;gap:8px">
+                    <button class="s-btn ghost sm" type="button" data-topup="topup_small">+300 &middot; $5</button>
+                    <button class="s-btn ghost sm" type="button" data-topup="topup_medium">+1,000 &middot; $15</button>
+                    <button class="s-btn gold sm" type="button" data-topup="topup_large">+3,000 &middot; $40</button>
+                  </div>
+                </div>
                 <div class="nudge" id="lowCreditNudge" style="display:none">
                   <span id="lowCreditMsg"></span>
                   <button class="s-btn gold sm" type="button" data-goto-tab="plan">See plans</button>
@@ -279,26 +287,26 @@
                   <div class="tier3" data-plan="free">
                     <h3>Free Trial</h3>
                     <div class="t-price"><span class="amt">$0</span> <span class="per">to start</span></div>
-                    <div class="t-creds"><span class="t-cr">25</span> credits at sign-up &middot; every tool unlocked</div>
+                    <div class="t-creds"><span class="t-cr">100</span> credits at sign-up &middot; every tool unlocked</div>
                     <div class="t-state" id="freePlanState">Where everyone starts</div>
                   </div>
                   <div class="tier3" data-plan="starter">
                     <h3>Starter</h3>
                     <div class="t-price"><span class="amt">$19</span> <span class="per">/ month</span></div>
-                    <div class="t-creds"><span class="t-cr">600</span> credits a month &middot; full-strength source checks</div>
+                    <div class="t-creds"><span class="t-cr">1,200</span> credits a month &middot; full-strength source checks</div>
                     <a class="s-btn gold" href="/studio#pricing" data-checkout="starter" data-plan-btn>Upgrade</a>
                   </div>
                   <div class="tier3 pop" data-plan="pro">
                     <span class="pop-pill">Most popular</span>
                     <h3>Pro</h3>
                     <div class="t-price"><span class="amt">$39</span> <span class="per">/ month</span></div>
-                    <div class="t-creds"><span class="t-cr">1,500</span> credits a month &middot; 3 team seats</div>
+                    <div class="t-creds"><span class="t-cr">3,000</span> credits a month &middot; 3 team seats</div>
                     <a class="s-btn gold" href="/studio#pricing" data-checkout="pro" data-plan-btn>Upgrade</a>
                   </div>
                   <div class="tier3" data-plan="studio">
                     <h3>Studio</h3>
                     <div class="t-price"><span class="amt">$99</span> <span class="per">/ month</span></div>
-                    <div class="t-creds"><span class="t-cr">4,000</span> credits a month &middot; 5 team seats</div>
+                    <div class="t-creds"><span class="t-cr">8,000</span> credits a month &middot; 5 team seats</div>
                     <a class="s-btn gold" href="/studio#pricing" data-checkout="studio" data-plan-btn>Upgrade</a>
                   </div>
                 </div>

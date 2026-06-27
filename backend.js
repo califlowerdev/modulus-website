@@ -640,6 +640,9 @@
     var ownerBox = document.getElementById("ownerBilling");
     if (memberBox) memberBox.style.display = dashIsMember ? "" : "none";
     if (ownerBox) ownerBox.style.display = dashIsMember ? "none" : "";
+    // Members share the owner's pool and can't top up their own account.
+    var topupRow = document.getElementById("topupRow");
+    if (topupRow) topupRow.style.display = dashIsMember ? "none" : "";
     if (dashIsMember) {
       setText("memberOwnerEmail", dashOwnerEmail || "your team owner");
       setText("billPlan", "Shared team plan");
@@ -1519,7 +1522,52 @@
     });
   }
 
-  function boot() { wireLogin(); wireCheckout(); wireAccount(); wireJoin(); wirePortal(); }
+  // Top-up buttons ([data-topup]) buy a one-time credit pack via Stripe. Mirrors
+  // wireCheckout but hits create-topup-checkout (mode=payment). Hidden for team
+  // members in applyMemberBilling (the owner tops up the shared pool); guarded here
+  // and server-side too.
+  function wireTopup() {
+    var els = document.querySelectorAll("[data-topup]");
+    if (!els.length || !CONFIG.BILLING_LIVE || !hasAuth) return;
+    for (var i = 0; i < els.length; i++) {
+      (function (el) {
+        var pack = el.getAttribute("data-topup");
+        el.addEventListener("click", function (e) {
+          e.preventDefault();
+          if (el.getAttribute("data-busy")) return;
+          if (dashIsMember) { alert("You're on a team plan and share its credit pool. The plan owner can buy a top-up for the team."); return; }
+          var label = el.textContent;
+          el.setAttribute("data-label", label);
+          el.setAttribute("data-busy", "1");
+          el.textContent = "Opening…";
+          function fail(msg) { el.textContent = label; el.removeAttribute("data-busy"); if (msg) alert(msg); }
+          accessToken().then(function (token) {
+            if (!token) { window.location.assign("/login"); return; }
+            return fetch(fnUrl("create-topup-checkout"), {
+              method: "POST",
+              headers: { "content-type": "application/json", "Authorization": "Bearer " + token },
+              body: JSON.stringify({ pack_key: pack, return_url: location.origin + "/account" })
+            }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+              .then(function (res) {
+                if (res.ok && res.d && res.d.url) { window.location.assign(res.d.url); return; }
+                fail((res.d && (res.d.message || res.d.error)) || "Couldn't start the top-up. Please try again.");
+              });
+          }).catch(function () { fail("Couldn't start the top-up. Please try again."); });
+        });
+      })(els[i]);
+    }
+    // Back-button resilience (same as wireCheckout): restore any stuck busy button.
+    window.addEventListener("pageshow", function (e) {
+      if (!e.persisted) return;
+      var busy = document.querySelectorAll("[data-topup][data-busy]");
+      for (var j = 0; j < busy.length; j++) {
+        busy[j].textContent = busy[j].getAttribute("data-label") || "Top up";
+        busy[j].removeAttribute("data-busy");
+      }
+    });
+  }
+
+  function boot() { wireLogin(); wireCheckout(); wireTopup(); wireAccount(); wireJoin(); wirePortal(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 })();
