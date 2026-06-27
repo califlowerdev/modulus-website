@@ -212,14 +212,6 @@
                   <span>Generations, source checks, and transcription all spend from this balance.</span>
                   <span id="usageRefillRow"></span>
                 </div>
-                <div id="topupRow" style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)">
-                  <span class="hint" style="display:block;margin-bottom:10px">Need more credits this month? Add a one-time top-up:</span>
-                  <div class="dcard-btns" style="flex-wrap:wrap;gap:8px">
-                    <button class="s-btn ghost sm" type="button" data-topup="topup_small">+300 &middot; $5</button>
-                    <button class="s-btn ghost sm" type="button" data-topup="topup_medium">+1,000 &middot; $15</button>
-                    <button class="s-btn gold sm" type="button" data-topup="topup_large">+3,000 &middot; $40</button>
-                  </div>
-                </div>
                 <div class="nudge" id="lowCreditNudge" style="display:none">
                   <span id="lowCreditMsg"></span>
                   <button class="s-btn gold sm" type="button" data-goto-tab="plan">See plans</button>
@@ -313,6 +305,15 @@
                 <p class="hint" style="margin-top:14px">Secure checkout by Stripe &middot; cancel anytime &middot; <a href="/studio#pricing">compare plans in detail</a></p>
                 <div class="dcard-btns" style="margin-top:6px">
                   <a class="s-btn ghost" id="manageBillingBtn" href="#">Manage billing</a>
+                </div>
+                <div id="topupRow" style="margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.08)">
+                  <h3 style="margin:0 0 4px;font-size:16px;color:var(--s-ink)">Top up credits</h3>
+                  <p class="hint" style="margin:0 0 12px">Need more before your plan renews? Add a one-time pack. Credits stack on your current balance.</p>
+                  <div class="dcard-btns" style="flex-wrap:wrap;gap:8px;margin:0">
+                    <button class="s-btn ghost sm" type="button" data-topup="topup_small">+300 &middot; $5</button>
+                    <button class="s-btn ghost sm" type="button" data-topup="topup_medium">+1,000 &middot; $15</button>
+                    <button class="s-btn gold sm" type="button" data-topup="topup_large">+3,000 &middot; $40</button>
+                  </div>
                 </div>
                 </div><!-- /#ownerBilling -->
               </div>

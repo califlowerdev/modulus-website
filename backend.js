@@ -1260,6 +1260,44 @@
     });
   }
 
+  // After a top-up checkout the webhook grants asynchronously, and the redirect
+  // back can beat webhook delivery. Render the dashboard each round (so the new
+  // balance + Top-up activity appear live) and keep an "Adding your credits…" note
+  // up until a FRESH Top-up activity row lands (the grant arrived) or the budget
+  // runs out — so we never drop the only "still processing" cue while showing a
+  // stale balance. renderPlan hides #noPlanHint whenever a plan is present, so the
+  // note is re-asserted after each render.
+  function pollTopup(n) {
+    // Correlate to the EXACT checkout: the pack grant's idempotency_key is
+    // `topup:<session_id>`, surfaced as recent[].topup_session. We exit only when a
+    // Top-up row carries THIS checkout's session id — bulletproof against prior or
+    // pending grants, with no clock/baseline heuristics or readiness state. If the
+    // session id is missing (older function not yet deployed, or direct nav), fall
+    // back to a 5-minute recency window.
+    var session = null;
+    try { session = sessionStorage.getItem("modulus-topup-session"); } catch (e) {}
+    loadEntitlement().then(function (d) {
+      var note = document.getElementById("noPlanHint");
+      var landed = !!(d && d.recent && d.recent.some(function (e) {
+        if (!e || e.feature !== "Top-up") return false;
+        return session
+          ? e.topup_session === session
+          : (e.at && (Date.now() - new Date(e.at).getTime() < 5 * 60 * 1000));
+      }));
+      if (landed) {
+        try { sessionStorage.removeItem("modulus-topup-session"); } catch (e2) {}
+        return; // the render already showed the new balance + Top-up row
+      }
+      if (n > 6) {
+        try { sessionStorage.removeItem("modulus-topup-session"); } catch (e2) {}
+        if (note) { note.textContent = "Your credits should arrive within a minute. Your payment is safe; refresh if they don't appear."; note.style.display = ""; }
+        return;
+      }
+      if (note) { note.textContent = "Adding your credits…"; note.style.display = ""; }
+      setTimeout(function () { pollTopup(n + 1); }, 4000);
+    });
+  }
+
   function wireAccount() {
     var card = document.getElementById("accountCard");
     if (!card) return; // not the dashboard
@@ -1453,11 +1491,24 @@
     if (!hasAuth) { show(false); return; }
 
     var justSubscribed = /[?&]checkout=success/.test(location.search);
+    var justToppedUp = /[?&]topup=success/.test(location.search);
 
     ensureClient().then(function (c) {
-      c.auth.getUser().then(function (r) {
+      var triedReauth = false;
+      function onUser(r) {
         var user = r && r.data && r.data.user;
-        if (!user) { show(false); return; }
+        if (!user) {
+          // Returning from Stripe (subscribe or top-up): the session can take a
+          // beat to hydrate after the redirect. Hold the branded loader and retry
+          // once before falling back to the signed-out view, so a paid/topped-up
+          // user never sees a "please sign in" flash.
+          if ((justSubscribed || justToppedUp) && !triedReauth) {
+            triedReauth = true;
+            setTimeout(function () { c.auth.getUser().then(onUser); }, 900);
+            return;
+          }
+          show(false); return;
+        }
         var meta = user.user_metadata || {};
         var name = meta.full_name || meta.name || (user.email ? user.email.split("@")[0] : "there");
         setText("acctHello", "Welcome back, " + name + ".");
@@ -1476,6 +1527,14 @@
           try { sessionStorage.removeItem("modulus-pending-join"); } catch (e) {}
           pollEntitlement(0);
           // Clean the URL so a refresh doesn't re-trigger.
+          try { history.replaceState({}, "", "/account"); } catch (e) {}
+        } else if (justToppedUp) {
+          // Returning from a one-time top-up: the plan is unchanged but the balance
+          // just grew. Reveal the dashboard immediately, then poll until the webhook
+          // grant lands (the redirect can beat webhook delivery), keeping an "Adding
+          // your credits…" note up so we never show a stale balance with no cue.
+          show(true);
+          pollTopup(0);
           try { history.replaceState({}, "", "/account"); } catch (e) {}
         } else {
           // Finish a join that started on /join while signed out: accept the
@@ -1518,7 +1577,8 @@
             if (btn && !btn.getAttribute("data-current")) btn.click();
           });
         }
-      });
+      }
+      c.auth.getUser().then(onUser);
     });
   }
 
@@ -1549,7 +1609,18 @@
               body: JSON.stringify({ pack_key: pack, return_url: location.origin + "/account" })
             }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
               .then(function (res) {
-                if (res.ok && res.d && res.d.url) { window.location.assign(res.d.url); return; }
+                if (res.ok && res.d && res.d.url) {
+                  // Record THIS checkout's Stripe Session id so the post-return poll
+                  // correlates to the EXACT grant (the pack grant's idempotency_key is
+                  // `topup:<session_id>`, surfaced as recent[].topup_session) — no clock
+                  // or baseline heuristics. Cleared once that grant is seen / times out.
+                  try {
+                    if (res.d.session_id) sessionStorage.setItem("modulus-topup-session", res.d.session_id);
+                    else sessionStorage.removeItem("modulus-topup-session");
+                  } catch (e2) {}
+                  window.location.assign(res.d.url);
+                  return;
+                }
                 fail((res.d && (res.d.message || res.d.error)) || "Couldn't start the top-up. Please try again.");
               });
           }).catch(function () { fail("Couldn't start the top-up. Please try again."); });
