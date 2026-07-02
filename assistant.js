@@ -62,7 +62,7 @@
     { id: "credits",
       k: ["credit", "credits", "what's a credit", "usage", "allowance", "run out", "top up", "refill", "limit"],
       boost: ["what's a credit", "what is a credit"],
-      a: "A credit is a unit of usage that every AI action spends. As a rough guide, a piece of content runs about 4 credits and an hour of transcription about 18, so Starter's monthly pool is roughly 300 pieces of content. Your plan refills automatically, and if you run low you can add a top-up pack or just wait. The app shows an estimate before each action, so nothing is a surprise.",
+      a: "A credit is a unit of usage that every AI action spends. As a rough guide, a typical piece of content runs about 4 credits and an hour of transcription about 18, all from the same pool, so Starter's 1,200 credits cover roughly 300 pieces if content is all you make. Your plan refills automatically, and if you run low you can add a top-up pack or just wait. The app shows an estimate before each action, so nothing is a surprise.",
       chips: ["Is there a free plan?", "How much does it cost?", "See plans"] },
 
     { id: "freeplan",
@@ -74,19 +74,19 @@
     { id: "accuracy",
       k: ["accurate", "accuracy", "faithful", "hallucinate", "hallucination", "make up", "makes things up", "fabricate", "invent", "trust", "quality", "quote", "quotes", "wrong"],
       boost: ["is it accurate", "does it hallucinate"],
-      a: "Faithfulness is the whole point. Studio works only from your source, then a separate verification pass re-reads every draft against it. Quotes have to exist in the source, claims have to trace back, and your voice has to survive. Nothing gets invented.\n\nThe founder wrote up exactly how this works: [why Studio checks every draft](/insights/source-faithful-ai).",
+      a: "Faithfulness is the whole point. Studio works only from your source, and every draft is checked against it: quotes have to exist in the source, claims have to trace back, and your voice has to survive. Deeper reviews, like a full source audit and a doctrine-aware pass, run on demand. Nothing gets invented.\n\nThe founder wrote up exactly how this works: [why Studio checks every draft](/insights/source-faithful-ai).",
       chips: ["What's Modulus Studio?", "Who is it for?", "Request early access"] },
 
     { id: "ministry",
       k: ["church", "ministry", "ministries", "sermon", "sermons", "pastor", "scripture", "bible", "doctrine", "doctrinal", "theological", "christian", "faith"],
       boost: ["for churches", "for ministries"],
-      a: "Churches and Christian publishers are a core audience. Beyond the standard source checks, theological content gets an additional doctrinal alignment review that checks drafts for consistency with the source material. Misrepresenting what a pastor taught is serious, so for that audience the extra pass isn't optional.\n\nMore on the approach: [why Studio checks every draft](/insights/source-faithful-ai).",
+      a: "Churches and Christian publishers are a core audience. Beyond the standard source checks, Studio includes the Theological Judge: set your doctrinal frame once, and run a doctrine-aware review on any draft to flag drift from your teaching. It surfaces the concern; your editors make the call. Misrepresenting what a pastor taught is serious, so this pass is built for exactly that audience.\n\nMore on the approach: [why Studio checks every draft](/insights/source-faithful-ai).",
       chips: ["How much does it cost?", "Request early access"] },
 
     { id: "how",
       k: ["how does it work", "how it works", "process", "steps", "what happens", "workflow"],
       boost: ["how does it work"],
-      a: "For Modulus Studio: add your source (audio, PDF, or text) → pick what to make (article, Q&A, quotes, social) → publish with confidence, because every draft is verified against your source.\n\nFor custom work, we Consult (find the right job for an agent), Build (an agent that fits how you already work), and Run (keep it sharp as you grow).",
+      a: "For Modulus Studio: add your source (audio, PDF, or text) → pick what to make (article, Q&A, quotes, social) → publish with confidence, because every draft is checked against your source.\n\nFor custom work, we Consult (find the right job for an agent), Build (an agent that fits how you already work), and Run (keep it sharp as you grow).",
       chips: ["What's Modulus Studio?", "Do you build custom agents?", "Book a call"] },
 
     { id: "transcribe",

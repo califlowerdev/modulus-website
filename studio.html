@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Modulus Studio | Marketing tools for Christian publishers</title>
-  <meta name="description" content="Modulus Studio turns the books, sermons, and articles you already publish into faithful, social-ready content. Built only from your source, checked against your doctrine. A product of Modulus Technologies." />
+  <meta name="description" content="Modulus Studio turns the books, sermons, and articles you already publish into faithful, social-ready content. Built only from your source and checked against it, with doctrine review on demand. A product of Modulus Technologies." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
@@ -14,7 +14,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Modulus Technologies" />
   <meta property="og:title" content="Modulus Studio | Marketing tools for Christian publishers" />
-  <meta property="og:description" content="Turn the books and teaching you already publish into faithful, social-ready content. Built only from your source, checked against your doctrine." />
+  <meta property="og:description" content="Turn the books and teaching you already publish into faithful, social-ready content. Built only from your source and checked against it, with doctrine review on demand." />
   <meta property="og:url" content="https://modulustech.ai/studio" />
   <meta property="og:image" content="https://modulustech.ai/assets/og-card.png" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -28,7 +28,7 @@
     "image": "https://modulustech.ai/assets/modulus-mark.png",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Windows 10, Windows 11",
-    "description": "A premium desktop studio that turns books, sermons, podcasts, and writing into articles, Q&As, key quotes, social posts, and clean transcripts, in your voice, faithful to the source and checked against your doctrine.",
+    "description": "A premium desktop studio that turns books, sermons, podcasts, and writing into articles, Q&As, key quotes, social posts, and clean transcripts, in your voice, faithful to the source and checked against it, with an opt-in doctrine review.",
     "publisher": { "@type": "Organization", "name": "Modulus Technologies", "url": "https://modulustech.ai/" },
     "offers": [
       { "@type": "Offer", "name": "Free Trial", "price": "0", "priceCurrency": "USD", "url": "https://modulustech.ai/studio#pricing", "availability": "https://schema.org/InStock", "description": "100 credits at sign-up, every tool unlocked" },
@@ -362,9 +362,8 @@
     @keyframes trPulse { 50% { opacity: .35; } }
     .tr-script { margin-top: 14px; overflow: hidden; height: 196px; }
     .tr-lines { position: relative; transition: transform .9s var(--ease); will-change: transform; }
-    .tr-line { display: grid; grid-template-columns: 46px 1fr; gap: 10px; margin-bottom: 12px; opacity: 0; transform: translateY(8px); }
+    .tr-line { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; opacity: 0; transform: translateY(8px); }
     .tr-line.show { animation: ocIn .5s var(--ease) forwards; }
-    .tr-line .ts { font-size: 11px; color: var(--gold); font-variant-numeric: tabular-nums; padding-top: 1px; }
     .tr-line .tx { font-size: 12.5px; line-height: 1.5; color: var(--w-ink); }
     .tr-line .tx b { color: #fff; font-weight: 700; }
     .tr-export { align-self: flex-start; margin-top: 4px; display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: var(--w-ink); background: rgba(228,199,125,.1); border: 1px solid rgba(228,199,125,.42); border-radius: 9px; padding: 8px 13px; opacity: 0; transform: translateY(6px); transition: opacity .4s var(--ease), transform .4s var(--ease), color .25s, background .25s, border-color .25s; }
@@ -478,7 +477,7 @@
       <div class="swrap">
         <span class="s-eyebrow fade-up">Modulus Studio · marketing tools for Christian publishers</span>
         <h1 class="fade-up d1">Turn the books you publish into <span class="acc">a month of content</span>.</h1>
-        <p class="s-sub fade-up d2">A premium desktop studio that takes the books, sermons, and articles you already publish and turns them into articles, Q&amp;As, key quotes, social posts, and clean transcripts. Built only from your source, written in the author's voice, and checked against your doctrine.</p>
+        <p class="s-sub fade-up d2">A premium desktop studio that takes the books, sermons, and articles you already publish and turns them into articles, Q&amp;As, key quotes, social posts, and clean transcripts. Built only from your source, written in the author's voice, and checked against the manuscript before you see it. When doctrine matters, an opt-in review holds your line.</p>
         <div class="s-cta fade-up d3">
           <a class="s-btn gold" href="/login?mode=create">Start free, 100 credits</a>
           <a class="s-btn ghost" href="/download">
@@ -517,7 +516,7 @@
           <div class="s-copy">
             <span class="s-eyebrow">Content Repurposer</span>
             <h2>One source in, a month of content out.</h2>
-            <p>Drop in a book, a sermon, or a transcript and Studio pulls articles, Q&amp;As, key quotes, and posts straight from the text, in the author's voice. Every line is anchored to the source, and three checks run on each draft before you see it.</p>
+            <p>Drop in a book, a sermon, or a transcript and Studio pulls articles, Q&amp;As, key quotes, and posts straight from the text, in the author's voice. Every line is anchored to the source, and every draft is automatically checked against the manuscript before you see it. Deeper reviews, like the full Source Check and the Theological Judge, run whenever you ask.</p>
             <p class="tooluse">Use it to turn one talk into a week of posts, build a Q&amp;A library from a book, or draft articles from a sermon series.</p>
           </div>
           <div class="card appshot reveal">
@@ -562,13 +561,13 @@
                     <ul class="gen-steps">
                       <li>Reading the source</li>
                       <li>Drafting in the author's voice</li>
-                      <li>Source Check</li>
-                      <li>Theological Judge</li>
+                      <li>Checking quotes against the source</li>
+                      <li>Checking scripture references</li>
                     </ul>
                   </div>
 
                   <div class="out">
-                    <div class="out-h"><span class="out-title">Q&amp;A pulled from Ask Pastor John</span><span class="out-badge"><i></i>Source Check 99%</span></div>
+                    <div class="out-h"><span class="out-title">Q&amp;A pulled from Ask Pastor John</span><span class="out-badge"><i></i>Quotes verified</span></div>
                     <div class="out-content qa-content">
                       <div class="ocard"><div class="oq">How do I fight for joy when I feel nothing?</div><div class="oa">The pursuit of joy in God is not optional. It is not an extra you grow into after you come to faith. It is the fight of faith itself.</div></div>
                       <div class="ocard"><div class="oq">Why would a good God let his children suffer?</div><div class="oa">Suffering in the path of obedience, endured with joy, is the clearest display of the worth of God in our lives.</div></div>
@@ -583,9 +582,9 @@
 
         <div class="s-show toolblock flip reveal">
           <div class="s-copy">
-            <span class="s-eyebrow">Photo Editor</span>
+            <span class="s-eyebrow">Photo Editor &middot; in preview</span>
             <h2>Turn a key quote into a finished graphic.</h2>
-            <p>Take any quote Studio pulls, drop it on a background, add the reference, and it renders in every social size at once: square, portrait, and story. On brand, ready to post, no design tool needed.</p>
+            <p>Take any quote Studio pulls, drop it on a background, add the reference, and it renders in every social size at once: square, portrait, and story. On brand, ready to post, no design tool needed. The editor ships in preview today, with polish still landing.</p>
             <p class="tooluse">Use it to turn a sermon's best line into a week of graphics, or build a whole quote series from one book in minutes.</p>
           </div>
           <div class="card appshot">
@@ -648,8 +647,8 @@
           <div class="s-copy">
             <span class="s-eyebrow">Transcription</span>
             <h2>Drop a sermon in, get a clean transcript out.</h2>
-            <p>Drop in an MP3, M4A, WAV, or MP4 and Studio returns a clean, accurate transcript with speaker labels and timestamps, ready to repurpose, publish, or caption. Built to chew through full-length sermons and podcasts.</p>
-            <p class="tooluse">Use it to caption a sermon, feed the transcript straight into the Repurposer, or build a searchable archive of everything you have preached.</p>
+            <p>Drop in an MP3, M4A, WAV, or MP4 and Studio returns a clean, accurate transcript, ready to repurpose or publish. Built to chew through full-length sermons and podcasts, so the words you preached become text you can work with.</p>
+            <p class="tooluse">Use it to feed a sermon straight into the Repurposer, publish the transcript on your site, or build a searchable archive of everything you have preached.</p>
           </div>
           <div class="card appshot">
             <div class="win">
@@ -664,13 +663,13 @@
                 <div class="tr-status"><span class="dot"></span>Transcribing the audio…</div>
                 <div class="tr-script">
                   <div class="tr-lines">
-                    <div class="tr-line"><span class="ts">00:04</span><span class="tx"><b>John Piper:</b> God created us to live with a single passion: to joyfully display his supreme excellence in all the spheres of life.</span></div>
-                    <div class="tr-line"><span class="ts">00:24</span><span class="tx"><b>John Piper:</b> The deepest and most enduring happiness is found not from God, but in God himself.</span></div>
-                    <div class="tr-line"><span class="ts">00:46</span><span class="tx"><b>John Piper:</b> Conversion is the creation of new desires, not just the suppression of old ones.</span></div>
-                    <div class="tr-line"><span class="ts">01:09</span><span class="tx"><b>John Piper:</b> We will not love people the way God calls us to until we are first satisfied in him.</span></div>
-                    <div class="tr-line"><span class="ts">01:32</span><span class="tx"><b>John Piper:</b> The cross of Christ is the blazing center of the glory of God.</span></div>
-                    <div class="tr-line"><span class="ts">01:55</span><span class="tx"><b>John Piper:</b> Faith is being satisfied with all that God is for us in Jesus.</span></div>
-                    <div class="tr-line"><span class="ts">02:18</span><span class="tx"><b>John Piper:</b> Wherever you are and whatever you do, do all of it to make God look glorious.</span></div>
+                    <div class="tr-line"><span class="tx">God created us to live with a single passion: to joyfully display his supreme excellence in all the spheres of life.</span></div>
+                    <div class="tr-line"><span class="tx">The deepest and most enduring happiness is found not from God, but in God himself.</span></div>
+                    <div class="tr-line"><span class="tx">Conversion is the creation of new desires, not just the suppression of old ones.</span></div>
+                    <div class="tr-line"><span class="tx">We will not love people the way God calls us to until we are first satisfied in him.</span></div>
+                    <div class="tr-line"><span class="tx">The cross of Christ is the blazing center of the glory of God.</span></div>
+                    <div class="tr-line"><span class="tx">Faith is being satisfied with all that God is for us in Jesus.</span></div>
+                    <div class="tr-line"><span class="tx">Wherever you are and whatever you do, do all of it to make God look glorious.</span></div>
                   </div>
                 </div>
                 <button class="tr-export" type="button"><svg class="ex-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M8 7l4-4 4 4"/></svg><span class="ex-spin"></span><svg class="ex-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg><span class="trx-label">Export to extraction</span></button>
@@ -701,7 +700,7 @@
             <div class="s-price"><span class="amt">$19</span><span class="per">/ month</span></div>
             <div class="s-credits">1,200 credits / month</div>
             <ul class="s-list">
-              <li>About 300 pieces of content a month</li>
+              <li>Enough credits for about 300 typical pieces</li>
               <li>Content Repurposer and Transcription</li>
               <li>Your voice, plus full-strength source checks</li>
               <li>Cancel anytime</li>
@@ -716,9 +715,9 @@
             <div class="s-credits">3,000 credits / month</div>
             <ul class="s-list">
               <li>Everything in Starter</li>
-              <li>About 750 pieces of content a month</li>
+              <li>Enough credits for about 750 typical pieces</li>
               <li>3 team seats, one shared credit pool</li>
-              <li>Premium AI models</li>
+              <li>More credits for the strongest models</li>
             </ul>
             <a class="s-btn gold full" href="/login?mode=create&plan=pro" data-checkout="pro">Choose Pro</a>
           </div>

@@ -311,7 +311,7 @@
 })();
 
 /* 5) Transcription demo: a sermon file dropped in, a short processing beat,
-   then the transcript streams out line by line with speaker labels. */
+   then the transcript streams out line by line. */
 (function () {
   var tr = document.getElementById("trDemo");
   if (!tr) return;
