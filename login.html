@@ -50,7 +50,7 @@
                  a hidden required field blocks the sign-in submit; backend.js
                  enforces the match in create mode instead. Birthday is optional. -->
             <div class="field" id="confirmField"><label for="a-confirm">Confirm password</label><input id="a-confirm" type="password" autocomplete="new-password" minlength="8" /></div>
-            <div class="field" id="dobField"><label for="a-dob">Birthday <span class="muted">(optional)</span></label><input id="a-dob" type="date" autocomplete="bday" max="2025-12-31" /></div>
+            <div class="field" id="dobField"><label for="a-dob">Birthday <span class="muted">(optional)</span></label><input id="a-dob" type="date" autocomplete="bday" /></div>
             <!-- Marketing opt-in: create-account only, UNCHECKED by default (real
                  consent, not pre-ticked). Transactional account email is separate
                  and always sent; this gate is only for product news + tips. -->
@@ -86,6 +86,9 @@
   </main>
   <script src="site.js"></script>
   <script>
+    // Birthday can never be in the future; set the cap at runtime so it does not go stale.
+    var dobEl = document.getElementById("a-dob");
+    if (dobEl) dobEl.max = new Date().toISOString().slice(0, 10);
     function setMode(m) {
       document.body.setAttribute("data-mode", m);
       document.getElementById("tabSignin").classList.toggle("on", m === "signin");

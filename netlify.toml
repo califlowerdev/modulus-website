@@ -127,7 +127,7 @@
   status = 301
   force = true
 
-# Pricing lives on Products — real 301 so crawlers never see the meta-refresh stub.
+# Pricing lives on the Studio page. Real 301 so crawlers never see the meta-refresh stub.
 # force = true because pricing.html exists and would otherwise serve at /pricing.
 [[redirects]]
   from = "/pricing"
